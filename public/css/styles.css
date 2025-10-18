@@ -334,13 +334,14 @@ blockquote {
 
 /* Map */
 .map-wrapper {
+  position: relative;
   width: 100%;
-  max-width: 1000px;
-  height: 400px;
+  max-width: 900px;
+  height: 450px;
   margin: 0 auto;
   border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .map-wrapper iframe {
@@ -348,6 +349,20 @@ blockquote {
   height: 100%;
   border: none;
 }
+
+.map-overlay-circle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 250px;
+  height: 250px;
+  background: rgba(255, 182, 193, 0.25); /* muted pink tint */
+  border: 2px solid rgba(128, 128, 128, 0.4);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none; /* ensures clicks still go through to map */
+}
+
 
 /* Contact */
 #contact-form {
