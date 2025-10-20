@@ -44,3 +44,21 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
+// Smooth-scroll and focus on contact name field when any .cta link is clicked
+document.querySelectorAll(".cta").forEach((btn) => {
+  btn.addEventListener("click", (e) => {
+    e.preventDefault(); // prevent instant jump
+
+    // Scroll smoothly to the contact section
+    const contactSection = document.querySelector("#contact");
+    contactSection.scrollIntoView({ behavior: "smooth" });
+
+    // Wait a bit for the scroll animation to finish, then focus
+    setTimeout(() => {
+      const contactName = document.getElementById("contactName");
+      if (contactName) contactName.focus();
+    }, 800); // Adjust delay (ms) to match your scroll duration
+  });
+});
+
+
