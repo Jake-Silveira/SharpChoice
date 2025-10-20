@@ -27,3 +27,20 @@ form.addEventListener('submit', async (e) => {
     status.textContent = 'Error sending message. Please try again later.';
   }
 });
+
+// Expandable "See More" for About Section
+document.addEventListener("DOMContentLoaded", () => {
+  const readMoreBtn = document.querySelector(".read-more-btn");
+  const aboutBio = document.querySelector(".about-bio");
+
+  if (readMoreBtn && aboutBio) {
+    readMoreBtn.addEventListener("click", () => {
+      aboutBio.classList.toggle("expanded");
+
+      const isExpanded = aboutBio.classList.contains("expanded");
+      readMoreBtn.textContent = isExpanded ? "See Less" : "See More";
+      readMoreBtn.setAttribute("aria-expanded", isExpanded);
+    });
+  }
+});
+
