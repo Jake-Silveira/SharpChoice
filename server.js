@@ -2,7 +2,6 @@
 import express from "express";
 import path from "path";
 import { fileURLToPath } from "url";
-import fetch from "node-fetch";
 import { createClient } from "@supabase/supabase-js";
 import { Resend } from "resend";
 
