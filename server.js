@@ -39,7 +39,7 @@ app.post("/api/contact", async (req, res) => {
 
     // 2. Send notification email to business inbox
     await resend.emails.send({
-      from: "Website Contact <contact@yourdomain.com>",
+      from: "Website Contact <contact@sharpchoicerealestate.com>",
       to: "sharpchoicerealestate@gmail.com", // Replace with your Gmail
       subject: `New Contact from ${name}`,
       html: `
@@ -54,7 +54,7 @@ app.post("/api/contact", async (req, res) => {
       from: "no-reply@sharpchoicerealestate.com",
       to: email,
       subject: "Thanks for reaching out!",
-      html: `<p>Hi ${name},</p><p>We’ve received your message and will get back to you shortly.</p><p>– The Team</p>`,
+      html: `<p>Hi ${name},</p><p>We’ve received your message and will get back to you shortly.</p><p>– Stephanie Sharp</p>`,
     });
 
     res.status(200).json({ success: true });
