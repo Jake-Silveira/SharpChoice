@@ -13,7 +13,7 @@ form.addEventListener('submit', async (e) => {
 
   try {
     // Replace URL below with your API endpoint or serverless function
-    const res = await fetch('https://example.com/api/contact', {
+    const res = await fetch('/api/contact', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(formData),
