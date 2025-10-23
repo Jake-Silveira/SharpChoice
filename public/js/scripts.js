@@ -94,9 +94,9 @@ async function loadReviews(page = 1, limit = 3) {
       const stars = "★".repeat(rating) + "☆".repeat(5 - rating);
 
       blockquote.innerHTML = `
-        <p>"${comment}"</p>
-        <cite>— ${name}</cite>
-        <div class="review-stars" style="color:#f5a623;">${stars}</div>
+        <p>"${text}"</p>
+        <cite>— ${author_name}</cite>
+        <div class="review-stars" style="color:#f5a623;">${rating}</div>
       `;
       container.appendChild(blockquote);
     });
