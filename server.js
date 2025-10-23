@@ -65,11 +65,6 @@ app.post("/api/contact", async (req, res) => {
   }
 });
 
-// Fallback route
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "index.html"));
-});
-
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
 // API route to get reviews

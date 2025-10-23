@@ -1,94 +1,127 @@
-// Display current year
-document.getElementById('year').textContent = new Date().getFullYear();
+// =============================
+// Utility: Safe DOM lookup
+// =============================
+const $ = (selector) => document.querySelector(selector);
 
-// Handle contact form submission
-const form = document.getElementById('contact-form');
-const status = document.getElementById('form-status');
+// =============================
+// Footer Year
+// =============================
+const yearEl = $('#year');
+if (yearEl) yearEl.textContent = new Date().getFullYear();
 
-form.addEventListener('submit', async (e) => {
-  e.preventDefault();
-  status.textContent = 'Sending...';
+// =============================
+// Contact Form Submission
+// =============================
+const form = $('#contact-form');
+const status = $('#form-status');
 
-  const formData = Object.fromEntries(new FormData(form));
+if (form && status) {
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    status.textContent = 'Sending...';
 
-  try {
-    // Replace URL below with your API endpoint or serverless function
-    const res = await fetch('/api/contact', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(formData),
-    });
+    const formData = Object.fromEntries(new FormData(form));
 
-    if (!res.ok) throw new Error('Network error');
-    status.textContent = 'Message sent successfully!';
-    form.reset();
-  } catch (err) {
-    console.error(err);
-    status.textContent = 'Error sending message. Please try again later.';
-  }
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+
+      if (!res.ok) throw new Error('Network error');
+      status.textContent = 'Message sent successfully!';
+      form.reset();
+    } catch (err) {
+      console.error(err);
+      status.textContent = 'Error sending message. Please try again later.';
+    }
+  });
+}
+
+// =============================
+// Smooth-scroll CTA links
+// =============================
+document.querySelectorAll(".cta").forEach((btn) => {
+  btn.addEventListener("click", (e) => {
+    e.preventDefault();
+    const contactSection = $("#contact");
+    contactSection.scrollIntoView({ behavior: "smooth" });
+    setTimeout(() => $("#contactName")?.focus(), 800);
+  });
 });
 
-// Expandable "See More" for About Section
+// =============================
+// Expandable About Section
+// =============================
 document.addEventListener("DOMContentLoaded", () => {
-  const readMoreBtn = document.querySelector(".read-more-btn");
-  const aboutBio = document.querySelector(".about-bio");
+  const readMoreBtn = $(".read-more-btn");
+  const aboutBio = $(".about-bio");
 
   if (readMoreBtn && aboutBio) {
     readMoreBtn.addEventListener("click", () => {
       aboutBio.classList.toggle("expanded");
-
-      const isExpanded = aboutBio.classList.contains("expanded");
-      readMoreBtn.textContent = isExpanded ? "See Less" : "See More";
-      readMoreBtn.setAttribute("aria-expanded", isExpanded);
+      const expanded = aboutBio.classList.contains("expanded");
+      readMoreBtn.textContent = expanded ? "See Less" : "See More";
+      readMoreBtn.setAttribute("aria-expanded", expanded);
     });
   }
 });
 
-// Smooth-scroll and focus on contact name field when any .cta link is clicked
-document.querySelectorAll(".cta").forEach((btn) => {
-  btn.addEventListener("click", (e) => {
-    e.preventDefault(); // prevent instant jump
-
-    // Scroll smoothly to the contact section
-    const contactSection = document.querySelector("#contact");
-    contactSection.scrollIntoView({ behavior: "smooth" });
-
-    // Wait a bit for the scroll animation to finish, then focus
-    setTimeout(() => {
-      const contactName = document.getElementById("contactName");
-      if (contactName) contactName.focus();
-    }, 800); // Adjust delay (ms) to match your scroll duration
-  });
-});
-
-// Pull in reviews to frontend
-async function loadReviews() {
+// =============================
+// Reviews with Stars + Pagination
+// =============================
+async function loadReviews(page = 1, limit = 3) {
   try {
     const res = await fetch("/api/reviews");
     const reviews = await res.json();
+    const container = $("#reviews-container");
+    if (!container) return;
 
-    const container = document.getElementById("reviews-container");
-    container.innerHTML = ""; // clear existing content
+    container.innerHTML = "";
 
     if (!reviews.length) {
       container.innerHTML = "<p>No reviews yet. Check back soon!</p>";
       return;
     }
 
-    reviews.forEach(({ name, comment, rating }) => {
+    const start = (page - 1) * limit;
+    const paginated = reviews.slice(start, start + limit);
+
+    paginated.forEach(({ name, comment, rating = 0 }) => {
       const blockquote = document.createElement("blockquote");
+
+      const stars = "★".repeat(rating) + "☆".repeat(5 - rating);
+
       blockquote.innerHTML = `
         <p>"${comment}"</p>
-        <cite>— ${name}${rating ? ` (${rating}/5)` : ""}</cite>
+        <cite>— ${name}</cite>
+        <div class="review-stars" style="color:#f5a623;">${stars}</div>
       `;
       container.appendChild(blockquote);
     });
+
+    // Pagination controls
+    const totalPages = Math.ceil(reviews.length / limit);
+    const pagination = document.createElement("div");
+    pagination.className = "review-pagination";
+    pagination.style.marginTop = "1rem";
+    pagination.style.textAlign = "center";
+
+    pagination.innerHTML = `
+      <button ${page === 1 ? "disabled" : ""} class="review-prev">Prev</button>
+      <span>Page ${page} of ${totalPages}</span>
+      <button ${page === totalPages ? "disabled" : ""} class="review-next">Next</button>
+    `;
+
+    container.appendChild(pagination);
+
+    pagination.querySelector(".review-prev")?.addEventListener("click", () => loadReviews(page - 1, limit));
+    pagination.querySelector(".review-next")?.addEventListener("click", () => loadReviews(page + 1, limit));
+
   } catch (err) {
     console.error("Error loading reviews:", err);
   }
 }
 
-document.addEventListener("DOMContentLoaded", loadReviews);
-
-
-
+document.addEventListener("DOMContentLoaded", () => loadReviews());
