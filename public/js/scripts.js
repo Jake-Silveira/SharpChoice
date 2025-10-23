@@ -90,7 +90,8 @@ async function loadReviews(page = 1, limit = 3) {
 
     paginated.forEach(({ author_name, comment, rating = 0 }) => {
       const blockquote = document.createElement("blockquote");
-
+      blockquote.classList.add("review");
+      
       const stars = "★".repeat(rating) + "☆".repeat(5 - rating);
 
       blockquote.innerHTML = `
