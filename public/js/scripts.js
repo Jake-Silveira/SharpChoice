@@ -88,15 +88,15 @@ async function loadReviews(page = 1, limit = 3) {
     const start = (page - 1) * limit;
     const paginated = reviews.slice(start, start + limit);
 
-    paginated.forEach(({ name, comment, rating = 0 }) => {
+    paginated.forEach(({ author_name, comment, rating = 0 }) => {
       const blockquote = document.createElement("blockquote");
 
       const stars = "★".repeat(rating) + "☆".repeat(5 - rating);
 
       blockquote.innerHTML = `
-        <p>"${text}"</p>
+        <p>"${comment}"</p>
         <cite>— ${author_name}</cite>
-        <div class="review-stars" style="color:#f5a623;">${rating}</div>
+        <div class="review-stars" style="color:#f5a623;">${stars}</div>
       `;
       container.appendChild(blockquote);
     });
