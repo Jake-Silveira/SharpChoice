@@ -71,3 +71,24 @@ app.get("*", (req, res) => {
 });
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+// API route to get reviews
+app.get("/api/reviews", async (req, res) => {
+  try {
+    const { data, error } = await supabase
+      .from("reviews")
+      .select("*")
+      .order("created_at", { ascending: false });
+
+    if (error) throw error;
+    res.json(data);
+  } catch (err) {
+    console.error("Error fetching reviews:", err.message);
+    res.status(500).json({ error: "Failed to fetch reviews" });
+  }
+});
+
+// Fallback route
+app.get("*", (req, res) => {
+  res.sendFile(path.join(path.dirname(fileURLToPath(import.meta.url)), "public", "index.html"));
+});

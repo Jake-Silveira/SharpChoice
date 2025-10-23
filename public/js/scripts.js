@@ -61,4 +61,34 @@ document.querySelectorAll(".cta").forEach((btn) => {
   });
 });
 
+// Pull in reviews to frontend
+async function loadReviews() {
+  try {
+    const res = await fetch("/api/reviews");
+    const reviews = await res.json();
+
+    const container = document.getElementById("reviews-container");
+    container.innerHTML = ""; // clear existing content
+
+    if (!reviews.length) {
+      container.innerHTML = "<p>No reviews yet. Check back soon!</p>";
+      return;
+    }
+
+    reviews.forEach(({ name, comment, rating }) => {
+      const blockquote = document.createElement("blockquote");
+      blockquote.innerHTML = `
+        <p>"${comment}"</p>
+        <cite>— ${name}${rating ? ` (${rating}/5)` : ""}</cite>
+      `;
+      container.appendChild(blockquote);
+    });
+  } catch (err) {
+    console.error("Error loading reviews:", err);
+  }
+}
+
+document.addEventListener("DOMContentLoaded", loadReviews);
+
+
 
