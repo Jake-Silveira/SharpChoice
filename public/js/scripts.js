@@ -152,7 +152,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function openModal() {
     modal.classList.add("show");
     document.body.style.overflow = "hidden"; // prevent background scroll
-    loadReviews(1, 4, "modal-reviews-container");
+    loadReviews(1, 3, "modal-reviews-container");
   }
 
   // Modal close
