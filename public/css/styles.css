@@ -1,15 +1,16 @@
 /* ========================================
    Sharp Choice Real Estate – Professional CSS
    Mobile-First | Accessible | Performant
+   Client-Approved Colors & Button Styles
    ======================================== */
 
-/* --- CSS Variables --- */
+/* --- CSS Variables (Original Client Colors) --- */
 :root {
   --font-primary: 'Inter', system-ui, -apple-system, sans-serif;
   --font-heading: 'Playfair Display', Georgia, serif;
 
-  --color-primary: #1a4731;      /* Deep Green */
-  --color-accent: #f5a623;       /* Gold */
+  --color-primary: #1a4731;      /* Deep Green – Client */
+  --color-accent: #f5a623;       /* Gold – Client */
   --color-bg: #ffffff;
   --color-text: #2d2d2d;
   --color-muted: #666;
@@ -82,6 +83,7 @@ button {
 .mb-1 { margin-bottom: 1rem; }
 .mb-2 { margin-bottom: 2rem; }
 
+/* --- Buttons – ORIGINAL CLIENT STYLE (no lift, no shadow) --- */
 .btn {
   display: inline-block;
   padding: 0.75rem 1.5rem;
@@ -98,8 +100,6 @@ button {
 }
 .btn-primary:hover, .btn-primary:focus {
   background: #143c28;
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-sm);
 }
 
 .btn-outline {
@@ -210,8 +210,6 @@ button {
   display: none;
   flex-direction: column;
   gap: 4px;
-  background: none;
-  border: none;
 }
 
 .nav-toggle span {
@@ -305,10 +303,6 @@ button {
   font-size: 1.1rem;
 }
 
-.about-bio {
-  position: relative;
-}
-
 .more-text {
   display: none;
 }
@@ -353,7 +347,6 @@ button {
 }
 
 .service-list li:hover {
-  transform: translateY(-4px);
   box-shadow: var(--shadow-md);
 }
 
@@ -373,7 +366,6 @@ button {
 }
 
 .listing:hover {
-  transform: translateY(-6px);
   box-shadow: var(--shadow-md);
 }
 
