@@ -1,278 +1,328 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
+  <!-- Core Meta -->
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <!-- Basic SEO -->
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#1a4731" />
+
+  <!-- SEO -->
   <title>Sharp Choice Real Estate | Austin TX Homes for Sale</title>
   <meta name="description" content="Stephanie Sharp helps buyers and sellers in Austin with 30+ years of local expertise. Contact for consultation.">
-  <meta name="keywords" content="Austin real estate, home buying, home selling, Stephanie Sharp">
+  <meta name="keywords" content="Austin real estate, home buying, home selling, Stephanie Sharp, Texas homes">
+  <meta name="author" content="Stephanie Sharp">
+  <link rel="canonical" href="https://sharpchoicerealestate.com" />
 
-  <!-- Open Graph / Social -->
+  <!-- Open Graph -->
   <meta property="og:title" content="Sharp Choice Real Estate">
   <meta property="og:description" content="Your trusted Austin real estate partner.">
   <meta property="og:image" content="https://sharpchoicerealestate.com/assets/hero.jpg">
-  <meta property="og:url" content="https://sharpchoicerealestatecom">
+  <meta property="og:url" content="https://sharpchoicerealestate.com">
   <meta property="og:type" content="website">
+  <meta property="og:locale" content="en_US">
 
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Sharp Choice Real Estate">
+  <meta name="twitter:description" content="Your trusted Austin real estate partner.">
+  <meta name="twitter:image" content="https://sharpchoicerealestate.com/assets/hero.jpg">
 
-  <!-- Google Analytics -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
-  <script>
-    window.dataLayer = window.data&nbsp;|| [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-XXXXXXXXXX');
+  <!-- Structured Data (LocalBusiness) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "RealEstateAgent",
+    "name": "Sharp Choice Real Estate",
+    "image": "https://sharpchoicerealestate.com/assets/logo.png",
+    "url": "https://sharpchoicerealestate.com",
+    "telephone": "+1-512-555-1234",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Austin",
+      "addressRegion": "TX",
+      "postalCode": "78701",
+      "addressCountry": "US"
+    },
+    "founder": {
+      "@type": "Person",
+      "name": "Stephanie Sharp",
+      "jobTitle": "Real Estate Broker"
+    },
+    "description": "Over 30 years helping Austin buyers and sellers with concierge-level service.",
+    "openingHours": "Mo-Fr 09:00-17:00",
+    "sameAs": [
+      "https://www.facebook.com/sharpchoicerealestate",
+      "https://www.instagram.com/sharpchoicerealestate"
+    ]
+  }
   </script>
 
   <!-- Favicon -->
-  <link rel="icon" href="/assets/logo.png" type="image/png" />
-  
+  <link rel="icon" href="/assets/logo.png" type="image/png">
+  <link rel="apple-touch-icon" href="/assets/logo.png">
+
+  <!-- Analytics (replace G-XXXXXXXXXX) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-XXXXXXXXXX', { anonymize_ip: true });
+  </script>
+
   <!-- Styles -->
   <link rel="stylesheet" href="css/styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
 </head>
 
 <body>
+  <!-- Skip Link -->
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
   <!-- HEADER -->
-  <header class="site-header">
+  <header class="site-header" aria-label="Site header">
     <div class="container header-inner">
       <div class="brand">
-        <img src="assets/logo.png" alt="Sharp Choice Real Estate Logo" class="brand-logo" loading="lazy" />
+        <a href="/" aria-label="Sharp Choice Real Estate - Home">
+          <img src="assets/logo.png" alt="Sharp Choice Real Estate Logo" class="brand-logo" loading="lazy" />
+        </a>
         <div class="brand-text">
           <h1 class="brand-name">Sharp Choice Real Estate</h1>
         </div>
       </div>
-      <nav class="site-nav">
-        <ul>
-          <li><a href="#about" class="abt">About</a></li>
-          <li><a href="#services" class="ser">Services</a></li>
-          <li><a href="#listings" class="lis">Listings</a></li>
-          <li><a href="#reviews" class="rvs">Reviews</a></li>
+
+      <nav class="site-nav" aria-label="Main navigation">
+        <button class="nav-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="nav-menu">
+          <span></span><span></span><span></span>
+        </button>
+        <ul id="nav-menu">
+          <li><a href="#about">About</a></li>
+          <li><a href="#services">Services</a></li>
+          <li><a href="#listings">Listings</a></li>
+          <li><a href="#reviews" id="header-reviews-link">Reviews</a></li>
           <li><a href="#contact" class="cta">Contact</a></li>
-          <li><a href="#" id="admin-login-btn" >Login</a></li>
+          <li><a href="#" id="admin-login-btn" class="admin-link">Admin</a></li>
         </ul>
       </nav>
     </div>
   </header>
 
-  <!-- HERO -->
-  <section id="hero" class="hero">
-    <div class="container hero-inner">
-      <div class="hero-text">
-        <h2>The Best Move Starts With A Sharp Choice.</h2>
-        <div class="hero-buttons">
-          <a href="#services" class="btn-primary">Learn More</a>
-          <a href="#contact" class="btn-outline cta">Get in Touch</a>
+  <main id="main-content">
+    <!-- HERO -->
+    <section id="hero" class="hero">
+      <div class="container hero-inner">
+        <div class="hero-text">
+          <h2>The Best Move Starts With A Sharp Choice.</h2>
+          <p class="hero-sub">Over 30 years of Austin expertise. $100M+ in closed transactions.</p>
+          <div class="hero-buttons">
+            <a href="#services" class="btn-primary">Explore Services</a>
+            <a href="#contact" class="btn-outline cta">Get in Touch</a>
+          </div>
+        </div>
+        <div class="hero-media">
+          <img src="assets/hero.jpg" alt="Stephanie Sharp helping a client in Austin" loading="lazy" />
         </div>
       </div>
-      <div class="hero-media">
-        <img src="assets/hero.jpg" alt="Sharp Choice Real Estate Hero Image" loading="lazy" />
+    </section>
+
+    <!-- ABOUT -->
+    <section id="about" class="about container" aria-labelledby="about-heading">
+      <h2 id="about-heading">About Stephanie Sharp</h2>
+      <div class="about-container">
+        <div class="about-photo">
+          <img src="assets/profile.jpg" alt="Stephanie Sharp, Austin Real Estate Expert" loading="lazy" />
+        </div>
+        <div class="about-text">
+          <p class="about-bio">
+            A longtime Austin resident, Stephanie brings over 30 years of local knowledge and a diverse career spanning education, sales, and real estate. After earning her Master’s in Education from The University of Nebraska, she began her career as a teacher before moving into insurance sales and later medical devices—experiences that strengthened her ability to connect with people and understand their goals.
+            <span class="more-text" id="about-more">
+              For more than two decades, Stephanie has focused on helping buyers and sellers navigate Central Texas real estate with confidence. With over $100 million in successful transactions, she is known for her integrity, attention to detail, and client-first approach, providing expert guidance tailored to each individual’s needs.
+              <br><br>
+              Stephanie is also a dedicated real estate investor, having renovated, flipped, and built multiple properties over the past 11 years. This hands-on experience gives her clients invaluable insight into construction, design, and market trends.
+              <br><br>
+              Recognized for her concierge-level service, Stephanie and her skilled support team ensure every transaction is smooth, precise, and focused on achieving her clients’ goals. Outside of real estate, she enjoys traveling, making candles, and spending quality time with her daughter and dogs.
+            </span>
+          </p>
+          <button class="read-more-btn" aria-expanded="false" aria-controls="about-more">
+            See More
+          </button>
+        </div>
+      </div>
+      <div class="about-video">
+        <video controls poster="assets/logo.png" loading="lazy" playsinline preload="metadata">
+          <source src="assets/video.mp4" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+      </div>
+    </section>
+
+    <!-- SERVICES -->
+    <section id="services" class="container" aria-labelledby="services-heading">
+      <h2 id="services-heading">Services</h2>
+      <ul class="service-list">
+        <li><a href="#contact" class="cta"><strong>Property Consultation</strong></a></li>
+        <li><a href="#contact" class="cta"><strong>Home Staging Consultation</strong></a></li>
+        <li><a href="#contact" class="cta"><strong>Market Analysis Report</strong></a></li>
+      </ul>
+    </section>
+
+    <!-- LISTINGS -->
+    <section id="listings" class="container" aria-labelledby="listings-heading">
+      <h2 id="listings-heading">Featured Listings</h2>
+      <div class="listings-grid" aria-live="polite">
+        <!-- Dynamic content loaded by JS -->
+      </div>
+      <button id="view-all-listings" class="btn-accent" style="margin-top:1.5rem; display:none;">
+        View All Listings
+      </button>
+    </section>
+
+    <!-- All Listings Modal -->
+    <div id="all-listings-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="all-listings-title">
+      <div class="modal-content">
+        <button class="modal-close" aria-label="Close modal">×</button>
+        <h2 id="all-listings-title">All Listings</h2>
+        <div class="modal-body" style="max-height:70vh; overflow-y:auto;">
+          <div id="all-listings-container" class="listings-grid"></div>
+        </div>
       </div>
     </div>
-  </section>
 
+    <!-- REVIEWS -->
+    <section id="reviews" class="container" aria-labelledby="reviews-heading">
+      <h2 id="reviews-heading">What Clients Say</h2>
+      <div id="reviews-container" aria-live="polite">
+        <!-- Dynamic -->
+      </div>
+      <button id="see-more-reviews" class="btn-accent" style="margin-top:1rem;">
+        More Reviews
+      </button>
+    </section>
 
-<!-- ABOUT -->
-<section id="about" class="about container">
-  <div class="aboutContainerTop">
-    <div class="about-photo">
-      <img src="assets/profile.jpg" alt="Photo of Stephanie Sharp" loading="lazy" />
-    </div>
-    <div class="about-text">
-      <h2>About Stephanie Sharp - Austin Real Estate Expert</h2>
-      <p class="about-bio">
-        A longtime Austin resident, Stephanie brings over 30 years of local knowledge and a diverse career spanning education, sales, and real estate. After earning her Master’s in Education from The University of Nebraska, she began her career as a teacher before moving into insurance sales and later medical devices—experiences that strengthened her ability to connect with people and understand their goals.
-        <span class="more-text">
-          For more than two decades, Stephanie has focused on helping buyers and sellers navigate Central Texas real estate with confidence. With over $100 million in successful transactions, she is known for her integrity, attention to detail, and client-first approach, providing expert guidance tailored to each individual’s needs.
-          Stephanie is also a dedicated real estate investor, having renovated, flipped, and built multiple properties over the past 11 years. This hands-on experience gives her clients invaluable insight into construction, design, and market trends.
-          Recognized for her concierge-level service, Stephanie and her skilled support team ensure every transaction is smooth, precise, and focused on achieving her clients’ goals. Outside of real estate, she enjoys traveling, making candles, and spending quality time with her daughter and dogs.
-        </span>
-      </p>
-      <div class="read-more-container">
-        <button class="read-more-btn" aria-expanded="false">See More</button>
+    <!-- Reviews Modal -->
+    <div id="reviews-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="reviews-modal-title">
+      <div class="modal-content">
+        <button class="modal-close" aria-label="Close modal">&times;</button>
+        <h2 id="reviews-modal-title">Client Reviews</h2>
+        <div class="modal-body">
+          <div id="modal-reviews-container"></div>
+          <div class="review-pagination" aria-live="polite"></div>
+        </div>
       </div>
     </div>
-  </div>
-  <div class="about-video">
-    <video src="assets/video.mp4" controls poster="assets/logo.png" loading="lazy" playsinline></video>
-  </div>
-</section>
 
-
-
-  <!-- SERVICES -->
-  <section id="services" class="container">
-    <h2>Services</h2>
-    <ul class="service-list">
-      <li class="cta">
-        <a href="#contact" class="cta"><strong>Property Consultation</strong></a>
-      </li>
-      <li class="cta">
-        <a href="#contact" class="cta"><strong>Home Staging Consultation</strong></a>
-      </li>
-      <li class="cta">
-        <a href="#contact" class="cta"><strong>Market Analysis Report</strong></a>
-      </li>
-    </ul>
-
-  </section>
-
-  <!-- LISTINGS -->
-  <section id="listings" class="container">
-    <h2>Featured Listings</h2>
-    <div class="listings-grid">
-      <article class="listing">
-        <img src="assets/listing1.jpg" alt="Property image" />
-        <h3>123 Example Street</h3>
-        <p>3 bed • 2 bath • 1,800 sqft</p>
-      </article>
-
-      <article class="listing">
-        <img src="assets/listing2.jpg" alt="Property image" />
-        <h3>456 Sample Avenue</h3>
-        <p>2 bed • 1 bath • 1,200 sqft</p>
-      </article>
-    </div>
-    <button id="view-all-listings" class="btn-accent" style="margin-top:1.5rem; display:none;">View All Listings</button>
-  </section>
-
-  <!-- All-Listings Modal -->
-<div id="all-listings-modal" class="modal">
-  <div class="modal-content">
-    <button class="modal-close" aria-label="Close">×</button>
-    <h2>All Listings</h2>
-    <div class="modal-body" style="max-height:70vh; overflow-y:auto;">
-      <div id="all-listings-container" class="listings-grid"></div>
-    </div>
-  </div>
-</div>
-
-<!-- REVIEWS -->
-<section id="reviews" class="container">
-  <h2>What Clients Say</h2>
-  <div id="reviews-container">
-    <blockquote>
-      <p>No reviews yet. Check back soon!</p>
-    </blockquote>
-  </div>
-  <button id="see-more-reviews" class="btn-accent" style="margin-top:1rem;">More Reviews</button>
-</section>
-
-<!-- Reviews Modal -->
-<div id="reviews-modal" class="modal">
-  <div class="modal-content">
-    <button class="modal-close" aria-label="Close">&times;</button>
-    <h2>Client Reviews</h2>
-
-    <div class="modal-body">
-      <div id="modal-reviews-container"></div>
-      <div class="review-pagination"></div> <!-- MOVED INSIDE -->
-    </div>
-  </div>
-</div>
-
-  <!-- MAP -->
-<section id="map" class="container">
-  <h2>Service Area</h2>
-  <div class="map-wrapper">
-    <img src="assets/serviceMap.png" alt="Central Texas Service Area Map" class="service-map">
-  </div>
-</section>
-
-  <!-- CONTACT -->
-  <section id="contact" class="container">
-    <h2>Contact</h2>
-    <form id="contact-form">
-      <label>Name</label>
-      <input type="text" name="name" id="contactName" required />
-
-      <label>Email</label>
-      <input type="email" name="email" id="contactEmail" required />
-
-      <label>Message</label>
-      <textarea name="message" rows="4" id="contactMessage" required></textarea>
-
-      <button type="submit" class="btn-primary">Send Message</button>
-      <div id="form-status"></div>
-    </form>
-  </section>
-
-  <!-- New Login Modal -->
-<div id="login-modal" class="modal">
-  <div class="modal-content">
-    <button class="modal-close">&times;</button>
-    <h2>Admin Login</h2>
-    <form id="login-form">
-      <input type="email" id="email" placeholder="Email" required>
-      <input type="password" id="password" placeholder="Password" required>
-      <button type="submit">Login</button>
-    </form>
-  </div>
-</div>
-
-<!-- Dashboard Modal (replaces login after success) -->
-<div id="dashboard-modal" class="modal">
-  <div class="modal-content">
-    <button class="modal-close">&times;</button>
-    <h2>Admin Dashboard</h2>
-    <div id="dashboard-content">
-      <!-- Tabs for Reviews/Listings -->
-      <button id="reviews-tab">Manage Reviews</button>
-      <button id="listings-tab">Manage Listings</button>
-      
-      <!-- Reviews Form -->
-      <div id="reviews-section" style="display:none;">
-        <h3>Add Review</h3>
-        <form id="add-review-form">
-          <input type="text" id="review-name" placeholder="Name" required>
-          <textarea id="review-text" placeholder="Review Text" required></textarea>
-          <input type="number" id="review-rating" min="1" max="5" placeholder="Rating (1-5)" required>
-          <button type="submit">Add Review</button>
-        </form>
+    <!-- MAP -->
+    <section id="map" class="container" aria-labelledby="map-heading">
+      <h2 id="map-heading">Service Area</h2>
+      <div class="map-wrapper">
+        <img src="assets/serviceMap.png" alt="Central Texas Service Area Map - Austin and surrounding counties" class="service-map" loading="lazy">
       </div>
-      
-      <!-- Listings Form -->
-      <div id="listings-section" style="display:none;">
-        <h3>Add Listing</h3>
-        <form id="add-listing-form">
-          <input type="text" id="listing-address" placeholder="Address" required>
-          <input type="text" id="listing-city" placeholder="City" required>
-          <input type="text" id="listing-state" placeholder="State" required>
-          <input type="text" id="listing-zip" placeholder="ZIP" required>
-          <input type="number" id="listing-price" placeholder="Price ($)" required>
+    </section>
 
-          <input type="number" id="listing-beds" placeholder="Beds" required>
-          <input type="number" id="listing-baths" placeholder="Baths" required>
-          <input type="number" id="listing-sqft" placeholder="Sqft" required>
+    <!-- CONTACT -->
+    <section id="contact" class="container" aria-labelledby="contact-heading">
+      <h2 id="contact-heading">Get in Touch</h2>
+      <form id="contact-form" novalidate>
+        <div class="form-group">
+          <label for="contactName">Name <span class="required">*</span></label>
+          <input type="text" name="name" id="contactName" required aria-required="true" />
+        </div>
 
-          <select id="listing-status">
-            <option value="active">Active</option>
-            <option value="closed">Closed</option>
-          </select>
+        <div class="form-group">
+          <label for="contactEmail">Email <span class="required">*</span></label>
+          <input type="email" name="email" id="contactEmail" required aria-required="true" />
+        </div>
 
-          <label>Photos (select multiple)</label>
-          <input type="file" id="listing-photos" multiple accept="image/*">
+        <div class="form-group">
+          <label for="contactMessage">Message <span class="required">*</span></label>
+          <textarea name="message" id="contactMessage" rows="5" required aria-required="true"></textarea>
+        </div>
 
-          <textarea id="listing-metadata" placeholder='Metadata JSON (optional) e.g. {"mls":"12345"}'></textarea>
+        <button type="submit" class="btn-primary">Send Message</button>
+        <div id="form-status" role="status" aria-live="polite"></div>
+      </form>
+    </section>
 
-          <button type="submit">Add Listing</button>
+    <!-- Admin Login Modal -->
+    <div id="login-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="login-title">
+      <div class="modal-content">
+        <button class="modal-close" aria-label="Close login">&times;</button>
+        <h2 id="login-title">Admin Login</h2>
+        <form id="login-form">
+          <div class="form-group">
+            <label for="login-email">Email</label>
+            <input type="email" id="login-email" required />
+          </div>
+          <div class="form-group">
+            <label for="login-password">Password</label>
+            <input type="password" id="login-password" required />
+          </div>
+          <button type="submit">Login</button>
         </form>
       </div>
     </div>
-  </div>
-</div>
+
+    <!-- Admin Dashboard Modal -->
+    <div id="dashboard-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="dashboard-title">
+      <div class="modal-content">
+        <button class="modal-close" aria-label="Close dashboard">&times;</button>
+        <h2 id="dashboard-title">Admin Dashboard</h2>
+        <button id="logout-btn" class="logout-btn">Logout</button>
+
+        <nav class="dashboard-tabs">
+          <button id="reviews-tab" class="tab-active">Reviews</button>
+          <button id="listings-tab">Listings</button>
+        </nav>
+
+        <div id="reviews-section">
+          <h3>Add Review</h3>
+          <form id="add-review-form">
+            <input type="text" id="review-name" placeholder="Client Name" required>
+            <textarea id="review-text" placeholder="Review Text" required></textarea>
+            <input type="number" id="review-rating" min="1" max="5" placeholder="Rating" required>
+            <button type="submit">Add Review</button>
+          </form>
+        </div>
+
+        <div id="listings-section" style="display:none;">
+          <h3>Add Listing</h3>
+          <form id="add-listing-form">
+            <input type="text" id="listing-address" placeholder="Address" required>
+            <input type="text" id="listing-city" placeholder="City" required>
+            <input type="text" id="listing-state" placeholder="State" required>
+            <input type="text" id="listing-zip" placeholder="ZIP" required>
+            <input type="number" id="listing-price" placeholder="Price ($)" required>
+            <input type="number" id="listing-beds" placeholder="Beds" required>
+            <input type="number" id="listing-baths" placeholder="Baths" required>
+            <input type="number" id="listing-sqft" placeholder="Sqft" required>
+            <select id="listing-status">
+              <option value="active">Active</option>
+              <option value="closed">Closed</option>
+            </select>
+            <label>Photos (multiple)</label>
+            <input type="file" id="listing-photos" multiple accept="image/*">
+            <textarea id="listing-metadata" placeholder='{"mls":"12345"}'></textarea>
+            <button type="submit">Add Listing</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </main>
 
   <!-- FOOTER -->
-  <footer class="site-footer">
+  <footer class="site-footer" aria-label="Site footer">
     <div class="container footer-inner">
       <p>&copy; <span id="year"></span> Sharp Choice Real Estate. All rights reserved.</p>
-      <p><a href="/privacy.html">Privacy Policy</a> • <a href="/terms.html">Terms</a></p>
+      <p>
+        <a href="/privacy.html">Privacy Policy</a> • 
+        <a href="/terms.html">Terms of Service</a>
+      </p>
     </div>
   </footer>
 
   <!-- Scripts -->
-  <script src="js/scripts.js"></script>
+  <script src="js/scripts.js" defer></script>
 </body>
 </html>

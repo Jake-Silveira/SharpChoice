@@ -8,40 +8,62 @@ import { Resend } from "resend";
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Body parser middleware
-app.use(express.json());
-
-// Resolve __dirname
+// === Resolve __dirname for ESM ===
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Static files
+// === Middleware ===
+app.use(express.json({ limit: "10mb" })); // Support base64 image uploads
 app.use(express.static(path.join(__dirname, "public")));
 
-app.get('/healthz', (req, res) => {
-  res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
-});
-
-// Supabase & Resend clients
+// === Clients ===
 const supabase = createClient(
   process.env.SUPABASE_URL,
   process.env.SUPABASE_SERVICE_ROLE_KEY
 );
+
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-// Contact form endpoint
+// === Health Check ===
+app.get("/healthz", (req, res) => {
+  res.status(200).json({ status: "ok", timestamp: new Date().toISOString() });
+});
+
+// === JWT Auth Middleware (for admin routes) ===
+async function requireAuth(req, res, next) {
+  const authHeader = req.headers.authorization;
+  if (!authHeader?.startsWith("Bearer ")) {
+    return res.status(401).json({ error: "Missing token" });
+  }
+
+  const token = authHeader.split(" ")[1];
+  const { data: { user }, error } = await supabase.auth.getUser(token);
+
+  if (error || !user) {
+    return res.status(401).json({ error: "Invalid or expired token" });
+  }
+
+  req.user = user;
+  next();
+}
+
+// === Contact Form ===
 app.post("/api/contact", async (req, res) => {
   const { name, email, message } = req.body;
 
+  if (!name || !email || !message) {
+    return res.status(400).json({ error: "Missing fields" });
+  }
+
   try {
-    // 1. Insert into Supabase
-    const { error } = await supabase
+    // 1. Save to Supabase
+    const { error: dbError } = await supabase
       .from("contacts")
       .insert([{ name, email, message }]);
 
-    if (error) throw error;
+    if (dbError) throw dbError;
 
-    // 2. Send notification email to business inbox
+    // 2. Notify business
     await resend.emails.send({
       from: "Website Contact <contact@sharpchoicerealestate.com>",
       to: "sharpchoicerealestate@gmail.com",
@@ -56,22 +78,24 @@ app.post("/api/contact", async (req, res) => {
 
     // 3. Auto-reply to sender
     await resend.emails.send({
-      from: "no-reply@sharpchoicerealestate.com",
+      from: "Sharp Choice Real Estate <no-reply@sharpchoicerealestate.com>",
       to: email,
       subject: "Thanks for reaching out!",
-      html: `<p>Hi ${name},</p><p>We’ve received your message and will get back to you shortly.</p><p>– Stephanie Sharp</p>`,
+      html: `
+        <p>Hi ${name},</p>
+        <p>We’ve received your message and will get back to you shortly.</p>
+        <p>– Stephanie Sharp</p>
+      `,
     });
 
-    res.status(200).json({ success: true });
+    res.json({ success: true });
   } catch (err) {
-    console.error(err);
+    console.error("Contact error:", err);
     res.status(500).json({ error: "Failed to send message" });
   }
 });
 
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-
-// API route to get reviews
+// === Reviews API ===
 app.get("/api/reviews", async (req, res) => {
   try {
     const { data, error } = await supabase
@@ -82,93 +106,135 @@ app.get("/api/reviews", async (req, res) => {
     if (error) throw error;
     res.json(data);
   } catch (err) {
-    console.error("Error fetching reviews:", err.message);
+    console.error("Fetch reviews error:", err);
     res.status(500).json({ error: "Failed to fetch reviews" });
   }
 });
 
-// GET listings
-app.get("/api/listings", async (req, res) => {
-  const { status } = req.query;               // ?status=active
-  try {
-    let query = supabase.from("listings").select("*");
-    if (status) query = query.eq("status", status);
-    const { data, error } = await query.order("created_at", { ascending: false });
-    if (error) throw error;
-    res.json(data);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Failed to fetch listings" });
-  }
-});
-
-// POST new review (auth required - we'll handle in frontend)
-app.post("/api/reviews", async (req, res) => {
+app.post("/api/reviews", requireAuth, async (req, res) => {
   const { name, text, rating } = req.body;
+
+  if (!name || !text || rating == null) {
+    return res.status(400).json({ error: "Missing fields" });
+  }
+
   try {
-    const { data, error } = await supabase.from("reviews").insert([{ name, text, rating }]);
+    const { error } = await supabase
+      .from("reviews")
+      .insert([{ name, text, rating: Number(rating) }]);
+
     if (error) throw error;
-    res.status(200).json({ success: true });
+    res.json({ success: true });
   } catch (err) {
+    console.error("Add review error:", err);
     res.status(500).json({ error: "Failed to add review" });
   }
 });
 
-// POST new listing (auth required)
-app.post("/api/listings", async (req, res) => {
+// === Listings API ===
+app.get("/api/listings", async (req, res) => {
+  const { status } = req.query;
+  try {
+    let query = supabase.from("listings").select("*");
+    if (status) query = query.eq("status", status);
+    const { data, error } = await query.order("created_at", { ascending: false });
+
+    if (error) throw error;
+    res.json(data);
+  } catch (err) {
+    console.error("Fetch listings error:", err);
+    res.status(500).json({ error: "Failed to fetch listings" });
+  }
+});
+
+app.post("/api/listings", requireAuth, async (req, res) => {
   const {
     address, city, state, zip, price,
     beds, baths, sqft, status = "active",
     photos = [], metadata = {}
   } = req.body;
 
+  if (!address || !city || !state || !zip || price == null || beds == null || baths == null || sqft == null) {
+    return res.status(400).json({ error: "Missing required fields" });
+  }
+
   try {
     const { data, error } = await supabase
       .from("listings")
-      .insert([{ address, city, state, zip, price, beds, baths, sqft, status, photos, metadata }])
+      .insert([{
+        address, city, state, zip,
+        price: Number(price),
+        beds: Number(beds),
+        baths: Number(baths),
+        sqft: Number(sqft),
+        status,
+        photos,
+        metadata
+      }])
+      .select()
       .single();
 
     if (error) throw error;
     res.json({ success: true, id: data.id });
   } catch (err) {
-    console.error(err);
+    console.error("Add listing error:", err);
     res.status(500).json({ error: err.message });
   }
 });
 
-// POST image upload (to Supabase Storage)
-app.post("/api/upload-image", async (req, res) => {
-  const { fileName, fileData } = req.body;  // Expect base64 data
-  try {
-    const { data, error } = await supabase.storage
-      .from("listings-images")
-      .upload(fileName, Buffer.from(fileData, "base64"), { contentType: "image/jpeg" });  // Adjust type as needed
-
-    if (error) throw error;
-    const publicUrl = supabase.storage.from("listings-images").getPublicUrl(fileName).data.publicUrl;
-    res.status(200).json({ url: publicUrl });
-  } catch (err) {
-    res.status(500).json({ error: "Failed to upload image" });
-  }
-});
-
-// PATCH – update existing listing (admin)
-app.patch("/api/listings/:id", async (req, res) => {
+app.patch("/api/listings/:id", requireAuth, async (req, res) => {
   const { id } = req.params;
-  const updates = req.body;   // any fields you want to change
+  const updates = req.body;
+
   try {
     const { error } = await supabase
       .from("listings")
       .update(updates)
       .eq("id", id);
+
     if (error) throw error;
     res.json({ success: true });
   } catch (err) {
+    console.error("Update listing error:", err);
     res.status(500).json({ error: err.message });
   }
 });
 
-// Fallback route
+// === Image Upload (Supabase Storage) ===
+app.post("/api/upload-image", async (req, res) => {
+  const { fileName, fileData } = req.body;
+
+  if (!fileName || !fileData) {
+    return res.status(400).json({ error: "Missing file" });
+  }
+
+  try {
+    const { error } = await supabase.storage
+      .from("listings-images")
+      .upload(fileName, Buffer.from(fileData, "base64"), {
+        contentType: "image/jpeg",
+        upsert: true,
+      });
+
+    if (error) throw error;
+
+    const { data: { publicUrl } } = supabase.storage
+      .from("listings-images")
+      .getPublicUrl(fileName);
+
+    res.json({ url: publicUrl });
+  } catch (err) {
+    console.error("Upload error:", err);
+    res.status(500).json({ error: "Failed to upload image" });
+  }
+});
+
+// === SPA Fallback (must be last) ===
 app.get("*", (req, res) => {
-  res.sendFile(path.join(path.dirname(fileURLToPath(import.meta.url)), "public", "index.html"));
+  res.sendFile(path.join(__dirname, "public", "index.html"));
+});
+
+// === Start Server ===
+app.listen(PORT, () => {
+  console.log(`Server running on http://localhost:${PORT}`);
 });
