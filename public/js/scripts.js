@@ -69,73 +69,66 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // =============================
-// Reviews with Preview + Modal Pagination
+// Reviews with Stars + Pagination (Modal-Friendly)
 // =============================
-
-async function loadReviews(page = 1, limit = 3, containerId = "reviews-container") {
+async function loadReviews(page = 1, limit = 3) {
   try {
     const res = await fetch("/api/reviews");
     const reviews = await res.json();
-    const container = document.getElementById(containerId);
-    if (!container) return;
 
-    container.innerHTML = "";
+    const container = document.getElementById("modal-reviews-container");
+    const pagination = document.querySelector("#reviews-modal .review-pagination");
+    if (!container || !pagination) return;
+
+    container.innerHTML = ""; // Clear existing reviews
+    pagination.innerHTML = ""; // Clear old pagination
 
     if (!reviews.length) {
       container.innerHTML = "<p>No reviews yet. Check back soon!</p>";
       return;
     }
 
+    // Paginate
+    const totalPages = Math.ceil(reviews.length / limit);
     const start = (page - 1) * limit;
     const paginated = reviews.slice(start, start + limit);
 
+    // Render reviews
     paginated.forEach(({ author_name, comment, rating = 0 }) => {
       const blockquote = document.createElement("blockquote");
       blockquote.classList.add("review");
 
       const stars = "★".repeat(rating) + "☆".repeat(5 - rating);
 
-      // truncate for preview
-      const shortComment =
-        containerId === "reviews-container" && comment.length > 120
-          ? comment.slice(0, 120) + "..."
-          : comment;
-
       blockquote.innerHTML = `
-        <p>"${shortComment}"</p>
+        <p>"${comment}"</p>
         <cite>— ${author_name}</cite>
         <div class="review-stars" style="color:#f5a623;">${stars}</div>
       `;
+
       container.appendChild(blockquote);
     });
 
-    // Only show pagination inside modal
-    if (containerId === "modal-reviews-container") {
-      const totalPages = Math.ceil(reviews.length / limit);
-      const pagination = document.createElement("div");
-      pagination.className = "review-pagination";
-      pagination.style.marginTop = "1rem";
-      pagination.style.textAlign = "center";
+    // Render pagination (fixed in modal)
+    pagination.innerHTML = `
+      <button ${page === 1 ? "disabled" : ""} class="review-prev">Prev</button>
+      <span>Page ${page} of ${totalPages}</span>
+      <button ${page === totalPages ? "disabled" : ""} class="review-next">Next</button>
+    `;
 
-      pagination.innerHTML = `
-        <button ${page === 1 ? "disabled" : ""} class="review-prev">Prev</button>
-        <span>Page ${page} of ${totalPages}</span>
-        <button ${page === totalPages ? "disabled" : ""} class="review-next">Next</button>
-      `;
+    // Pagination event listeners
+    pagination.querySelector(".review-prev")?.addEventListener("click", () => {
+      loadReviews(page - 1, limit);
+    });
+    pagination.querySelector(".review-next")?.addEventListener("click", () => {
+      loadReviews(page + 1, limit);
+    });
 
-      container.appendChild(pagination);
-
-      pagination.querySelector(".review-prev")?.addEventListener("click", () =>
-        loadReviews(page - 1, limit, containerId)
-      );
-      pagination.querySelector(".review-next")?.addEventListener("click", () =>
-        loadReviews(page + 1, limit, containerId)
-      );
-    }
   } catch (err) {
     console.error("Error loading reviews:", err);
   }
 }
+
 
 // =============================
 // Modal Controls

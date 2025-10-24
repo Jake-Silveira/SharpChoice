@@ -659,7 +659,27 @@ header, section {
   width: 100%;
   box-shadow: 0 4px 20px rgba(0,0,0,0.15);
   position: relative;
+  display: flex;
+  flex-direction: column;
+  max-height: 90vh;
   animation: fadeIn 0.3s ease forwards;
+}
+
+modal-body {
+  overflow-y: auto;
+  flex: 1;
+  margin-top: 1rem;
+  padding-right: 0.5rem; /* space for scrollbar */
+}
+
+.review-pagination {
+  position: sticky;
+  bottom: 0;
+  background: #fff;
+  padding-top: 1rem;
+  margin-top: 1rem;
+  text-align: center;
+  border-top: 1px solid #eee;
 }
 
 .modal-close {
