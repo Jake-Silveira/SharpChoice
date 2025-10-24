@@ -886,3 +886,29 @@ header, section {
     grid-template-columns: 300px 1fr;
   }
 }
+
+/* Dashboard Tabs */
+#reviews-tab, #listings-tab {
+  background: var(--color-primary);
+  color: #fff;
+  border: none;
+  padding: 0.5rem 1rem;
+  margin-right: 0.5rem;
+  cursor: pointer;
+}
+
+#reviews-tab.active, #listings-tab.active {
+  background: var(--color-accent);
+}
+
+/* Forms */
+#add-review-form, #add-listing-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.sold {
+  background:#e63946; color:#fff; padding:0.2rem 0.5rem;
+  border-radius:4px; font-size:0.8rem; margin-left:0.5rem;
+}

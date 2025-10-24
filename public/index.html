@@ -51,6 +51,7 @@
           <li><a href="#listings" class="lis">Listings</a></li>
           <li><a href="#reviews" class="rvs">Reviews</a></li>
           <li><a href="#contact" class="cta">Contact</a></li>
+          <li><a href="#" id="admin-login-btn" style="display:none;">Admin</a></li>
         </ul>
       </nav>
     </div>
@@ -134,7 +135,19 @@
         <p>2 bed • 1 bath • 1,200 sqft</p>
       </article>
     </div>
+    <button id="view-all-listings" class="btn-accent" style="margin-top:1.5rem; display:none;">View All Listings</button>
   </section>
+
+  <!-- All-Listings Modal -->
+<div id="all-listings-modal" class="modal">
+  <div class="modal-content">
+    <button class="modal-close" aria-label="Close">×</button>
+    <h2>All Listings</h2>
+    <div class="modal-body" style="max-height:70vh; overflow-y:auto;">
+      <div id="all-listings-container" class="listings-grid"></div>
+    </div>
+  </div>
+</div>
 
 <!-- REVIEWS -->
 <section id="reviews" class="container">
@@ -185,6 +198,71 @@
       <div id="form-status"></div>
     </form>
   </section>
+
+  <!-- New Login Modal -->
+<div id="login-modal" class="modal">
+  <div class="modal-content">
+    <button class="modal-close">&times;</button>
+    <h2>Admin Login</h2>
+    <form id="login-form">
+      <input type="email" id="email" placeholder="Email" required>
+      <input type="password" id="password" placeholder="Password" required>
+      <button type="submit">Login</button>
+    </form>
+  </div>
+</div>
+
+<!-- Dashboard Modal (replaces login after success) -->
+<div id="dashboard-modal" class="modal">
+  <div class="modal-content">
+    <button class="modal-close">&times;</button>
+    <h2>Admin Dashboard</h2>
+    <div id="dashboard-content">
+      <!-- Tabs for Reviews/Listings -->
+      <button id="reviews-tab">Manage Reviews</button>
+      <button id="listings-tab">Manage Listings</button>
+      
+      <!-- Reviews Form -->
+      <div id="reviews-section" style="display:none;">
+        <h3>Add Review</h3>
+        <form id="add-review-form">
+          <input type="text" id="review-name" placeholder="Name" required>
+          <textarea id="review-text" placeholder="Review Text" required></textarea>
+          <input type="number" id="review-rating" min="1" max="5" placeholder="Rating (1-5)" required>
+          <button type="submit">Add Review</button>
+        </form>
+      </div>
+      
+      <!-- Listings Form -->
+      <div id="listings-section" style="display:none;">
+        <h3>Add Listing</h3>
+        <form id="add-listing-form">
+          <input type="text" id="listing-address" placeholder="Address" required>
+          <input type="text" id="listing-city" placeholder="City" required>
+          <input type="text" id="listing-state" placeholder="State" required>
+          <input type="text" id="listing-zip" placeholder="ZIP" required>
+          <input type="number" id="listing-price" placeholder="Price ($)" required>
+
+          <input type="number" id="listing-beds" placeholder="Beds" required>
+          <input type="number" id="listing-baths" placeholder="Baths" required>
+          <input type="number" id="listing-sqft" placeholder="Sqft" required>
+
+          <select id="listing-status">
+            <option value="active">Active</option>
+            <option value="closed">Closed</option>
+          </select>
+
+          <label>Photos (select multiple)</label>
+          <input type="file" id="listing-photos" multiple accept="image/*">
+
+          <textarea id="listing-metadata" placeholder='Metadata JSON (optional) e.g. {"mls":"12345"}'></textarea>
+
+          <button type="submit">Add Listing</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
 
   <!-- FOOTER -->
   <footer class="site-footer">
