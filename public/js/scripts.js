@@ -1,13 +1,13 @@
 /* =============================
    Sharp Choice Real Estate – scripts.js
-   Render-ready | No process.env | Supabase via meta tags
+   Fully Fixed | Render + Supabase Ready
    ============================= */
 
 // Utility: Safe DOM lookup
 const $ = (selector) => document.querySelector(selector);
 
 // =============================
-// Supabase client – from <meta> tags
+// Supabase client – from <meta> tags + CDN
 // =============================
 const SUPABASE_URL = document.querySelector('meta[name="supabase-url"]')?.content?.trim() || '';
 const SUPABASE_ANON_KEY = document.querySelector('meta[name="supabase-anon-key"]')?.content?.trim() || '';
@@ -16,12 +16,19 @@ if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
   console.error('Supabase env vars missing – add <meta name="supabase-url"> and <meta name="supabase-anon-key"> in <head>');
 }
 
-let supabase;
-try {
-  supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-} catch (err) {
-  console.error('Failed to initialize Supabase client:', err);
+let supabase = null;
+
+// Wait for Supabase to load from CDN
+function initSupabase() {
+  if (window.supabase && SUPABASE_URL && SUPABASE_ANON_KEY) {
+    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    console.log('Supabase client initialized');
+  } else {
+    console.warn('Supabase not ready yet – retrying...');
+    setTimeout(initSupabase, 100);
+  }
 }
+initSupabase();
 
 // =============================
 // Footer Year
@@ -29,7 +36,7 @@ try {
 $('#year')?.setAttribute('textContent', new Date().getFullYear());
 
 // =============================
-// Contact Form Submission (via Resend API)
+// Contact Form Submission
 // =============================
 const contactForm = $('#contact-form');
 const formStatus = $('#form-status');
@@ -38,6 +45,7 @@ if (contactForm && formStatus) {
   contactForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     formStatus.textContent = 'Sending...';
+    formStatus.style.color = '';
 
     const payload = Object.fromEntries(new FormData(contactForm));
 
@@ -95,15 +103,20 @@ document.addEventListener('DOMContentLoaded', () => {
 // Reviews – preview + modal pagination
 // =============================
 async function loadReviews(page = 1, limit = 3, containerId = 'reviews-container') {
+  if (!supabase) return console.warn('Supabase not ready');
+
   try {
     const res = await fetch('/api/reviews');
+    if (!res.ok) throw new Error('Failed to fetch reviews');
     const reviews = await res.json();
+
     const container = document.getElementById(containerId);
     if (!container) return;
 
     container.innerHTML = '';
 
-    if (!reviews.length) {
+    // Guard: reviews might be null or undefined
+    if (!Array.isArray(reviews) || reviews.length === 0) {
       container.innerHTML = '<p>No reviews yet. Check back soon!</p>';
       return;
     }
@@ -140,7 +153,6 @@ async function loadReviews(page = 1, limit = 3, containerId = 'reviews-container
         <button class="review-next" ${page === totalPages ? 'disabled' : ''}>Next</button>
       `;
 
-      // Re-attach listeners
       pagination.querySelector('.review-prev')?.addEventListener('click', () =>
         loadReviews(page - 1, limit, containerId)
       );
@@ -154,18 +166,19 @@ async function loadReviews(page = 1, limit = 3, containerId = 'reviews-container
 }
 
 // =============================
-// Featured Listings (active only)
+// Featured Listings
 // =============================
 async function loadFeaturedListings() {
   try {
     const res = await fetch('/api/listings?status=active');
+    if (!res.ok) throw new Error('Failed to fetch listings');
     const listings = await res.json();
 
     const grid = $('.listings-grid');
     if (!grid) return;
     grid.innerHTML = '';
 
-    if (!listings.length) {
+    if (!Array.isArray(listings) || listings.length === 0) {
       grid.innerHTML = '<p>No active listings at this time.</p>';
       return;
     }
@@ -204,12 +217,13 @@ async function loadFeaturedListings() {
 async function loadAllListings() {
   try {
     const res = await fetch('/api/listings');
+    if (!res.ok) throw new Error('Failed to fetch listings');
     const listings = await res.json();
     const container = $('#all-listings-container');
     if (!container) return;
     container.innerHTML = '';
 
-    if (!listings.length) {
+    if (!Array.isArray(listings) || listings.length === 0) {
       container.innerHTML = '<p>No listings available.</p>';
       return;
     }
@@ -242,7 +256,6 @@ async function loadAllListings() {
 // Modal Controls
 // =============================
 document.addEventListener('DOMContentLoaded', () => {
-  // Load initial content
   loadReviews(1, 3, 'reviews-container');
   loadFeaturedListings();
 
@@ -265,7 +278,6 @@ document.addEventListener('DOMContentLoaded', () => {
   closeReviewsBtn?.addEventListener('click', closeReviewsModal);
   reviewsModal?.addEventListener('click', (e) => e.target === reviewsModal && closeReviewsModal());
 
-  // Header link to reviews
   $('#header-reviews-link')?.addEventListener('click', (e) => {
     e.preventDefault();
     openReviewsModal();
@@ -290,16 +302,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Mobile Nav Toggle
+  // Mobile Nav
   const navToggle = $('.nav-toggle');
   const navMenu = $('#nav-menu');
-
   navToggle?.addEventListener('click', () => {
     const isOpen = navMenu.classList.toggle('show');
     navToggle.setAttribute('aria-expanded', isOpen);
   });
 
-  // Close mobile nav on link click
   navMenu?.querySelectorAll('a').forEach(link => {
     link.addEventListener('click', () => {
       navMenu.classList.remove('show');
@@ -315,31 +325,35 @@ document.addEventListener('DOMContentLoaded', () => {
   const loginBtn = $('#admin-login-btn');
   if (loginBtn) loginBtn.style.display = 'block';
 
-  // Show login modal
   loginBtn?.addEventListener('click', (e) => {
     e.preventDefault();
     $('#login-modal').classList.add('show');
     document.body.style.overflow = 'hidden';
   });
 
-  // Auto-login if session exists
   const session = localStorage.getItem('sb-session');
-  if (session) {
+  if (session && supabase) {
     $('#dashboard-modal').classList.add('show');
     document.body.style.overflow = 'hidden';
     loginBtn.textContent = 'Dashboard';
   }
 });
 
-// Close login modal
+// Close modals
 $('#login-modal .modal-close')?.addEventListener('click', () => {
   $('#login-modal').classList.remove('show');
   document.body.style.overflow = '';
 });
+$('#dashboard-modal .modal-close')?.addEventListener('click', () => {
+  $('#dashboard-modal').classList.remove('show');
+  document.body.style.overflow = '';
+});
 
-// Login form
+// Login
 $('#login-form')?.addEventListener('submit', async (e) => {
   e.preventDefault();
+  if (!supabase) return alert('Supabase not loaded yet. Try again.');
+
   const email = $('#login-email').value.trim();
   const password = $('#login-password').value;
 
@@ -365,7 +379,7 @@ $('#logout-btn')?.addEventListener('click', () => {
   location.reload();
 });
 
-// Tab switching
+// Tabs
 $('#reviews-tab')?.addEventListener('click', () => {
   $('#reviews-section').style.display = 'block';
   $('#listings-section').style.display = 'none';
@@ -379,13 +393,7 @@ $('#listings-tab')?.addEventListener('click', () => {
   $('#listings-tab').classList.add('tab-active');
 });
 
-// Close dashboard modal
-$('#dashboard-modal .modal-close')?.addEventListener('click', () => {
-  $('#dashboard-modal').classList.remove('show');
-  document.body.style.overflow = '';
-});
-
-// ---------- Helpers ----------
+// Helpers
 function fileToBase64(file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -398,7 +406,7 @@ function parseJSONSafe(str) {
   try { return JSON.parse(str); } catch { return {}; }
 }
 
-// ---------- Add Review ----------
+// Add Review
 $('#add-review-form')?.addEventListener('submit', async (e) => {
   e.preventDefault();
   const payload = {
@@ -427,7 +435,7 @@ $('#add-review-form')?.addEventListener('submit', async (e) => {
   }
 });
 
-// ---------- Add Listing (multi-photo) ----------
+// Add Listing
 $('#add-listing-form')?.addEventListener('submit', async (e) => {
   e.preventDefault();
 
