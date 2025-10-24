@@ -665,23 +665,6 @@ header, section {
   animation: fadeIn 0.3s ease forwards;
 }
 
-modal-body {
-  overflow-y: auto;
-  flex: 1;
-  margin-top: 1rem;
-  padding-right: 0.5rem; /* space for scrollbar */
-}
-
-.review-pagination {
-  position: sticky;
-  bottom: 0;
-  background: #fff;
-  padding-top: 1rem;
-  margin-top: 1rem;
-  text-align: center;
-  border-top: 1px solid #eee;
-}
-
 .modal-close {
   position: absolute;
   top: 1rem;
