@@ -109,25 +109,32 @@ async function loadReviews(page = 1, limit = 3, containerId = "reviews-container
       container.appendChild(blockquote);
     });
 
-    // Only show pagination inside modal
-    if (containerId === "modal-reviews-container") {
-      const totalPages = Math.ceil(reviews.length / limit);
-      const pagination = document.querySelector("#reviews-modal .review-pagination");
-      if (!pagination) return;
-      pagination.innerHTML = `
-        <button ${page === 1 ? "disabled" : ""} class="review-prev">Prev</button>
-        <span>Page ${page} of ${totalPages}</span>
-        <button ${page === totalPages ? "disabled" : ""} class="review-next">Next</button>`;
+// Only show pagination inside modal
+if (containerId === "modal-reviews-container") {
+  const totalPages = Math.ceil(reviews.length / limit);
+  const pagination = document.querySelector("#reviews-modal .review-pagination");
+  if (!pagination) return;
 
-      container.appendChild(pagination);
+  pagination.innerHTML = `
+    <button ${page === 1 ? "disabled" : ""} class="review-prev">Prev</button>
+    <span>Page ${page} of ${totalPages}</span>
+    <button ${page === totalPages ? "disabled" : ""} class="review-next">Next</button>`;
 
-      pagination.querySelector(".review-prev")?.addEventListener("click", () =>
-        loadReviews(page - 1, limit, containerId)
-      );
-      pagination.querySelector(".review-next")?.addEventListener("click", () =>
-        loadReviews(page + 1, limit, containerId)
-      );
-    }
+  // re-attach event listeners
+  pagination.querySelector(".review-prev")?.replaceWith(
+    pagination.querySelector(".review-prev").cloneNode(true)
+  );
+  pagination.querySelector(".review-next")?.replaceWith(
+    pagination.querySelector(".review-next").cloneNode(true)
+  );
+
+  pagination.querySelector(".review-prev").addEventListener("click", () =>
+    loadReviews(page - 1, limit, containerId)
+  );
+  pagination.querySelector(".review-next").addEventListener("click", () =>
+    loadReviews(page + 1, limit, containerId)
+  );
+}
   } catch (err) {
     console.error("Error loading reviews:", err);
   }
