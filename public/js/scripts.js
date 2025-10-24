@@ -136,7 +136,7 @@ async function loadReviews(page = 1, limit = 3, containerId = 'reviews-container
       el.className = 'review';
       el.innerHTML = `
         <p>"${comment}"</p>
-        <cite>— ${r.name}</cite>
+        <cite>— ${author_name}</cite>
         <div class="review-stars" style="color:#f5a623;">${stars}</div>
       `;
       container.appendChild(el);
