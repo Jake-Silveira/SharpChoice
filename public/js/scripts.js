@@ -112,16 +112,12 @@ async function loadReviews(page = 1, limit = 3, containerId = "reviews-container
     // Only show pagination inside modal
     if (containerId === "modal-reviews-container") {
       const totalPages = Math.ceil(reviews.length / limit);
-      const pagination = document.createElement("div");
-      pagination.className = "review-pagination";
-      pagination.style.marginTop = "1rem";
-      pagination.style.textAlign = "center";
-
+      const pagination = document.querySelector("#reviews-modal .review-pagination");
+      if (!pagination) return;
       pagination.innerHTML = `
         <button ${page === 1 ? "disabled" : ""} class="review-prev">Prev</button>
         <span>Page ${page} of ${totalPages}</span>
-        <button ${page === totalPages ? "disabled" : ""} class="review-next">Next</button>
-      `;
+        <button ${page === totalPages ? "disabled" : ""} class="review-next">Next</button>`;
 
       container.appendChild(pagination);
 
