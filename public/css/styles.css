@@ -665,6 +665,30 @@ header, section {
   animation: fadeIn 0.3s ease forwards;
 }
 
+/* Mobile – full-width, tighter padding, smaller close button */
+@media (max-width: 768px) {
+  .modal {
+    padding: 1rem;           /* less side padding on the overlay */
+  }
+
+  .modal-content {
+    max-width: none;         /* remove the hard 800px cap */
+    padding: 1.5rem;         /* a bit less breathing room */
+    border-radius: 8px;
+  }
+
+  .modal-close {
+    font-size: 1.5rem;       /* smaller X */
+    top: 0.75rem;
+    right: 0.75rem;
+  }
+
+  .modal-body {
+    max-height: 65vh;        /* leave room for pagination */
+    padding-right: 0.25rem;  /* tiny right gutter for scroll bar */
+  }
+}
+
 .modal-body {
   overflow-y: auto;
   flex: 1;
