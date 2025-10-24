@@ -88,11 +88,14 @@ document.querySelectorAll('.cta').forEach((btn) => {
 // =============================
 document.addEventListener('DOMContentLoaded', () => {
   const readMoreBtn = $('.read-more-btn');
-  const moreText = $('#about-more');
+  const bio         = $('#about-bio');      // the <p> that truncates
+  const moreText    = $('#about-more');     // hidden extra text
 
-  if (readMoreBtn && moreText) {
+  if (readMoreBtn && bio && moreText) {
     readMoreBtn.addEventListener('click', () => {
-      const isExpanded = moreText.classList.toggle('show');
+      const isExpanded = bio.classList.toggle('expanded');
+
+      // Update button text & ARIA
       readMoreBtn.textContent = isExpanded ? 'See Less' : 'See More';
       readMoreBtn.setAttribute('aria-expanded', isExpanded);
     });
