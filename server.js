@@ -18,6 +18,10 @@ const __dirname = path.dirname(__filename);
 // Static files
 app.use(express.static(path.join(__dirname, "public")));
 
+app.get('/healthz', (req, res) => {
+  res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
 // Supabase & Resend clients
 const supabase = createClient(
   process.env.SUPABASE_URL,
