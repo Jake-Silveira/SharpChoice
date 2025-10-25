@@ -22,7 +22,6 @@ let supabase = null;
 function initSupabase() {
   if (window.supabase && SUPABASE_URL && SUPABASE_ANON_KEY) {
     supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    console.log('Supabase client initialized');
   } else {
     console.warn('Supabase not ready yet – retrying...');
     setTimeout(initSupabase, 100);
