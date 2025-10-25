@@ -110,7 +110,7 @@ async function loadReviews(page = 1, limit = 3, containerId = 'reviews-container
 
   try {
     const res = await fetch('/api/reviews');
-    if (!res.ok) throw new Error('Failed to fetch reviews');
+    if (!res.ok) throw new Error(`Failed to fetch reviews: ${res.status} ${res.statusText}`);
     const reviews = await res.json();
 
     const container = document.getElementById(containerId);
@@ -118,7 +118,6 @@ async function loadReviews(page = 1, limit = 3, containerId = 'reviews-container
 
     container.innerHTML = '';
 
-    // Guard: reviews might be null or undefined
     if (!Array.isArray(reviews) || reviews.length === 0) {
       container.innerHTML = '<p>No reviews yet. Check back soon!</p>';
       return;
@@ -131,15 +130,15 @@ async function loadReviews(page = 1, limit = 3, containerId = 'reviews-container
     slice.forEach((r) => {
       const stars = '★'.repeat(r.rating || 0) + '☆'.repeat(5 - (r.rating || 0));
       const comment =
-        containerId === 'reviews-container' && r.text.length > 120
-          ? r.text.slice(0, 120) + '... <em>(read more)</em>'
-          : r.text;
+        containerId === 'reviews-container' && r.comment?.length > 120
+          ? r.comment.slice(0, 120) + '... <em>(read more)</em>'
+          : r.comment || '';
 
       const el = document.createElement('blockquote');
       el.className = 'review';
       el.innerHTML = `
         <p>"${comment}"</p>
-        <cite>— ${author_name}</cite>
+        <cite>— ${r.author_name || 'Anonymous'}</cite>
         <div class="review-stars" style="color:#f5a623;">${stars}</div>
       `;
       container.appendChild(el);
@@ -164,7 +163,9 @@ async function loadReviews(page = 1, limit = 3, containerId = 'reviews-container
       );
     }
   } catch (err) {
-    console.error('loadReviews error:', err);
+    console.error('loadReviews error:', err.message, err.stack);
+    const container = document.getElementById(containerId);
+    if (container) container.innerHTML = '<p>Error loading reviews. Please try again later.</p>';
   }
 }
 
@@ -174,7 +175,7 @@ async function loadReviews(page = 1, limit = 3, containerId = 'reviews-container
 async function loadFeaturedListings() {
   try {
     const res = await fetch('/api/listings?status=active');
-    if (!res.ok) throw new Error('Failed to fetch listings');
+    if (!res.ok) throw new Error(`Failed to fetch listings: ${res.status} ${res.statusText}`);
     const listings = await res.json();
 
     const grid = $('.listings-grid');
@@ -210,7 +211,9 @@ async function loadFeaturedListings() {
     const viewAll = $('#view-all-listings');
     if (viewAll) viewAll.style.display = listings.length ? 'block' : 'none';
   } catch (err) {
-    console.error('loadFeaturedListings error:', err);
+    console.error('loadFeaturedListings error:', err.message, err.stack);
+    const grid = $('.listings-grid');
+    if (grid) grid.innerHTML = '<p>Error loading listings. Please try again later.</p>';
   }
 }
 
@@ -220,7 +223,7 @@ async function loadFeaturedListings() {
 async function loadAllListings() {
   try {
     const res = await fetch('/api/listings');
-    if (!res.ok) throw new Error('Failed to fetch listings');
+    if (!res.ok) throw new Error(`Failed to fetch listings: ${res.status} ${res.statusText}`);
     const listings = await res.json();
     const container = $('#all-listings-container');
     if (!container) return;
@@ -251,7 +254,9 @@ async function loadAllListings() {
       container.appendChild(article);
     });
   } catch (err) {
-    console.error('loadAllListings error:', err);
+    console.error('loadAllListings error:', err.message, err.stack);
+    const container = $('#all-listings-container');
+    if (container) container.innerHTML = '<p>Error loading listings. Please try again later.</p>';
   }
 }
 
@@ -413,10 +418,10 @@ function parseJSONSafe(str) {
 $('#add-review-form')?.addEventListener('submit', async (e) => {
   e.preventDefault();
   const payload = {
-    name: $('#review-name').value,
-    text: $('#review-text').value,
-    rating: Number($('#review-rating').value),
-  };
+  author_name: $('#review-name').value.trim(),
+  comment: $('#review-text').value.trim(),
+  rating: Number($('#review-rating').value),
+};
 
   const session = JSON.parse(localStorage.getItem('sb-session') || '{}');
   const res = await fetch('/api/reviews', {
