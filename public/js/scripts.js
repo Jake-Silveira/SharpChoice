@@ -1,8 +1,3 @@
-/* =============================
-   Sharp Choice Real Estate – scripts.js
-   Fully Fixed | Render + Supabase Ready
-   ============================= */
-
 // Utility: Safe DOM lookup
 const $ = (selector) => document.querySelector(selector);
 

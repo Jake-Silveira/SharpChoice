@@ -954,17 +954,20 @@ header, section {
 }
 
 #logout-btn {
-  background: var(--color-error);
+  background: var(--color-primary);
   color: #fff;
   padding: 0.5rem 1rem;
   border-radius: var(--border-radius);
   font-size: 0.9rem;
   font-weight: 600;
   transition: var(--transition);
+  border: none;
+  cursor: pointer;
 }
 
 #logout-btn:hover {
-  background: #c82333;
+  background: var(--color-accent);
+  transform: translateY(-1px);
 }
 
 /* Tabs – Clean, Underlined Active State */

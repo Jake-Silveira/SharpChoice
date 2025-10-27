@@ -112,16 +112,16 @@ app.get("/api/reviews", async (req, res) => {
 });
 
 app.post("/api/reviews", requireAuth, async (req, res) => {
-  const { name, text, rating } = req.body;
+  const { author_name, comment, rating } = req.body;
 
-  if (!name || !text || rating == null) {
-    return res.status(400).json({ error: "Missing fields" });
+  if (!author_name || !comment || rating == null) {
+    return res.status(400).json({ error: "Missing fields: author_name, comment, or rating" });
   }
 
   try {
     const { error } = await supabase
       .from("reviews")
-      .insert([{ name, text, rating: Number(rating) }]);
+      .insert([{ author_name, comment, rating: Number(rating) }]);
 
     if (error) throw error;
     res.json({ success: true });
