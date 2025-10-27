@@ -367,9 +367,26 @@ async function openEditListing(id) {
   const modal = $('#edit-listing-modal');
   if (!modal) return;
 
+  const session = JSON.parse(localStorage.getItem('sb-session') || '{}');
+  const token = session.access_token || '';
+
+  if (!token) {
+    alert('You must be logged in to edit listings.');
+    return;
+  }
+
   try {
-    const res = await fetch(`/api/listings/${id}`);
-    if (!res.ok) throw new Error('Failed to fetch listing');
+    const res = await fetch(`/api/listings/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error || `HTTP ${res.status}`);
+    }
+
     const listing = await res.json();
 
     // Populate form
@@ -390,7 +407,7 @@ async function openEditListing(id) {
     document.body.style.overflow = 'hidden';
   } catch (err) {
     console.error('openEditListing error:', err);
-    alert('Could not load listing data.');
+    alert('Failed to load listing: ' + err.message);
   }
 }
 
