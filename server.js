@@ -147,6 +147,26 @@ app.get("/api/listings", async (req, res) => {
   }
 });
 
+// GET a single listing by id (admin only)
+app.get("/api/listings/:id", requireAuth, async (req, res) => {
+  const { id } = req.params;
+  try {
+    const { data, error } = await supabase
+      .from("listings")
+      .select("*")
+      .eq("id", id)
+      .single();
+
+    if (error) throw error;
+    if (!data) return res.status(404).json({ error: "Listing not found" });
+
+    res.json(data);
+  } catch (err) {
+    console.error("Get listing error:", err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 app.post("/api/listings", requireAuth, async (req, res) => {
   const {
     address, city, state, zip, price,

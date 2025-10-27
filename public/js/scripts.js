@@ -302,11 +302,15 @@ async function loadAdminListings() {
               ${statusText}
             </span>
           </td>
-          <td style="padding: 0.75rem;">
-            <button class="btn-accent" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;" 
-                    onclick="toggleListingStatus('${l.id}', '${l.status}')">
-              ${l.status === 'closed' ? 'Mark Active' : 'Mark SOLD'}
+          <td style="padding: 0.75rem; display:flex; gap:0.5rem;">
+            <button class="btn-accent" style="padding:0.4rem 0.8rem; font-size:0.85rem;"
+                    onclick="openEditListing('${l.id}')">
+              Edit
             </button>
+            <button class="btn-accent" style="padding:0.4rem 0.8rem; font-size:0.85rem; background:${l.status === 'closed' ? '#28a745' : 'var(--color-error)'};"
+                  onclick="toggleListingStatus('${l.id}', '${l.status}')">
+            ${l.status === 'closed' ? 'Mark Active' : 'Mark SOLD'}
+          </button>
           </td>
         </tr>
       `;
@@ -320,9 +324,10 @@ async function loadAdminListings() {
   }
 }
 
-// Toggle listing status
+// Toggle listing status (quick action from table)
 async function toggleListingStatus(id, currentStatus) {
-  if (!confirm(`Change status to ${currentStatus === 'closed' ? 'Active' : 'SOLD'}?`)) return;
+  const action = currentStatus === 'closed' ? 'activate' : 'mark as SOLD';
+  if (!confirm(`Are you sure you want to ${action} this listing?`)) return;
 
   const newStatus = currentStatus === 'closed' ? 'active' : 'closed';
 
@@ -341,10 +346,13 @@ async function toggleListingStatus(id, currentStatus) {
 
     if (!res.ok) {
       const err = await res.json();
-      throw new Error(err.error || 'Failed');
+      throw new Error(err.error || 'Update failed');
     }
 
-    alert('Status updated!');
+    // Success feedback
+    alert(`Listing ${newStatus === 'closed' ? 'marked SOLD' : 'activated'}!`);
+    
+    // Refresh UI
     loadAdminListings();
     loadFeaturedListings();
     loadAllListings();
@@ -353,6 +361,105 @@ async function toggleListingStatus(id, currentStatus) {
     alert('Error: ' + err.message);
   }
 }
+
+// ---- Open edit modal and fill with current data ----
+async function openEditListing(id) {
+  const modal = $('#edit-listing-modal');
+  if (!modal) return;
+
+  try {
+    const res = await fetch(`/api/listings/${id}`);
+    if (!res.ok) throw new Error('Failed to fetch listing');
+    const listing = await res.json();
+
+    // Populate form
+    $('#edit-listing-id').value = listing.id;
+    $('#edit-address').value = listing.address || '';
+    $('#edit-city').value = listing.city || '';
+    $('#edit-state').value = listing.state || '';
+    $('#edit-zip').value = listing.zip || '';
+    $('#edit-price').value = listing.price || '';
+    $('#edit-beds').value = listing.beds || '';
+    $('#edit-baths').value = listing.baths || '';
+    $('#edit-sqft').value = listing.sqft || '';
+    $('#edit-status').value = listing.status || 'active';
+    $('#edit-metadata').value = JSON.stringify(listing.metadata || {}, null, 2);
+
+    // Show modal
+    modal.classList.add('show');
+    document.body.style.overflow = 'hidden';
+  } catch (err) {
+    console.error('openEditListing error:', err);
+    alert('Could not load listing data.');
+  }
+}
+
+// ---- Close edit modal (cancel or X) ----
+function closeEditListing() {
+  const modal = $('#edit-listing-modal');
+  if (modal) {
+    modal.classList.remove('show');
+    document.body.style.overflow = '';
+  }
+}
+
+// ---- Submit edited listing ----
+$('#edit-listing-form')?.addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const id = $('#edit-listing-id').value;
+  const payload = {
+    address: $('#edit-address').value.trim(),
+    city: $('#edit-city').value.trim(),
+    state: $('#edit-state').value.trim(),
+    zip: $('#edit-zip').value.trim(),
+    price: Number($('#edit-price').value),
+    beds: Number($('#edit-beds').value),
+    baths: Number($('#edit-baths').value),
+    sqft: Number($('#edit-sqft').value),
+    status: $('#edit-status').value,
+    metadata: (() => {
+      try { return JSON.parse($('#edit-metadata').value); }
+      catch { return {}; }
+    })()
+  };
+
+  const session = JSON.parse(localStorage.getItem('sb-session') || '{}');
+  const token = session.access_token || '';
+
+  try {
+    const res = await fetch(`/api/listings/${id}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error || 'Save failed');
+    }
+
+    alert('Listing updated!');
+    closeEditListing();
+    loadAdminListings();
+    loadFeaturedListings();
+    loadAllListings();
+  } catch (err) {
+    console.error('Edit listing error:', err);
+    alert('Error: ' + err.message);
+  }
+});
+
+// Close on X button
+$('#edit-listing-modal .modal-close')?.addEventListener('click', closeEditListing);
+
+// Close on background click
+$('#edit-listing-modal')?.addEventListener('click', (e) => {
+  if (e.target.id === 'edit-listing-modal') closeEditListing();
+});
 
 // =============================
 // Modal Controls

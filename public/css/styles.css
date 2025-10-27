@@ -1128,6 +1128,26 @@ header, section {
   background: #218838;
 }
 
+/* Edit listing modal */
+#edit-listing-modal .modal-content {
+  max-height: 90vh;
+  overflow-y: auto;
+}
+#edit-listing-modal label {
+  display: block;
+  margin-top: 0.75rem;
+  font-weight: 600;
+}
+#edit-listing-modal input,
+#edit-listing-modal select,
+#edit-listing-modal textarea {
+  width: 100%;
+  padding: 0.5rem;
+  margin-top: 0.25rem;
+  border: 1px solid #ddd;
+  border-radius: var(--border-radius);
+}
+
 /* Responsive Admin Dashboard */
 @media (max-width: 768px) {
   #dashboard-modal .modal-content {

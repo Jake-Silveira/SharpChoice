@@ -316,6 +316,55 @@
           <div id="admin-listings-container" style="max-height: 400px; overflow-y: auto; margin-top: 1rem;">
             <!-- Dynamic table loaded here -->
           </div>
+
+          <!-- Edit Listing Modal -->
+          <div id="edit-listing-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="edit-listing-title">
+            <div class="modal-content" style="max-width: 600px;">
+              <button class="modal-close" aria-label="Close edit modal">×</button>
+              <h3 id="edit-listing-title">Edit Listing</h3>
+              <form id="edit-listing-form">
+                <input type="hidden" id="edit-listing-id">
+
+                <label for="edit-address">Address</label>
+                <input type="text" id="edit-address" required>
+
+                <label for="edit-city">City</label>
+                <input type="text" id="edit-city" required>
+
+                <label for="edit-state">State</label>
+                <input type="text" id="edit-state" required>
+
+                <label for="edit-zip">ZIP</label>
+                <input type="text" id="edit-zip" required>
+
+                <label for="edit-price">Price ($)</label>
+                <input type="number" id="edit-price" required>
+
+                <label for="edit-beds">Beds</label>
+                <input type="number" id="edit-beds" required>
+
+                <label for="edit-baths">Baths</label>
+                <input type="number" id="edit-baths" required>
+
+                <label for="edit-sqft">Sqft</label>
+                <input type="number" id="edit-sqft" required>
+
+                <label for="edit-status">Status</label>
+                <select id="edit-status" required>
+                  <option value="active">Active – Show on homepage</option>
+                  <option value="closed">Closed – SOLD</option>
+                </select>
+
+                <label for="edit-metadata">Metadata (JSON)</label>
+                <textarea id="edit-metadata" rows="4" placeholder='{"mls":"12345","yearBuilt":2020}'></textarea>
+
+                <div class="form-actions" style="margin-top:1rem;">
+                  <button type="button" class="btn-cancel modal-close">Cancel</button>
+                  <button type="submit" class="btn-save">Save Changes</button>
+                </div>
+              </form>
+            </div>
+          </div>
         </div>
       </div>
     </div>
