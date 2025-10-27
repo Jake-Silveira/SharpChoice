@@ -369,27 +369,15 @@ async function openEditListing(id) {
 
   const session = JSON.parse(localStorage.getItem('sb-session') || '{}');
   const token = session.access_token || '';
-
-  if (!token) {
-    alert('You must be logged in to edit listings.');
-    return;
-  }
+  if (!token) { alert('You must be logged in.'); return; }
 
   try {
     const res = await fetch(`/api/listings/${id}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+      headers: { Authorization: `Bearer ${token}` },
     });
-
-    if (!res.ok) {
-      const err = await res.json();
-      throw new Error(err.error || `HTTP ${res.status}`);
-    }
-
+    if (!res.ok) { const e = await res.json(); throw new Error(e.error || `HTTP ${res.status}`); }
     const listing = await res.json();
 
-    // Populate form
     $('#edit-listing-id').value = listing.id;
     $('#edit-address').value = listing.address || '';
     $('#edit-city').value = listing.city || '';
@@ -402,7 +390,6 @@ async function openEditListing(id) {
     $('#edit-status').value = listing.status || 'active';
     $('#edit-metadata').value = JSON.stringify(listing.metadata || {}, null, 2);
 
-    // Show modal
     modal.classList.add('show');
     document.body.style.overflow = 'hidden';
   } catch (err) {
@@ -420,16 +407,6 @@ function closeEditListing() {
   }
 }
 
-// ---- Global list of all modals (add any new ones here) ----
-const ALL_MODALS = [
-  '#dashboard-modal',
-  '#reviews-modal',
-  '#edit-listing-modal',
-  // add future modals here
-];
-
-// ---- Store which modals were open before edit modal ----
-let previouslyOpenModals = [];
 
 // ---- Open edit modal (hides others) ----
 async function openEditListing(id) {
