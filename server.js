@@ -50,16 +50,17 @@ async function requireAuth(req, res, next) {
 // === Contact Form ===
 app.post("/api/contact", async (req, res) => {
   const { name, email, message } = req.body;
+  const opt_in = req.body.opt_in === true;  // Must be true
 
-  if (!name || !email || !message) {
-    return res.status(400).json({ error: "Missing fields" });
+  if (!name || !email || !message || opt_in !== true) {
+    return res.status(400).json({ error: "All fields are required, including privacy consent." });
   }
 
   try {
     // 1. Save to Supabase
     const { error: dbError } = await supabase
       .from("contacts")
-      .insert([{ name, email, message }]);
+      .insert([{ name, email, message, opt_in }]);
 
     if (dbError) throw dbError;
 
@@ -73,6 +74,8 @@ app.post("/api/contact", async (req, res) => {
         <h2>New Message from ${name}</h2>
         <p><strong>Email:</strong> ${email}</p>
         <p>${message}</p>
+        <hr>
+        <p><strong>Privacy Consent:</strong> ${opt_in ? '✅ Yes' : '❌ No'}</p>
       `,
     });
 

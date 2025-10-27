@@ -242,6 +242,16 @@
           <textarea name="message" id="contactMessage" rows="5" required aria-required="true"></textarea>
         </div>
 
+        <div class="opt-in-wrapper" style="margin: 1rem 0; font-size: 0.9rem;">
+          <label style="display:flex; align-items:flex-start; gap:0.5rem; cursor:pointer;">
+            <input type="checkbox" id="contact-opt-in" required style="margin-top:0.15rem;">
+            <span>
+              I agree to the <a href="/privacy.html" target="_blank" style="color:var(--color-primary); text-decoration:underline;">Privacy Policy</a> 
+              and consent to being contacted.
+            </span>
+          </label>
+        </div>
+
         <button type="submit" class="btn-primary">Send Message</button>
         <div id="form-status" role="status" aria-live="polite"></div>
       </form>
@@ -388,8 +398,8 @@
     <div class="container footer-inner">
       <p>&copy; <span id="year"></span> Sharp Choice Real Estate. All rights reserved.</p>
       <p>
-        <a href="/privacy.html">Privacy Policy</a> • 
-        <a href="/terms.html">Terms of Service</a>
+        <a href="/privacy.html" style="color:var(--color-primary); margin:0 1rem;">Privacy Policy</a> |
+        <a href="/terms.html" style="color:var(--color-primary); margin:0 1rem;">Terms of Service</a>
       </p>
     </div>
   </footer>

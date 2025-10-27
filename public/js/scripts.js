@@ -33,15 +33,29 @@ $('#year')?.setAttribute('textContent', new Date().getFullYear());
 // Contact Form Submission
 // =============================
 const contactForm = $('#contact-form');
-const formStatus = $('#form-status');
+const formStatus  = $('#form-status');
 
 if (contactForm && formStatus) {
   contactForm.addEventListener('submit', async (e) => {
     e.preventDefault();
+
+    // ---- 1. Grab checkbox state first ----
+    const optInChecked = $('#contact-opt-in')?.checked ?? false;
+
+    // ---- 2. Front-end validation (mirrors server) ----
+    if (!optInChecked) {
+      formStatus.textContent = 'You must agree to the Privacy Policy to submit.';
+      formStatus.style.color = 'red';
+      return;                     // stop submission
+    }
+
     formStatus.textContent = 'Sending...';
     formStatus.style.color = '';
 
-    const payload = Object.fromEntries(new FormData(contactForm));
+    // ---- 3. Build payload (FormData → object) + opt_in ----
+    const formData = new FormData(contactForm);
+    const payload = Object.fromEntries(formData);
+    payload.opt_in = optInChecked;   // <-- explicit boolean
 
     try {
       const res = await fetch('/api/contact', {
@@ -50,19 +64,24 @@ if (contactForm && formStatus) {
         body: JSON.stringify(payload),
       });
 
-      if (!res.ok) throw new Error('Network error');
+      // ---- 4. Server-side error handling ----
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || 'Network error');
+      }
+
+      // ---- 5. Success ----
       formStatus.textContent = 'Message sent! We’ll be in touch soon.';
       formStatus.style.color = 'green';
       contactForm.reset();
-      setTimeout(() => formStatus.textContent = '', 5000);
+      setTimeout(() => (formStatus.textContent = ''), 5000);
     } catch (err) {
       console.error(err);
-      formStatus.textContent = 'Error – please try again later.';
+      formStatus.textContent = err.message || 'Error – please try again later.';
       formStatus.style.color = 'red';
     }
   });
 }
-
 // =============================
 // Smooth-scroll CTA links
 // =============================
