@@ -327,7 +327,7 @@ async function loadAdminListings() {
 // Toggle listing status (quick action from table)
 async function toggleListingStatus(id, currentStatus) {
   const action = currentStatus === 'closed' ? 'activate' : 'mark as SOLD';
-  if (!confirm(`Are you sure you want to ${action} this listing?`)) return;
+  if (!confirm(`Are you sure you want to mark this listing as ${action}?`)) return;
 
   const newStatus = currentStatus === 'closed' ? 'active' : 'closed';
 
@@ -419,6 +419,96 @@ function closeEditListing() {
     document.body.style.overflow = '';
   }
 }
+
+// ---- Global list of all modals (add any new ones here) ----
+const ALL_MODALS = [
+  '#dashboard-modal',
+  '#reviews-modal',
+  '#edit-listing-modal',
+  // add future modals here
+];
+
+// ---- Store which modals were open before edit modal ----
+let previouslyOpenModals = [];
+
+// ---- Open edit modal (hides others) ----
+async function openEditListing(id) {
+  const modal = $('#edit-listing-modal');
+  if (!modal) return;
+
+  const session = JSON.parse(localStorage.getItem('sb-session') || '{}');
+  const token = session.access_token || '';
+  if (!token) { alert('You must be logged in.'); return; }
+
+  // 1. Remember which modals are currently open
+  previouslyOpenModals = ALL_MODALS
+    .map(sel => $(sel))
+    .filter(m => m && m.classList.contains('show'))
+    .map(m => m.id);
+
+  // 2. Hide EVERY modal
+  ALL_MODALS.forEach(sel => {
+    const m = $(sel);
+    if (m) m.classList.remove('show');
+  });
+
+  try {
+    const res = await fetch(`/api/listings/${id}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!res.ok) { const e = await res.json(); throw new Error(e.error || `HTTP ${res.status}`); }
+    const listing = await res.json();
+
+    // Populate fields …
+    $('#edit-listing-id').value = listing.id;
+    $('#edit-address').value = listing.address || '';
+    $('#edit-city').value = listing.city || '';
+    $('#edit-state').value = listing.state || '';
+    $('#edit-zip').value = listing.zip || '';
+    $('#edit-price').value = listing.price || '';
+    $('#edit-beds').value = listing.beds || '';
+    $('#edit-baths').value = listing.baths || '';
+    $('#edit-sqft').value = listing.sqft || '';
+    $('#edit-status').value = listing.status || 'active';
+    $('#edit-metadata').value = JSON.stringify(listing.metadata || {}, null, 2);
+
+    // 3. Show ONLY edit modal
+    modal.classList.add('show');
+    document.body.style.overflow = 'hidden';
+  } catch (err) {
+    console.error('openEditListing error:', err);
+    alert('Failed to load listing: ' + err.message);
+    closeEditListing(); // restore previous state on error
+  }
+}
+
+// ---- Close edit modal (restore previous modals) ----
+function closeEditListing() {
+  const modal = $('#edit-listing-modal');
+  if (modal) {
+    modal.classList.remove('show');
+    document.body.style.overflow = '';
+  }
+
+  // 4. Re-open the modals that were open before
+  ALL_MODALS.forEach(sel => {
+    const m = $(sel);
+    if (m && previouslyOpenModals.includes(m.id)) {
+      m.classList.add('show');
+    }
+  });
+
+  previouslyOpenModals = []; // reset
+}
+
+// ---- Cancel button (uses same close logic) ----
+$('#edit-cancel-btn')?.addEventListener('click', closeEditListing);
+
+// ---- X button & backdrop click (existing) ----
+$('#edit-listing-modal .modal-close')?.addEventListener('click', closeEditListing);
+$('#edit-listing-modal')?.addEventListener('click', e => {
+  if (e.target.id === 'edit-listing-modal') closeEditListing();
+});
 
 // ---- Submit edited listing ----
 $('#edit-listing-form')?.addEventListener('submit', async (e) => {
@@ -617,6 +707,30 @@ $('#listings-tab')?.addEventListener('click', () => {
   $('#listings-section').style.display = 'block';
   $('#reviews-tab').classList.remove('tab-active');
   $('#listings-tab').classList.add('tab-active');
+
+  // Default to "Add Listing" sub-tab
+  $('#add-listing-subsection').style.display = 'block';
+  $('#edit-listings-subsection').style.display = 'none';
+  $('#add-listing-tab').classList.add('tab-active');
+  $('#edit-listings-tab').classList.remove('tab-active');
+});
+
+// ---- Sub-tab: Add Listing ----
+$('#add-listing-tab')?.addEventListener('click', () => {
+  $('#add-listing-subsection').style.display = 'block';
+  $('#edit-listings-subsection').style.display = 'none';
+  $('#add-listing-tab').classList.add('tab-active');
+  $('#edit-listings-tab').classList.remove('tab-active');
+});
+
+// ---- Sub-tab: Edit Listings ----
+$('#edit-listings-tab')?.addEventListener('click', () => {
+  $('#add-listing-subsection').style.display = 'none';
+  $('#edit-listings-subsection').style.display = 'block';
+  $('#add-listing-tab').classList.remove('tab-active');
+  $('#edit-listings-tab').classList.add('tab-active');
+  
+  // Load table when tab is opened
   loadAdminListings();
 });
 

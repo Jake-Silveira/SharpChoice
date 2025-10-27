@@ -288,34 +288,47 @@
           </form>
         </div>
 
+        <!-- ====================== LISTINGS SECTION ====================== -->
         <div id="listings-section" style="display:none;">
-          <h3>Add Listing</h3>
-          <form id="add-listing-form">
-            <input type="text" id="listing-address" placeholder="Address" required>
-            <input type="text" id="listing-city" placeholder="City" required>
-            <input type="text" id="listing-state" placeholder="State" required>
-            <input type="text" id="listing-zip" placeholder="ZIP" required>
-            <input type="number" id="listing-price" placeholder="Price ($)" required>
-            <input type="number" id="listing-beds" placeholder="Beds" required>
-            <input type="number" id="listing-baths" placeholder="Baths" required>
-            <input type="number" id="listing-sqft" placeholder="Sqft" required>
-            <select id="listing-status" required>
-              <option value="active">Active – Show on homepage</option>
-              <option value="closed">Closed – SOLD</option>
-            </select>
-            <label>Photos (multiple)</label>
-            <input type="file" id="listing-photos" multiple accept="image/*">
-            <textarea id="listing-metadata" placeholder='{"mls":"12345"}'></textarea>
-            <div class="form-actions">
-              <button type="submit" class="btn-save">Add Listing</button>
-            </div>
-          </form>
-
-          <!-- Listings Table -->
-          <h3 style="margin-top: 2rem;">Manage Listings</h3>
-          <div id="admin-listings-container" style="max-height: 400px; overflow-y: auto; margin-top: 1rem;">
-            <!-- Dynamic table loaded here -->
+          <!-- Tabs inside Listings -->
+          <div class="admin-tabs">
+            <button id="add-listing-tab" class="tab-btn tab-active">Add Listing</button>
+            <button id="edit-listings-tab" class="tab-btn">Edit Listings</button>
           </div>
+
+          <!-- Add Listing Sub-section -->
+          <div id="add-listing-subsection">
+            <h3>Add New Listing</h3>
+            <form id="add-listing-form">
+              <input type="text" id="listing-address" placeholder="Address" required>
+              <input type="text" id="listing-city" placeholder="City" required>
+              <input type="text" id="listing-state" placeholder="State" required>
+              <input type="text" id="listing-zip" placeholder="ZIP" required>
+              <input type="number" id="listing-price" placeholder="Price ($)" required>
+              <input type="number" id="listing-beds" placeholder="Beds" required>
+              <input type="number" id="listing-baths" placeholder="Baths" required>
+              <input type="number" id="listing-sqft" placeholder="Sqft" required>
+              <select id="listing-status" required>
+                <option value="active">Active – Show on homepage</option>
+                <option value="closed">Closed – SOLD</option>
+              </select>
+              <label>Photos (multiple)</label>
+              <input type="file" id="listing-photos" multiple accept="image/*">
+              <textarea id="listing-metadata" placeholder='{"mls":"12345"}'></textarea>
+              <div class="form-actions">
+                <button type="submit" class="btn-save">Add Listing</button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Edit Listings Sub-section -->
+          <div id="edit-listings-subsection" style="display:none;">
+            <h3>Manage Existing Listings</h3>
+            <div id="admin-listings-container" style="max-height: 500px; overflow-y: auto; margin-top: 1rem;">
+              <!-- Dynamic table loaded here -->
+            </div>
+          </div>
+        </div>
 
           <!-- Edit Listing Modal -->
           <div id="edit-listing-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="edit-listing-title">
@@ -358,8 +371,8 @@
                 <label for="edit-metadata">Metadata (JSON)</label>
                 <textarea id="edit-metadata" rows="4" placeholder='{"mls":"12345","yearBuilt":2020}'></textarea>
 
-                <div class="form-actions" style="margin-top:1rem;">
-                  <button type="button" class="btn-cancel modal-close">Cancel</button>
+                <div class="form-actions" style="margin-top:1rem; display:flex; gap:0.75rem; justify-content:flex-end;">
+                  <button type="button" class="btn-cancel" id="edit-cancel-btn">Cancel</button>
                   <button type="submit" class="btn-save">Save Changes</button>
                 </div>
               </form>
