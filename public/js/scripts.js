@@ -201,31 +201,31 @@ async function loadFeaturedListings() {
     }
 
       listings.forEach((l) => {
-      const price = new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD',
-        maximumFractionDigits: 0,
-      }).format(l.price);
+        const price = new Intl.NumberFormat('en-US', {
+          style: 'currency',
+          currency: 'USD',
+          maximumFractionDigits: 0,
+        }).format(l.price);
 
-      const article = document.createElement('article');
-      article.className = 'listing';
-      article.dataset.id = l.id;
+        const article = document.createElement('article');
+        article.className = 'listing';
+        article.dataset.id = l.id;
 
-      // Render photos (new helper)
-      renderPhotos(l.photos, article);
+        // ---- PHOTOS ----
+        renderPhotos(l.photos, article);
 
-      // Append text content after photos
-      const textContent = document.createElement('div');
-      textContent.innerHTML = `
-        <h3>${l.address}</h3>
-        <p>${l.beds} bed • ${l.baths} bath • ${l.sqft} sqft</p>
-        <p class="price">${price}</p>
-        <span class="status-badge status-active">For Sale</span>
-      `;
-      article.appendChild(textContent);
+        // ---- TEXT ----
+        const text = document.createElement('div');
+        text.innerHTML = `
+          <h3>${l.address}</h3>
+          <p>${l.beds} bed • ${l.baths} bath • ${l.sqft} sqft</p>
+          <p class="price">${price}</p>
+          <span class="status-badge status-active">For Sale</span>
+        `;
+        article.appendChild(text);
 
-      grid.appendChild(article);
-    });
+        grid.appendChild(article);
+      });
 
     const viewAll = $('#view-all-listings');
     if (viewAll) viewAll.style.display = listings.length ? 'block' : 'none';
@@ -268,18 +268,18 @@ async function loadAllListings() {
         ? '<span class="status-badge status-closed">SOLD</span>'
         : '<span class="status-badge status-active">For Sale</span>';
 
-      // Render photos (new helper)
+      // ---- PHOTOS ----
       renderPhotos(l.photos, article);
 
-      // Append text content after photos
-      const textContent = document.createElement('div');
-      textContent.innerHTML = `
+      // ---- TEXT ----
+      const text = document.createElement('div');
+      text.innerHTML = `
         <h3>${l.address}, ${l.city} ${l.zip}</h3>
         <p>${l.beds} bed • ${l.baths} bath • ${l.sqft} sqft</p>
         <p class="price">${price}</p>
         ${statusBadge}
       `;
-      article.appendChild(textContent);
+      article.appendChild(text);
 
       container.appendChild(article);
     });
@@ -683,33 +683,37 @@ function parseJSONSafe(str) {
   try { return JSON.parse(str); } catch { return {}; }
 }
 
-// Helper to render photos with containment
+// ---------- PHOTO RENDERER ----------
 function renderPhotos(photos = [], container) {
-  const section = document.createElement('div');
-  section.className = 'photo-section';
-
+  // ---- No photos → placeholder ----
   if (!photos.length) {
     const img = document.createElement('img');
     img.src = 'assets/placeholder.jpg';
     img.alt = 'No photo';
     img.className = 'main-photo';
-    section.appendChild(img);
-    container.appendChild(section);
+    img.style.width = '100%';
+    img.style.borderRadius = '6px';
+    container.appendChild(img);
     return;
   }
 
-  // Main photo (first one, large)
+  // ---- MAIN PHOTO (first image) ----
+  const mainContainer = document.createElement('div');
+  mainContainer.className = 'main-photo-container';
+
   const mainImg = document.createElement('img');
   mainImg.src = photos[0].url;
   mainImg.alt = 'Main listing photo';
   mainImg.className = 'main-photo';
   mainImg.loading = 'lazy';
-  section.appendChild(mainImg);
+  mainContainer.appendChild(mainImg);
+  container.appendChild(mainContainer);
 
-  // Carousel for all photos (thumbs)
+  // ---- THUMBNAIL CAROUSEL (ALL photos) ----
   const carousel = document.createElement('div');
   carousel.className = 'photo-carousel';
-  photos.forEach((p) => {
+
+  photos.forEach(p => {
     const thumb = document.createElement('img');
     thumb.src = p.url;
     thumb.alt = 'Listing thumbnail';
@@ -717,9 +721,8 @@ function renderPhotos(photos = [], container) {
     thumb.loading = 'lazy';
     carousel.appendChild(thumb);
   });
-  section.appendChild(carousel);
 
-  container.appendChild(section);
+  container.appendChild(carousel);
 }
 
 // Add Review
@@ -829,5 +832,25 @@ $('#add-listing-form')?.addEventListener('submit', async (e) => {
   } catch (err) {
     console.error('Add listing error:', err);
     alert('Error adding listing: ' + err.message);
+  }
+});
+
+// ---------- LIGHTBOX ----------
+document.addEventListener('click', e => {
+  if (e.target.matches('.photo-thumb')) {
+    const lightbox = document.createElement('div');
+    lightbox.style.cssText = `
+      position:fixed; inset:0; background:rgba(0,0,0,.85);
+      display:flex; align-items:center; justify-content:center;
+      z-index:2000; cursor:pointer;
+    `;
+    const img = document.createElement('img');
+    img.src = e.target.src;
+    img.style.maxWidth = '90%';
+    img.style.maxHeight = '90%';
+    img.style.borderRadius = '8px';
+    lightbox.appendChild(img);
+    lightbox.onclick = () => lightbox.remove();
+    document.body.appendChild(lightbox);
   }
 });
