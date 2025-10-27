@@ -260,6 +260,100 @@ async function loadAllListings() {
   }
 }
 
+// Load listings into admin dashboard
+async function loadAdminListings() {
+  const container = $('#admin-listings-container');
+  if (!container) return;
+
+  try {
+    const res = await fetch('/api/listings');
+    if (!res.ok) throw new Error('Failed to fetch');
+    const listings = await res.json();
+
+    if (!Array.isArray(listings) || listings.length === 0) {
+      container.innerHTML = '<p>No listings yet.</p>';
+      return;
+    }
+
+    let html = `
+      <table style="width:100%; border-collapse: collapse;">
+        <thead>
+          <tr style="background: #f8f9fa; text-align: left;">
+            <th style="padding: 0.75rem; border-bottom: 2px solid #eee;">Address</th>
+            <th style="padding: 0.75rem; border-bottom: 2px solid #eee;">Price</th>
+            <th style="padding: 0.75rem; border-bottom: 2px solid #eee;">Status</th>
+            <th style="padding: 0.75rem; border-bottom: 2px solid #eee;">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+    `;
+
+    listings.forEach(l => {
+      const price = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(l.price);
+      const statusText = l.status === 'closed' ? 'SOLD' : 'Active';
+      const statusClass = l.status === 'closed' ? 'status-closed' : 'status-active';
+
+      html += `
+        <tr style="border-bottom: 1px solid #eee;">
+          <td style="padding: 0.75rem;">${l.address}, ${l.city}</td>
+          <td style="padding: 0.75rem;">${price}</td>
+          <td style="padding: 0.75rem;">
+            <span class="status-badge ${statusClass}" style="font-size: 0.8rem; padding: 0.25rem 0.5rem; border-radius: 4px;">
+              ${statusText}
+            </span>
+          </td>
+          <td style="padding: 0.75rem;">
+            <button class="btn-accent" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;" 
+                    onclick="toggleListingStatus('${l.id}', '${l.status}')">
+              ${l.status === 'closed' ? 'Mark Active' : 'Mark SOLD'}
+            </button>
+          </td>
+        </tr>
+      `;
+    });
+
+    html += `</tbody></table>`;
+    container.innerHTML = html;
+  } catch (err) {
+    console.error('loadAdminListings error:', err);
+    container.innerHTML = '<p>Error loading listings.</p>';
+  }
+}
+
+// Toggle listing status
+async function toggleListingStatus(id, currentStatus) {
+  if (!confirm(`Change status to ${currentStatus === 'closed' ? 'Active' : 'SOLD'}?`)) return;
+
+  const newStatus = currentStatus === 'closed' ? 'active' : 'closed';
+
+  const session = JSON.parse(localStorage.getItem('sb-session') || '{}');
+  const token = session.access_token || '';
+
+  try {
+    const res = await fetch(`/api/listings/${id}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ status: newStatus }),
+    });
+
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error || 'Failed');
+    }
+
+    alert('Status updated!');
+    loadAdminListings();
+    loadFeaturedListings();
+    loadAllListings();
+  } catch (err) {
+    console.error('Toggle status error:', err);
+    alert('Error: ' + err.message);
+  }
+}
+
 // =============================
 // Modal Controls
 // =============================
@@ -399,6 +493,7 @@ $('#listings-tab')?.addEventListener('click', () => {
   $('#listings-section').style.display = 'block';
   $('#reviews-tab').classList.remove('tab-active');
   $('#listings-tab').classList.add('tab-active');
+  loadAdminListings();
 });
 
 // Helpers

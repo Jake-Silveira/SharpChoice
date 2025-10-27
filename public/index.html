@@ -300,14 +300,22 @@
             <input type="number" id="listing-baths" placeholder="Baths" required>
             <input type="number" id="listing-sqft" placeholder="Sqft" required>
             <select id="listing-status" required>
-              <option value="active">Active – Show on homepage (Featured)</option>
-              <option value="closed">Closed – SOLD, only in "View All" modal</option>
+              <option value="active">Active – Show on homepage</option>
+              <option value="closed">Closed – SOLD</option>
             </select>
             <label>Photos (multiple)</label>
             <input type="file" id="listing-photos" multiple accept="image/*">
             <textarea id="listing-metadata" placeholder='{"mls":"12345"}'></textarea>
-            <button type="submit">Add Listing</button>
+            <div class="form-actions">
+              <button type="submit" class="btn-save">Add Listing</button>
+            </div>
           </form>
+
+          <!-- Listings Table -->
+          <h3 style="margin-top: 2rem;">Manage Listings</h3>
+          <div id="admin-listings-container" style="max-height: 400px; overflow-y: auto; margin-top: 1rem;">
+            <!-- Dynamic table loaded here -->
+          </div>
         </div>
       </div>
     </div>
