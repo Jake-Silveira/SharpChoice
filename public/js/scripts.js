@@ -200,8 +200,7 @@ async function loadFeaturedListings() {
       return;
     }
 
-    listings.forEach((l) => {
-      const photo = l.photos?.[0]?.url || 'assets/placeholder.jpg';
+      listings.forEach((l) => {
       const price = new Intl.NumberFormat('en-US', {
         style: 'currency',
         currency: 'USD',
@@ -211,13 +210,20 @@ async function loadFeaturedListings() {
       const article = document.createElement('article');
       article.className = 'listing';
       article.dataset.id = l.id;
-      article.innerHTML = `
-        <img src="${photo}" alt="${l.address}" loading="lazy">
+
+      // Render photos (new helper)
+      renderPhotos(l.photos, article);
+
+      // Append text content after photos
+      const textContent = document.createElement('div');
+      textContent.innerHTML = `
         <h3>${l.address}</h3>
         <p>${l.beds} bed • ${l.baths} bath • ${l.sqft} sqft</p>
         <p class="price">${price}</p>
         <span class="status-badge status-active">For Sale</span>
       `;
+      article.appendChild(textContent);
+
       grid.appendChild(article);
     });
 
@@ -248,7 +254,6 @@ async function loadAllListings() {
     }
 
     listings.forEach((l) => {
-      const photo = l.photos?.[0]?.url || 'assets/placeholder.jpg';
       const price = new Intl.NumberFormat('en-US', {
         style: 'currency',
         currency: 'USD',
@@ -263,13 +268,19 @@ async function loadAllListings() {
         ? '<span class="status-badge status-closed">SOLD</span>'
         : '<span class="status-badge status-active">For Sale</span>';
 
-      article.innerHTML = `
-        <img src="${photo}" alt="${l.address}" loading="lazy">
+      // Render photos (new helper)
+      renderPhotos(l.photos, article);
+
+      // Append text content after photos
+      const textContent = document.createElement('div');
+      textContent.innerHTML = `
         <h3>${l.address}, ${l.city} ${l.zip}</h3>
         <p>${l.beds} bed • ${l.baths} bath • ${l.sqft} sqft</p>
         <p class="price">${price}</p>
         ${statusBadge}
       `;
+      article.appendChild(textContent);
+
       container.appendChild(article);
     });
   } catch (err) {
@@ -670,6 +681,45 @@ function fileToBase64(file) {
 }
 function parseJSONSafe(str) {
   try { return JSON.parse(str); } catch { return {}; }
+}
+
+// Helper to render photos with containment
+function renderPhotos(photos = [], container) {
+  const section = document.createElement('div');
+  section.className = 'photo-section';
+
+  if (!photos.length) {
+    const img = document.createElement('img');
+    img.src = 'assets/placeholder.jpg';
+    img.alt = 'No photo';
+    img.className = 'main-photo';
+    section.appendChild(img);
+    container.appendChild(section);
+    return;
+  }
+
+  // Main photo (first one, large)
+  const mainImg = document.createElement('img');
+  mainImg.src = photos[0].url;
+  mainImg.alt = 'Main listing photo';
+  mainImg.className = 'main-photo';
+  mainImg.loading = 'lazy';
+  section.appendChild(mainImg);
+
+  // Carousel for all photos (thumbs)
+  const carousel = document.createElement('div');
+  carousel.className = 'photo-carousel';
+  photos.forEach((p) => {
+    const thumb = document.createElement('img');
+    thumb.src = p.url;
+    thumb.alt = 'Listing thumbnail';
+    thumb.className = 'photo-thumb';
+    thumb.loading = 'lazy';
+    carousel.appendChild(thumb);
+  });
+  section.appendChild(carousel);
+
+  container.appendChild(section);
 }
 
 // Add Review
