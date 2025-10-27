@@ -197,7 +197,7 @@ async function loadFeaturedListings() {
         <h3>${l.address}</h3>
         <p>${l.beds} bed • ${l.baths} bath • ${l.sqft} sqft</p>
         <p class="price">${price}</p>
-        ${l.status === 'closed' ? '<span class="sold">SOLD</span>' : ''}
+        <span class="status-badge status-active">For Sale</span>
       `;
       grid.appendChild(article);
     });
@@ -239,11 +239,17 @@ async function loadAllListings() {
       const article = document.createElement('article');
       article.className = 'listing';
       article.dataset.id = l.id;
+
+      const statusBadge = l.status === 'closed'
+        ? '<span class="status-badge status-closed">SOLD</span>'
+        : '<span class="status-badge status-active">For Sale</span>';
+
       article.innerHTML = `
         <img src="${photo}" alt="${l.address}" loading="lazy">
         <h3>${l.address}, ${l.city} ${l.zip}</h3>
-        <p>${l.beds} bed • ${l.baths} bath • ${l.sqft} sqft • ${price}</p>
-        ${l.status === 'closed' ? '<span class="sold">SOLD</span>' : ''}
+        <p>${l.beds} bed • ${l.baths} bath • ${l.sqft} sqft</p>
+        <p class="price">${price}</p>
+        ${statusBadge}
       `;
       container.appendChild(article);
     });

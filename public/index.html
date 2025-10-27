@@ -299,9 +299,9 @@
             <input type="number" id="listing-beds" placeholder="Beds" required>
             <input type="number" id="listing-baths" placeholder="Baths" required>
             <input type="number" id="listing-sqft" placeholder="Sqft" required>
-            <select id="listing-status">
-              <option value="active">Active</option>
-              <option value="closed">Closed</option>
+            <select id="listing-status" required>
+              <option value="active">Active – Show on homepage (Featured)</option>
+              <option value="closed">Closed – SOLD, only in "View All" modal</option>
             </select>
             <label>Photos (multiple)</label>
             <input type="file" id="listing-photos" multiple accept="image/*">

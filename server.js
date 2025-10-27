@@ -150,12 +150,17 @@ app.get("/api/listings", async (req, res) => {
 app.post("/api/listings", requireAuth, async (req, res) => {
   const {
     address, city, state, zip, price,
-    beds, baths, sqft, status = "active",
+    beds, baths, sqft,
+    status = "active",  // default to active
     photos = [], metadata = {}
   } = req.body;
 
   if (!address || !city || !state || !zip || price == null || beds == null || baths == null || sqft == null) {
     return res.status(400).json({ error: "Missing required fields" });
+  }
+
+  if (!['active', 'closed'].includes(status)) {
+    return res.status(400).json({ error: "Invalid status. Use 'active' or 'closed'" });
   }
 
   try {
