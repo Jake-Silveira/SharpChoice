@@ -707,48 +707,77 @@ $('#add-listing-form')?.addEventListener('submit', async (e) => {
 
   const photos = [];
   const files = $('#listing-photos').files;
+  const previewContainer = document.createElement('div');
+  previewContainer.className = 'photo-preview';
+  $('#add-listing-form').appendChild(previewContainer); // Add previews below input
 
-  for (let file of files) {
-    const base64 = await fileToBase64(file);
-    const up = await fetch('/api/upload-image', {
+  try {
+    for (let file of files) {
+      // Preview (optional but helpful)
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        const img = document.createElement('img');
+        img.src = ev.target.result;
+        previewContainer.appendChild(img);
+      };
+      reader.readAsDataURL(file);
+
+      const base64 = await fileToBase64(file);
+      const up = await fetch('/api/upload-image', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ fileName: file.name, fileData: base64 }),
+      });
+
+      if (!up.ok) {
+        const err = await up.json();
+        throw new Error(err.error || 'Upload failed');
+      }
+
+      const { url } = await up.json();
+      photos.push({ url, caption: '' });
+    }
+
+    const payload = {
+      address: $('#listing-address').value.trim(),
+      city: $('#listing-city').value.trim(),
+      state: $('#listing-state').value.trim(),
+      zip: $('#listing-zip').value.trim(),
+      price: Number($('#listing-price').value),
+      beds: Number($('#listing-beds').value),
+      baths: Number($('#listing-baths').value),
+      sqft: Number($('#listing-sqft').value),
+      status: $('#listing-status').value,
+      photos,
+      metadata: parseJSONSafe($('#listing-metadata').value) || {},
+    };
+
+    const session = JSON.parse(localStorage.getItem('sb-session') || '{}');
+    const token = session.access_token || '';
+    if (!token) throw new Error('Not authenticated');
+
+    const res = await fetch('/api/listings', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ fileName: file.name, fileData: base64 }),
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(payload),
     });
-    const { url } = await up.json();
-    photos.push({ url, caption: '' });
-  }
 
-  const payload = {
-    address: $('#listing-address').value,
-    city: $('#listing-city').value,
-    state: $('#listing-state').value,
-    zip: $('#listing-zip').value,
-    price: Number($('#listing-price').value),
-    beds: Number($('#listing-beds').value),
-    baths: Number($('#listing-baths').value),
-    sqft: Number($('#listing-sqft').value),
-    status: $('#listing-status').value,
-    photos,
-    metadata: parseJSONSafe($('#listing-metadata').value) || {},
-  };
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error || 'Add failed');
+    }
 
-  const session = JSON.parse(localStorage.getItem('sb-session') || '{}');
-  const res = await fetch('/api/listings', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${session.access_token || ''}`,
-    },
-    body: JSON.stringify(payload),
-  });
-
-  if (res.ok) {
-    alert('Listing added!');
-    loadFeaturedListings();
+    alert('Listing added successfully!');
     e.target.reset();
-  } else {
-    const err = await res.json();
-    alert('Error: ' + (err.error || 'unknown'));
+    previewContainer.innerHTML = ''; // Clear previews
+    loadFeaturedListings();
+    loadAllListings(); // Refresh modals too
+    loadAdminListings();
+  } catch (err) {
+    console.error('Add listing error:', err);
+    alert('Error adding listing: ' + err.message);
   }
 });

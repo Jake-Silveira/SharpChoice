@@ -233,27 +233,33 @@ app.post("/api/upload-image", async (req, res) => {
   const { fileName, fileData } = req.body;
 
   if (!fileName || !fileData) {
-    return res.status(400).json({ error: "Missing file" });
+    return res.status(400).json({ error: "Missing fileName or fileData" });
   }
 
   try {
-    const { error } = await supabase.storage
+    // Detect contentType from extension (e.g., .jpg -> image/jpeg)
+    const ext = fileName.split('.').pop().toLowerCase();
+    const contentType = `image/${ext === 'jpg' ? 'jpeg' : ext}`; // Handles jpeg, png, gif, etc.
+
+    const { error: uploadError } = await supabase.storage
       .from("listings-images")
       .upload(fileName, Buffer.from(fileData, "base64"), {
-        contentType: "image/jpeg",
-        upsert: true,
+        contentType,
+        upsert: true, // Overwrite if exists
       });
 
-    if (error) throw error;
+    if (uploadError) throw uploadError;
 
     const { data: { publicUrl } } = supabase.storage
       .from("listings-images")
       .getPublicUrl(fileName);
 
+    if (!publicUrl) throw new Error("Failed to get public URL");
+
     res.json({ url: publicUrl });
   } catch (err) {
-    console.error("Upload error:", err);
-    res.status(500).json({ error: "Failed to upload image" });
+    console.error("Upload error:", err.message || err);
+    res.status(500).json({ error: "Failed to upload image: " + (err.message || "Unknown error") });
   }
 });
 
