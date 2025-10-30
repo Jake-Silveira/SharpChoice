@@ -192,7 +192,7 @@ async function loadReviews(page = 1, limit = 3, containerId = 'reviews-container
 }
 
 // =============================
-// Featured Listings
+// Featured Listings (DEBUG + FIXED)
 // =============================
 async function loadFeaturedListings() {
   try {
@@ -203,7 +203,7 @@ async function loadFeaturedListings() {
     const grid = $('.listings-grid');
     if (!grid) return;
 
-    // ---- SKELETON ----
+    // Skeleton
     grid.innerHTML = `
       <div class="skeleton skeleton-listing"></div>
       <div class="skeleton skeleton-listing"></div>
@@ -213,13 +213,14 @@ async function loadFeaturedListings() {
       </div>
     `;
 
-    // Clear skeleton
-    grid.innerHTML = '';
+    grid.innerHTML = ''; // Clear skeleton
 
     if (!Array.isArray(listings) || listings.length === 0) {
       grid.innerHTML = '<p>No active listings at this time.</p>';
       return;
     }
+
+    console.log('Raw listings from API:', listings); // ← DEBUG
 
     listings.forEach((l) => {
       const price = new Intl.NumberFormat('en-US', {
@@ -232,10 +233,10 @@ async function loadFeaturedListings() {
       article.className = 'listing';
       article.dataset.id = l.id;
 
-      // ---- PHOTOS ----
+      // PHOTOS
       renderPhotos(l.photos, article);
 
-      // ---- TEXT ----
+      // TEXT
       const text = document.createElement('div');
       text.innerHTML = `
         <h3>${l.address}</h3>
@@ -700,47 +701,72 @@ function parseJSONSafe(str) {
   try { return JSON.parse(str); } catch { return {}; }
 }
 
-// ---------- PHOTO RENDERER ----------
+// ---------- PHOTO RENDERER (FIXED) ----------
 function renderPhotos(photos = [], container) {
   // ---- No photos → placeholder ----
-  if (!photos.length) {
+  if (!photos || !Array.isArray(photos) || photos.length === 0) {
     const img = document.createElement('img');
     img.src = 'assets/placeholder.jpg';
-    img.alt = 'No photo';
+    img.alt = 'No photo available';
     img.className = 'main-photo';
-    img.style.width = '100%';
-    img.style.borderRadius = '6px';
     img.loading = 'lazy';
+    img.style.cssText = 'width:100%;border-radius:6px;';
     container.appendChild(img);
     return;
   }
 
-  // ---- MAIN PHOTO (first image) ----
+  // ---- MAIN PHOTO ----
   const mainContainer = document.createElement('div');
   mainContainer.className = 'main-photo-container';
 
   const mainImg = document.createElement('img');
-  mainImg.src = photos[0].url;
+  const mainUrl = ensurePublicUrl(photos[0].url);
+  mainImg.src = mainUrl;
   mainImg.alt = 'Main listing photo';
   mainImg.className = 'main-photo';
   mainImg.loading = 'lazy';
+  mainImg.onerror = () => {
+    mainImg.src = 'assets/placeholder.jpg';
+    console.warn('Main photo failed to load:', photos[0].url);
+  };
   mainContainer.appendChild(mainImg);
   container.appendChild(mainContainer);
 
-  // ---- THUMBNAIL CAROUSEL (ALL photos) ----
+  // ---- THUMBNAIL CAROUSEL ----
   const carousel = document.createElement('div');
   carousel.className = 'photo-carousel';
 
   photos.forEach(p => {
     const thumb = document.createElement('img');
-    thumb.src = p.url;
+    const thumbUrl = ensurePublicUrl(p.url);
+    thumb.src = thumbUrl;
     thumb.alt = 'Listing thumbnail';
     thumb.className = 'photo-thumb';
     thumb.loading = 'lazy';
+    thumb.onerror = () => {
+      thumb.src = 'assets/placeholder.jpg';
+      console.warn('Thumbnail failed to load:', p.url);
+    };
     carousel.appendChild(thumb);
   });
 
   container.appendChild(carousel);
+
+  // Helper: convert any Supabase URL to public version
+  function ensurePublicUrl(url) {
+    if (!url) return 'assets/placeholder.jpg';
+    // If it's already a full public URL, return it
+    if (url.includes('supabase.co/storage/v1/object/public')) return url;
+    // If it's a token-based URL, strip token
+    try {
+      const u = new URL(url);
+      if (u.searchParams.has('token')) {
+        u.search = '';
+        return u.toString();
+      }
+    } catch {}
+    return url;
+  }
 }
 
 // Add Review
