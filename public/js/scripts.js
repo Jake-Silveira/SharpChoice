@@ -202,7 +202,8 @@ async function loadFeaturedListings() {
 
     const grid = $('.listings-grid');
     if (!grid) return;
-    // Show skeleton
+
+    // ---- SKELETON ----
     grid.innerHTML = `
       <div class="skeleton skeleton-listing"></div>
       <div class="skeleton skeleton-listing"></div>
@@ -211,6 +212,8 @@ async function loadFeaturedListings() {
         <div class="skeleton skeleton-text" style="width:30%;height:20px;"></div>
       </div>
     `;
+
+    // Clear skeleton
     grid.innerHTML = '';
 
     if (!Array.isArray(listings) || listings.length === 0) {
@@ -218,37 +221,33 @@ async function loadFeaturedListings() {
       return;
     }
 
-      listings.forEach((l) => {
-        const price = new Intl.NumberFormat('en-US', {
-          style: 'currency',
-          currency: 'USD',
-          maximumFractionDigits: 0,
-        }).format(l.price);
+    listings.forEach((l) => {
+      const price = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        maximumFractionDigits: 0,
+      }).format(l.price);
 
-        const article = document.createElement('article');
-        article.className = 'listing';
-        article.dataset.id = l.id;
+      const article = document.createElement('article');
+      article.className = 'listing';
+      article.dataset.id = l.id;
 
-        // ---- PHOTOS ----
-        renderPhotos(l.photos, article);
+      // ---- PHOTOS ----
+      renderPhotos(l.photos, article);
 
-        // ---- TEXT ----
-        const text = document.createElement('div');
-        text.innerHTML = `
-          <h3>${l.address}</h3>
-          <p>${l.beds} bed • ${l.baths} bath • ${l.sqft} sqft</p>
-          <p class="price">${price}</p>
-          <span class="status-badge status-active">For Sale</span>
-        `;
-        article.appendChild(text);
-
-        grid.appendChild(article);
-      });
-
-    const viewAll = $('#view-all-listings');
-    if (viewAll) viewAll.style.display = listings.length ? 'block' : 'none';
+      // ---- TEXT ----
+      const text = document.createElement('div');
+      text.innerHTML = `
+        <h3>${l.address}</h3>
+        <p>${l.beds} bed • ${l.baths} bath • ${l.sqft} sqft</p>
+        <p class="price">${price}</p>
+        <span class="status-badge status-active">For Sale</span>
+      `;
+      article.appendChild(text);
+      grid.appendChild(article);
+    });
   } catch (err) {
-    console.error('loadFeaturedListings error:', err.message, err.stack);
+    console.error('loadFeaturedListings error:', err);
     const grid = $('.listings-grid');
     if (grid) grid.innerHTML = '<p>Error loading listings. Please try again later.</p>';
   }
@@ -711,6 +710,7 @@ function renderPhotos(photos = [], container) {
     img.className = 'main-photo';
     img.style.width = '100%';
     img.style.borderRadius = '6px';
+    img.loading = 'lazy';
     container.appendChild(img);
     return;
   }

@@ -1776,3 +1776,38 @@ img[loading="lazy"].loaded {
     padding: 12px 18px;
   }
 }
+
+/* ---------- LISTING PHOTOS ---------- */
+.main-photo-container {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--border-radius);
+  margin-bottom: 0.75rem;
+}
+.main-photo {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+}
+.photo-carousel {
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding-bottom: 0.5rem;
+  scrollbar-width: none;               /* Firefox */
+}
+.photo-carousel::-webkit-scrollbar { display: none; } /* Chrome/Safari */
+.photo-thumb {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 4px;
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+.photo-thumb:hover {
+  transform: scale(1.05);
+}
