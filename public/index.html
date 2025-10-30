@@ -5,6 +5,8 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#1a4731" />
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#b8a89f">
 
   <!-- SEO -->
   <title>Sharp Choice Real Estate | Austin TX Homes for Sale</title>
@@ -12,6 +14,9 @@
   <meta name="keywords" content="Austin real estate, home buying, home selling, Stephanie Sharp, Texas homes">
   <meta name="author" content="Stephanie Sharp">
   <link rel="canonical" href="https://sharpchoicerealestate.com" />
+  <link rel="preload" href="css/styles.css" as="style">
+  <link rel="preload" href="js/scripts.js" as="script">
+  <link rel="dns-prefetch" href="//fonts.googleapis.com">
 
   <!-- Open Graph -->
   <meta property="og:title" content="Sharp Choice Real Estate">
@@ -68,13 +73,14 @@
   <link rel="icon" href="/assets/logo.png" type="image/png">
   <link rel="apple-touch-icon" href="/assets/logo.png">
 
-  <!-- Analytics (replace G-XXXXXXXXXX) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-CCCVWTJQCY"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
-    gtag('config', 'G-XXXXXXXXXX', { anonymize_ip: true });
+
+    gtag('config', 'G-CCCVWTJQCY');
   </script>
 
   
@@ -114,7 +120,7 @@
 
   <main id="main-content">
     <!-- HERO -->
-    <section id="hero" class="hero">
+    <section id="hero" class="hero fade-on-scroll">
       <div class="container hero-inner">
         <div class="hero-text">
           <h2>The Best Move Starts With A Sharp Choice.</h2>
@@ -148,7 +154,7 @@
     </section>
 
 <!-- ABOUT -->
-<section id="about" class="about container">
+<section id="about" class="about container fade-on-scroll">
   <div class="aboutContainerTop">
     <div class="about-photo">
       <img src="assets/profile.jpg" alt="Photo of Stephanie Sharp" loading="lazy" />
@@ -175,7 +181,7 @@
 
 
     <!-- SERVICES -->
-<section id="services" class="container" aria-labelledby="services-heading">
+<section id="services" class="container fade-on-scroll" aria-labelledby="services-heading">
   <h2 id="services-heading">Services</h2>
   <div class="service-buttons">
     <button class="service-btn cta" data-scroll="#contact">
@@ -191,7 +197,7 @@
 </section>
 
     <!-- LISTINGS -->
-    <section id="listings" class="container" aria-labelledby="listings-heading">
+    <section id="listings" class="container fade-on-scroll" aria-labelledby="listings-heading">
       <h2 id="listings-heading">Featured Listings</h2>
       <div class="listings-grid" aria-live="polite">
         <!-- Dynamic content loaded by JS -->
@@ -213,7 +219,7 @@
     </div>
 
     <!-- REVIEWS -->
-    <section id="reviews" class="container" aria-labelledby="reviews-heading">
+    <section id="reviews" class="container fade-on-scroll" aria-labelledby="reviews-heading">
       <h2 id="reviews-heading">What Clients Say</h2>
       <div id="reviews-container" aria-live="polite">
         <!-- Dynamic -->
@@ -236,7 +242,7 @@
     </div>
 
     <!-- MAP -->
-    <section id="map" class="container" aria-labelledby="map-heading">
+    <section id="map" class="container fade-on-scroll" aria-labelledby="map-heading">
       <h2 id="map-heading">Service Area</h2>
       <div class="map-wrapper">
         <img src="assets/serviceMap.png" alt="Central Texas Service Area Map - Austin and surrounding counties" class="service-map" loading="lazy">
@@ -244,7 +250,7 @@
     </section>
 
     <!-- CONTACT -->
-    <section id="contact" class="container" aria-labelledby="contact-heading">
+    <section id="contact" class="container fade-on-scroll" aria-labelledby="contact-heading">
       <h2 id="contact-heading">Get in Touch</h2>
       <form id="contact-form" novalidate>
         <div class="form-group">
@@ -438,10 +444,12 @@
       <p>
         <a href="/privacy.html" style="color:var(--color-primary); margin:0 1rem;">Privacy Policy</a> |
         <a href="/terms.html" style="color:var(--color-primary); margin:0 1rem;">Terms of Service</a>
+        <button id="back-to-top" class="btn-back-to-top" aria-label="Back to top">↑</button>
       </p>
     </div>
   </footer>
 
+  <button id="sticky-cta" class="sticky-cta">Chat Now</button>
   <!-- Scripts -->
   <script src="js/scripts.js" defer></script>
 </body>

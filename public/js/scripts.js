@@ -24,6 +24,15 @@ function initSupabase() {
 }
 initSupabase();
 
+// Global error handler
+window.addEventListener('error', (e) => {
+  console.error('Global error:', e.error);
+  // Optional: Send to error tracking service
+});
+window.addEventListener('unhandledrejection', (e) => {
+  console.error('Unhandled promise rejection:', e.reason);
+});
+
 // =============================
 // Footer Year
 // =============================
@@ -193,6 +202,15 @@ async function loadFeaturedListings() {
 
     const grid = $('.listings-grid');
     if (!grid) return;
+    // Show skeleton
+    grid.innerHTML = `
+      <div class="skeleton skeleton-listing"></div>
+      <div class="skeleton skeleton-listing"></div>
+      <div style="display:flex;gap:1rem">
+        <div class="skeleton skeleton-text" style="width:60%;height:20px;"></div>
+        <div class="skeleton skeleton-text" style="width:30%;height:20px;"></div>
+      </div>
+    `;
     grid.innerHTML = '';
 
     if (!Array.isArray(listings) || listings.length === 0) {
@@ -853,4 +871,57 @@ document.addEventListener('click', e => {
     lightbox.onclick = () => lightbox.remove();
     document.body.appendChild(lightbox);
   }
+});
+
+// =============================
+// Fade-in on Scroll
+// =============================
+document.addEventListener('DOMContentLoaded', () => {
+  const fadeElements = document.querySelectorAll('.fade-on-scroll');
+
+  if ('IntersectionObserver' in window) {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target); // Stop observing once visible (one-time effect)
+        }
+      });
+    }, {
+      threshold: 0.1, // Trigger when 10% of element is in view
+      rootMargin: '0px 0px -50px 0px' // Slight offset for smoother reveal
+    });
+
+    fadeElements.forEach(el => observer.observe(el));
+  } else {
+    // Fallback for older browsers: show immediately
+    fadeElements.forEach(el => el.classList.add('visible'));
+  }
+});
+
+// Back to top
+const backToTop = $('#back-to-top');
+window.addEventListener('scroll', () => {
+  backToTop.classList.toggle('show', window.scrollY > 500);
+});
+backToTop?.addEventListener('click', () => {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
+// Lazy Image Loader
+document.addEventListener('DOMContentLoaded', () => {
+  const images = document.querySelectorAll('img[loading="lazy"]');
+  images.forEach(img => {
+    if (img.complete) {
+      img.classList.add('loaded');
+    } else {
+      img.addEventListener('load', () => img.classList.add('loaded'));
+    }
+  });
+});
+
+// Sticky CTA
+$('#sticky-cta')?.addEventListener('click', () => {
+  $('#contact').scrollIntoView({ behavior: 'smooth' });
+  setTimeout(() => $('#contactName')?.focus(), 800);
 });

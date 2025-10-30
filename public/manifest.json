@@ -1,0 +1,16 @@
+{
+  "name": "Sharp Choice Real Estate",
+  "short_name": "Sharp Choice",
+  "description": "Austin's trusted real estate partner",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#b8a89f",
+  "icons": [
+    {
+      "src": "/assets/logo.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+}
