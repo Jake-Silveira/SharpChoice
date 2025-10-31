@@ -1704,21 +1704,6 @@ body {
   width: 100%;
 }
 
-/* Image Optimizations */
-img {
-  max-width: 100%;
-  height: auto;
-}
-
-img[loading="lazy"] {
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-img[loading="lazy"].loaded {
-  opacity: 1;
-}
-
 /* WCAG 2.2 Focus & Accessibility */
 *:focus-visible {
   outline: 2px solid var(--color-accent);
