@@ -1640,7 +1640,7 @@ body {
 
 .btn-back-to-top {
   position: fixed;
-  bottom: 4rem;
+  bottom: 80px;
   right: 1.5rem;
   width: 3.5rem;
   height: 3.5rem;
@@ -1795,4 +1795,28 @@ body {
 }
 .photo-thumb:hover {
   transform: scale(1.05);
+}
+
+/* Contact Form Opt-In */
+.contact form .opt-in-container {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start; /* Explicitly align to left */
+  gap: 0.75rem;
+  margin: 1rem 0;
+  font-size: 0.95rem;
+  color: #555;
+  text-align: left; /* Ensure text is left-aligned if wrapping occurs */
+}
+
+.contact form .opt-in-container input[type="checkbox"] {
+  width: 1.1rem;
+  height: 1.1rem;
+  cursor: pointer;
+  flex-shrink: 0; /* Prevent checkbox from shrinking */
+}
+
+.contact form .opt-in-container label {
+  cursor: pointer;
+  flex: 1; /* Allow label to take remaining space */
 }

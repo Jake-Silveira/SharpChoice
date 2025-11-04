@@ -4,6 +4,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { createClient } from "@supabase/supabase-js";
 import { Resend } from "resend";
+import validator from "validator";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -23,6 +24,36 @@ const supabase = createClient(
 );
 
 const resend = new Resend(process.env.RESEND_API_KEY);
+
+// === Sanitization utility functions ===
+function sanitizeInput(input) {
+  if (typeof input !== 'string') return input;
+  return validator.escape(validator.trim(input));
+}
+
+function sanitizeReviewInput(reviewData) {
+  return {
+    author_name: sanitizeInput(reviewData.author_name) || '',
+    comment: sanitizeInput(reviewData.comment) || '',
+    rating: Number(reviewData.rating) || 0
+  };
+}
+
+function sanitizeListingInput(listingData) {
+  return {
+    address: sanitizeInput(listingData.address) || '',
+    city: sanitizeInput(listingData.city) || '',
+    state: sanitizeInput(listingData.state) || '',
+    zip: sanitizeInput(listingData.zip) || '',
+    price: Number(listingData.price) || 0,
+    beds: Number(listingData.beds) || 0,
+    baths: Number(listingData.baths) || 0,
+    sqft: Number(listingData.sqft) || 0,
+    status: sanitizeInput(listingData.status) || 'active',
+    photos: Array.isArray(listingData.photos) ? listingData.photos : [],
+    metadata: typeof listingData.metadata === 'object' ? listingData.metadata : {}
+  };
+}
 
 // === Health Check ===
 app.get("/healthz", (req, res) => {
@@ -49,8 +80,13 @@ async function requireAuth(req, res, next) {
 
 // === Contact Form ===
 app.post("/api/contact", async (req, res) => {
-  const { name, email, message } = req.body;
+  let { name, email, message } = req.body;
   const opt_in = req.body.opt_in === true;  // Must be true
+
+  // Sanitize inputs
+  name = sanitizeInput(name);
+  email = validator.isEmail(email) ? validator.normalizeEmail(email) : '';
+  message = sanitizeInput(message);
 
   if (!name || !email || !message || opt_in !== true) {
     return res.status(400).json({ error: "All fields are required, including privacy consent." });
@@ -115,7 +151,13 @@ app.get("/api/reviews", async (req, res) => {
 });
 
 app.post("/api/reviews", requireAuth, async (req, res) => {
-  const { author_name, comment, rating } = req.body;
+  let { author_name, comment, rating } = req.body;
+
+  // Sanitize inputs
+  const sanitizedData = sanitizeReviewInput({ author_name, comment, rating });
+  author_name = sanitizedData.author_name;
+  comment = sanitizedData.comment;
+  rating = sanitizedData.rating;
 
   if (!author_name || !comment || rating == null) {
     return res.status(400).json({ error: "Missing fields: author_name, comment, or rating" });
@@ -171,12 +213,31 @@ app.get("/api/listings/:id", requireAuth, async (req, res) => {
 });
 
 app.post("/api/listings", requireAuth, async (req, res) => {
-  const {
+  let {
     address, city, state, zip, price,
     beds, baths, sqft,
     status = "active",  // default to active
     photos = [], metadata = {}
   } = req.body;
+
+  // Sanitize inputs
+  const sanitizedData = sanitizeListingInput({ 
+    address, city, state, zip, price,
+    beds, baths, sqft,
+    status, photos, metadata
+  });
+  
+  address = sanitizedData.address;
+  city = sanitizedData.city;
+  state = sanitizedData.state;
+  zip = sanitizedData.zip;
+  price = sanitizedData.price;
+  beds = sanitizedData.beds;
+  baths = sanitizedData.baths;
+  sqft = sanitizedData.sqft;
+  status = sanitizedData.status;
+  photos = sanitizedData.photos;
+  metadata = sanitizedData.metadata;
 
   if (!address || !city || !state || !zip || price == null || beds == null || baths == null || sqft == null) {
     return res.status(400).json({ error: "Missing required fields" });
@@ -212,7 +273,10 @@ app.post("/api/listings", requireAuth, async (req, res) => {
 
 app.patch("/api/listings/:id", requireAuth, async (req, res) => {
   const { id } = req.params;
-  const updates = req.body;
+  let updates = req.body;
+
+  // Sanitize inputs
+  updates = sanitizeListingInput(updates);
 
   try {
     const { error } = await supabase

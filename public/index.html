@@ -4,8 +4,6 @@
   <!-- Core Meta -->
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="theme-color" content="#1a4731" />
-  <link rel="manifest" href="/manifest.json">
   <meta name="theme-color" content="#b8a89f">
 
   <!-- SEO -->
@@ -38,6 +36,9 @@
 
   <!-- Supabase Client (must load before scripts.js) -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- DOMPurify for client-side sanitization -->
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.2.3/dist/purify.min.js"></script>
 
   <!-- Structured Data (LocalBusiness) -->
   <script type="application/ld+json">
@@ -268,14 +269,12 @@
           <textarea name="message" id="contactMessage" rows="5" required aria-required="true"></textarea>
         </div>
 
-        <div class="opt-in-wrapper" style="margin: 1rem 0; font-size: 0.9rem;">
-          <label style="display:flex; align-items:flex-start; gap:0.5rem; cursor:pointer; width: 50%;">
+        <div class="opt-in-wrapper">
             <input type="checkbox" id="contact-opt-in" required style="margin-top:0.15rem;">
             <span>
-              I agree to the <a href="/privacy.html" target="_blank" style="color:var(--color-primary); text-decoration:underline;">Privacy Policy</a> 
+              I agree to the <a href="/privacy.html" target="_blank">Privacy Policy</a> 
               and consent to being contacted.
             </span>
-          </label>
         </div>
 
         <button type="submit" class="btn-primary">Send Message</button>

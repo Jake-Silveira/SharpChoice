@@ -2,6 +2,25 @@
 const $ = (selector) => document.querySelector(selector);
 
 // =============================
+// Sanitization utilities
+// =============================
+function sanitizeHTML(input) {
+  if (typeof input !== 'string') return input;
+  return DOMPurify.sanitize(input, { 
+    ALLOWED_TAGS: [], 
+    ALLOWED_ATTR: [] 
+  });
+}
+
+function sanitizeRichHTML(input) {
+  if (typeof input !== 'string') return input;
+  return DOMPurify.sanitize(input, {
+    ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'p', 'br', 'ul', 'ol', 'li'],
+    ALLOWED_ATTR: []
+  });
+}
+
+// =============================
 // Supabase client – from <meta> tags + CDN
 // =============================
 const SUPABASE_URL = document.querySelector('meta[name="supabase-url"]')?.content?.trim() || '';
@@ -151,16 +170,20 @@ async function loadReviews(page = 1, limit = 3, containerId = 'reviews-container
 
     slice.forEach((r) => {
       const stars = '★'.repeat(r.rating || 0) + '☆'.repeat(5 - (r.rating || 0));
-      const comment =
+      let comment =
         containerId === 'reviews-container' && r.comment?.length > 120
           ? r.comment.slice(0, 120) + '... <em>(read more)</em>'
           : r.comment || '';
+
+      // Sanitize the comment content
+      comment = sanitizeRichHTML(comment);
+      const authorName = sanitizeHTML(r.author_name || 'Anonymous');
 
       const el = document.createElement('blockquote');
       el.className = 'review';
       el.innerHTML = `
         <p>"${comment}"</p>
-        <cite>— ${r.author_name || 'Anonymous'}</cite>
+        <cite>— ${authorName}</cite>
         <div class="review-stars" style="color:#f5a623;">${stars}</div>
       `;
       container.appendChild(el);
@@ -239,8 +262,8 @@ async function loadFeaturedListings() {
       // TEXT
       const text = document.createElement('div');
       text.innerHTML = `
-        <h3>${l.address}</h3>
-        <p>${l.beds} bed • ${l.baths} bath • ${l.sqft} sqft</p>
+        <h3>${sanitizeHTML(l.address)}</h3>
+        <p>${sanitizeHTML(l.beds)} bed • ${sanitizeHTML(l.baths)} bath • ${sanitizeHTML(l.sqft)} sqft</p>
         <p class="price">${price}</p>
         <span class="status-badge status-active">For Sale</span>
       `;
@@ -292,8 +315,8 @@ async function loadAllListings() {
       // ---- TEXT ----
       const text = document.createElement('div');
       text.innerHTML = `
-        <h3>${l.address}, ${l.city} ${l.zip}</h3>
-        <p>${l.beds} bed • ${l.baths} bath • ${l.sqft} sqft</p>
+        <h3>${sanitizeHTML(l.address)}, ${sanitizeHTML(l.city)} ${sanitizeHTML(l.zip)}</h3>
+        <p>${sanitizeHTML(l.beds)} bed • ${sanitizeHTML(l.baths)} bath • ${sanitizeHTML(l.sqft)} sqft</p>
         <p class="price">${price}</p>
         ${statusBadge}
       `;
@@ -340,10 +363,12 @@ async function loadAdminListings() {
       const price = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(l.price);
       const statusText = l.status === 'closed' ? 'SOLD' : 'Active';
       const statusClass = l.status === 'closed' ? 'status-closed' : 'status-active';
+      const address = sanitizeHTML(l.address);
+      const city = sanitizeHTML(l.city);
 
       html += `
         <tr style="border-bottom: 1px solid #eee;">
-          <td style="padding: 0.75rem;">${l.address}, ${l.city}</td>
+          <td style="padding: 0.75rem;">${address}, ${city}</td>
           <td style="padding: 0.75rem;">${price}</td>
           <td style="padding: 0.75rem;">
             <span class="status-badge ${statusClass}" style="font-size: 0.8rem; padding: 0.25rem 0.5rem; border-radius: 4px;">
@@ -427,15 +452,15 @@ async function openEditListing(id) {
     const listing = await res.json();
 
     $('#edit-listing-id').value = listing.id;
-    $('#edit-address').value = listing.address || '';
-    $('#edit-city').value = listing.city || '';
-    $('#edit-state').value = listing.state || '';
-    $('#edit-zip').value = listing.zip || '';
-    $('#edit-price').value = listing.price || '';
-    $('#edit-beds').value = listing.beds || '';
-    $('#edit-baths').value = listing.baths || '';
-    $('#edit-sqft').value = listing.sqft || '';
-    $('#edit-status').value = listing.status || 'active';
+    $('#edit-address').value = sanitizeHTML(listing.address) || '';
+    $('#edit-city').value = sanitizeHTML(listing.city) || '';
+    $('#edit-state').value = sanitizeHTML(listing.state) || '';
+    $('#edit-zip').value = sanitizeHTML(listing.zip) || '';
+    $('#edit-price').value = sanitizeHTML(listing.price) || '';
+    $('#edit-beds').value = sanitizeHTML(listing.beds) || '';
+    $('#edit-baths').value = sanitizeHTML(listing.baths) || '';
+    $('#edit-sqft').value = sanitizeHTML(listing.sqft) || '';
+    $('#edit-status').value = sanitizeHTML(listing.status) || 'active';
     $('#edit-metadata').value = JSON.stringify(listing.metadata || {}, null, 2);
 
     modal.classList.add('show');
