@@ -5,6 +5,8 @@ import { fileURLToPath } from "url";
 import { createClient } from "@supabase/supabase-js";
 import { Resend } from "resend";
 import validator from "validator";
+import rateLimit from "express-rate-limit";
+import helmet from "helmet";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -14,6 +16,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // === Middleware ===
+app.use(helmet()); // Add security headers
 app.use(express.json({ limit: "10mb" })); // Support base64 image uploads
 app.use(express.static(path.join(__dirname, "public")));
 
@@ -24,6 +27,17 @@ const supabase = createClient(
 );
 
 const resend = new Resend(process.env.RESEND_API_KEY);
+
+// === Rate limiting configurations ===
+const contactLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 5, // Limit each IP to 5 contact requests per windowMs
+  message: {
+    error: 'Too many contact requests from this IP, please try again later.'
+  },
+  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+});
 
 // === Sanitization utility functions ===
 function sanitizeInput(input) {
@@ -79,7 +93,7 @@ async function requireAuth(req, res, next) {
 }
 
 // === Contact Form ===
-app.post("/api/contact", async (req, res) => {
+app.post("/api/contact", contactLimiter, async (req, res) => {
   let { name, email, message } = req.body;
   const opt_in = req.body.opt_in === true;  // Must be true
 
