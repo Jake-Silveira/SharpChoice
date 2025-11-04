@@ -906,6 +906,47 @@ header, section {
   overflow-wrap: break-word;
 }
 
+/* Opt-in checkbox container */
+#contact-form .opt-in-container {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  font-size: 0.95rem;
+  color: #555;
+  line-height: 1.4;
+}
+
+#contact-form .opt-in-container input[type="checkbox"] {
+  width: 1.1rem;
+  height: 1.1rem;
+  cursor: pointer;
+  flex-shrink: 0;
+  margin-top: 0.5rem; /* Align with text baseline */
+  align-self: flex-start; /* Align to top of label */
+}
+
+#contact-form .opt-in-container label {
+  cursor: pointer;
+  flex: 1;
+  margin: 0;
+  padding: 0;
+  display: inline;
+  align-self: flex-start; /* Align to top of checkbox */
+  font-weight: normal;
+}
+
+#contact-form .opt-in-container a {
+  color: var(--color-primary);
+  text-decoration: underline;
+  transition: color 0.3s ease;
+}
+
+#contact-form .opt-in-container a:hover {
+  color: var(--color-accent);
+  text-decoration: underline;
+}
+
 #contact-form input:focus,
 #contact-form textarea:focus {
   border-color: var(--color-accent);
@@ -1002,11 +1043,13 @@ header, section {
 }
 
 .contact-cta-block {
-  background: transparent;
+  display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
   max-width: 600px;
+  margin: 0 auto;
 }
 
 .contact-info {
@@ -1797,26 +1840,3 @@ body {
   transform: scale(1.05);
 }
 
-/* Contact Form Opt-In */
-.contact form .opt-in-container {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start; /* Explicitly align to left */
-  gap: 0.75rem;
-  margin: 1rem 0;
-  font-size: 0.95rem;
-  color: #555;
-  text-align: left; /* Ensure text is left-aligned if wrapping occurs */
-}
-
-.contact form .opt-in-container input[type="checkbox"] {
-  width: 1.1rem;
-  height: 1.1rem;
-  cursor: pointer;
-  flex-shrink: 0; /* Prevent checkbox from shrinking */
-}
-
-.contact form .opt-in-container label {
-  cursor: pointer;
-  flex: 1; /* Allow label to take remaining space */
-}
