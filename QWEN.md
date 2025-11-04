@@ -12,6 +12,7 @@ SharpChoice is a real estate website for "Sharp Choice Real Estate", built as a 
 - Mobile-responsive design
 - SEO-optimized with structured data
 - Privacy policy and terms of service pages
+- Enhanced security with input sanitization and rate limiting
 
 ## Architecture
 
@@ -79,6 +80,15 @@ The application requires the following environment variables:
 - `SUPABASE_SERVICE_ROLE_KEY`: Your Supabase service role key (for server-side operations)
 - `RESEND_API_KEY`: Your Resend API key for email notifications
 - `PORT`: Port for the server (defaults to 3000)
+
+## Security Features
+
+The application implements several security measures:
+- Client-side input sanitization using DOMPurify
+- Server-side input validation and sanitization using validator.js
+- Rate limiting for contact form submissions (5 requests per 15 minutes per IP)
+- Security headers using helmet.js
+- Authentication required for admin functions (reviews, listings, uploads)
 
 ## Building and Running
 

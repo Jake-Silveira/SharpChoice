@@ -14,6 +14,7 @@ Check out the live website: [www.sharpchoicerealestate.com](https://www.sharpcho
 - Mobile-responsive design
 - SEO-optimized with structured data
 - Privacy policy and terms of service pages
+- Enhanced security with input sanitization and rate limiting
 
 ## Architecture
 - **Frontend**: Vanilla JavaScript, HTML5, CSS3
