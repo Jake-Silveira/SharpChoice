@@ -16,7 +16,21 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // === Middleware ===
-app.use(helmet()); // Add security headers
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://cdn.jsdelivr.net"],
+      scriptSrc: ["'self'", "https://cdn.jsdelivr.net"],
+      imgSrc: ["'self'", "data:", "https://*.supabase.co", "https://*.supabase.com"],
+      fontSrc: ["'self'", "https://fonts.gstatic.com"],
+      connectSrc: ["'self'", "https://*.supabase.co", "https://*.supabase.com", "https://api.resend.com"],
+      frameSrc: ["'self'"],
+      objectSrc: ["'none'"],
+      frameAncestors: ["'none'"]
+    }
+  }
+})); // Add security headers with custom CSP
 app.use(express.json({ limit: "10mb" })); // Support base64 image uploads
 app.use(express.static(path.join(__dirname, "public")));
 
