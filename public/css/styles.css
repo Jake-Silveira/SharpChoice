@@ -1867,16 +1867,5 @@ body {
   text-decoration: underline;
 }
 
-/* Reviews CTA Link */
-.reviews-cta a {
-  color: var(--color-accent);
-  text-decoration: none;
-  font-weight: 600;
-  transition: var(--transition);
-}
 
-.reviews-cta a:hover {
-  color: var(--color-primary);
-  text-decoration: underline;
-}
 
