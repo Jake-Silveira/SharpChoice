@@ -1840,3 +1840,43 @@ body {
   transform: scale(1.05);
 }
 
+/* Google Review Callout */
+.google-review-callout {
+  background: #f8f9fa;
+  border-left: 4px solid var(--color-accent);
+  padding: 1rem 1.25rem;
+  margin: 1.5rem 0;
+  border-radius: 0 var(--border-radius) var(--border-radius) 0;
+  font-size: 0.95rem;
+}
+
+.google-review-callout p {
+  margin: 0;
+  color: var(--color-dark);
+}
+
+.google-review-callout a {
+  color: var(--color-accent);
+  text-decoration: none;
+  font-weight: 600;
+  transition: var(--transition);
+}
+
+.google-review-callout a:hover {
+  color: var(--color-primary);
+  text-decoration: underline;
+}
+
+/* Reviews CTA Link */
+.reviews-cta a {
+  color: var(--color-accent);
+  text-decoration: none;
+  font-weight: 600;
+  transition: var(--transition);
+}
+
+.reviews-cta a:hover {
+  color: var(--color-primary);
+  text-decoration: underline;
+}
+

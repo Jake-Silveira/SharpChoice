@@ -70,6 +70,28 @@
   }
   </script>
 
+  <!-- Additional Structured Data for Real Estate Services -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    "serviceType": "Real Estate Services",
+    "provider": {
+      "@type": "RealEstateAgent",
+      "name": "Sharp Choice Real Estate"
+    },
+    "areaServed": {
+      "@type": "City",
+      "name": "Austin"
+    },
+    "offers": {
+      "@type": "Offer",
+      "name": "Property Consultation",
+      "description": "Expert consultation on buying or selling properties in Austin"
+    }
+  }
+  </script>
+
   <!-- Favicon -->
   <link rel="icon" href="/assets/logo.png" type="image/png">
   <link rel="apple-touch-icon" href="/assets/logo.png">
@@ -222,6 +244,9 @@
     <!-- REVIEWS -->
     <section id="reviews" class="container fade-on-scroll" aria-labelledby="reviews-heading">
       <h2 id="reviews-heading">What Clients Say</h2>
+      <div class="reviews-cta">
+        <p>Have a great experience? <a href="https://www.google.com/search?q=Sharp+Choice+Real+Estate" target="_blank" rel="noopener noreferrer">Leave us a Google Review!</a></p>
+      </div>
       <div id="reviews-container" aria-live="polite">
         <!-- Dynamic -->
       </div>
@@ -236,6 +261,9 @@
         <button class="modal-close" aria-label="Close modal">&times;</button>
         <h2 id="reviews-modal-title">Client Reviews</h2>
         <div class="modal-body">
+          <div class="google-review-callout">
+            <p>Also see our <a href="https://www.google.com/search?q=Sharp+Choice+Real+Estate" target="_blank" rel="noopener noreferrer">Google Reviews</a>!</p>
+          </div>
           <div id="modal-reviews-container"></div>
           <div class="review-pagination" aria-live="polite"></div>
         </div>
