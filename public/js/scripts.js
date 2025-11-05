@@ -163,7 +163,7 @@ async function loadReviews(page = 1, limit = 3, containerId = 'reviews-container
       container.innerHTML = '<p>No reviews yet. Check back soon!</p>';
       // Add Google Reviews link if container is for main reviews
       if (containerId === 'reviews-container') {
-        container.innerHTML += '<p>See our <a href="https://www.google.com/search?q=Sharp+Choice+Real+Estate+Austin" target="_blank" rel="noopener noreferrer">Google Reviews</a></p>';
+        container.innerHTML += '<p>See our <a href="https://www.google.com/search?q=Sharp+Choice+Real+Estate" target="_blank" rel="noopener noreferrer">Google Reviews</a></p>';
       }
       return;
     }
@@ -173,7 +173,7 @@ async function loadReviews(page = 1, limit = 3, containerId = 'reviews-container
       const googleReviewCallout = document.createElement('div');
       googleReviewCallout.className = 'google-review-callout';
       googleReviewCallout.innerHTML = `
-        <p>See our <a href="https://www.google.com/search?q=Sharp+Choice+Real+Estate+Austin" target="_blank" rel="noopener noreferrer">Google Reviews</a></p>
+        <p>See our <a href="https://www.google.com/search?q=Sharp+Choice+Real+Estate" target="_blank" rel="noopener noreferrer">Google Reviews</a></p>
       `;
       container.appendChild(googleReviewCallout);
     }
