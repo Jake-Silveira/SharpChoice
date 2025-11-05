@@ -17,7 +17,7 @@ Check out the live website: [www.sharpchoicerealestate.com](https://www.sharpcho
 - Enhanced security with input sanitization and rate limiting
 - Google Analytics integration
 - Up to 3 custom sections (About, Services, Reviews)
-- Google Reviews callouts and links
+- Google Reviews callouts and links (updated to "See my Google Reviews")
 
 ## Architecture
 - **Frontend**: Vanilla JavaScript, HTML5, CSS3
@@ -39,6 +39,13 @@ Then install dependencies and start the server:
 npm install
 npm start
 ```
+
+## Security Configuration
+This application implements Content Security Policy (CSP) headers to enhance security. The CSP allows:
+- Loading scripts from `self` and trusted CDNs (`cdn.jsdelivr.net`)
+- Loading images from `self` and Supabase storage
+- Loading fonts from `fonts.gstatic.com`
+- Connecting to Supabase and Resend APIs
 
 ## Deployment
 The application is currently deployed on Render at: [www.sharpchoicerealestate.com](https://www.sharpchoicerealestate.com)
