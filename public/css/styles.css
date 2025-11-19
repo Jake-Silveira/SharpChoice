@@ -210,6 +210,7 @@ header, section {
   max-width: 500px;
   border-radius: 8px;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  object-fit: cover; /* Maintains aspect ratio while covering the container */
 }
 
 /* RESPONSIVE DESIGN */
@@ -336,9 +337,12 @@ header, section {
   }
 
   .hero-media img {
-    height: 40vh; /* Slightly shorter on mobile, matches About video */
-    border-radius: 8px;
     width: 100%;
+    max-width: 500px;
+    height: auto;
+    border-radius: 8px;
+    object-fit: cover; /* Maintains aspect ratio while covering the container */
+    max-height: 40vh; /* Limits height on mobile */
   }
 
   .hero-buttons {
