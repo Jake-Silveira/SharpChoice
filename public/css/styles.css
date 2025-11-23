@@ -51,8 +51,8 @@ header, section {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  flex-wrap: wrap; /* allows logo + nav to wrap if space runs out */
-  gap: 1.5rem;
+  flex-wrap: nowrap; /* Disable wrapping on desktop */
+  gap: .3rem;
   padding: 0.75rem 1rem;
   max-width: 1200px;
   margin: 0 auto;
@@ -62,13 +62,13 @@ header, section {
 .brand {
   display: flex;
   align-items: center;
-  flex-wrap: wrap; /* ensures brand text wraps under logo on smaller widths */
+  flex-wrap: nowrap; /* Disable wrapping on desktop */
   gap: 1rem;
   min-width: 0; /* allows flex child text to shrink instead of overflow */
 }
 
 .brand-logo {
-  height: 100px; /* balanced size */
+  height: 140px; /* increased size */
   width: auto;
   display: block;
   flex-shrink: 0; /* prevents logo from squishing */
@@ -85,7 +85,7 @@ header, section {
 
 .brand-name {
   margin: 0;
-  font-size: 1.5rem;
+  font-size: 2rem;
   line-height: 1.2;
   word-break: break-word;
 }
@@ -137,14 +137,21 @@ header, section {
   .header-inner {
     align-items: center;
     text-align: center;
+    flex-wrap: wrap; /* Re-enable wrapping for tablets */
   }
 
   .brand {
     justify-content: center;
+    padding: 0.5rem 0;
+    flex-wrap: wrap; /* Re-enable wrapping for brand elements on tablets */
   }
 
   .brand-logo {
-    height: 80px;
+    height: 100px; /* Reduced for appropriately sized logo on tablet screens */
+  }
+  
+  .brand-name {
+    font-size: 1.5rem; /* Reduced to proportionally match the logo */
   }
 
   .site-nav ul {
@@ -298,7 +305,7 @@ header, section {
 }
 
 /* Mobile Responsiveness (max-width: 768px for phones/tablets) */
-@media (max-width: 768px) {
+@media (max-width: 600px) {
   .site-header {
     padding: 1rem 0;
   }
@@ -307,14 +314,20 @@ header, section {
     flex-direction: column; /* Stack logo and nav */
     align-items: center;
     gap: 1rem;
+    flex-wrap: nowrap; /* No wrapping in vertical layout */
   }
 
   .brand {
     text-align: center;
+    flex-wrap: nowrap; /* No wrapping in vertical layout */
   }
 
   .brand-logo {
-    height: 100px; /* Smaller logo on mobile */
+    height: 120px; /* Reduced for appropriately sized logo on very small screens */
+  }
+  
+  .brand-name {
+    font-size: 1.7rem; /* Reduced to proportionally match the logo */
   }
 
   .site-nav ul {
@@ -375,13 +388,14 @@ header, section {
 }
 
 .about-photo {
-  flex: 0 0 25%;
   display: flex;
   justify-content: center;
+  align-items: flex-start; /* Align to top so it doesn't expand to fill height */
+  min-width: 280px; /* Keep minimum width to match image max-width */
+  flex: 0 0 auto; /* Let the container size based on content */
 }
 
 .about-photo img {
-  width: 100%;
   max-width: 280px;
   height: auto;
   border-radius: 10px;
