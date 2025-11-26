@@ -1145,6 +1145,7 @@ header, section {
   border-top: 1px solid #eee;
   text-align: center;
   color: var(--color-gray);
+  background-color: rgba(214, 214, 214, 0.8); /* Even darker background to distinguish from main content */
 }
 
 @media (min-width: 900px) {
@@ -1883,6 +1884,28 @@ body {
 .google-review-callout a:hover {
   color: var(--color-primary);
   text-decoration: underline;
+}
+
+/* KW Logo Container */
+.kw-logo-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
+
+.kw-logo {
+  height: 60px;
+  width: auto;
+  max-width: 180px;
+  filter: grayscale(20%) brightness(0.8);
+  transition: filter 0.3s ease;
+}
+
+.kw-logo:hover {
+  filter: grayscale(0%) brightness(1);
 }
 
 

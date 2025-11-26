@@ -12,12 +12,15 @@ Check out the live website: [www.sharpchoicerealestate.com](https://www.sharpcho
 - Contact form with email notifications
 - Admin dashboard for content management
 - Mobile-responsive design
+- Optimized header with appropriately sized branding elements
+- Image optimization (logo and profile photo) to improve loading times
 - SEO-optimized with structured data (LocalBusiness and Service schemas)
 - Privacy policy and terms of service pages
 - Enhanced security with input sanitization and rate limiting
 - Google Analytics integration
 - Up to 3 custom sections (About, Services, Reviews)
 - Google Reviews callouts and links (updated to "See my Google Reviews")
+- Keller Williams (KW) logo prominently displayed in footer to show affiliation
 
 ## Architecture
 - **Frontend**: Vanilla JavaScript, HTML5, CSS3
