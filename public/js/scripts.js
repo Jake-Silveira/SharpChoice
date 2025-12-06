@@ -390,12 +390,10 @@ async function loadAdminListings() {
             </span>
           </td>
           <td style="padding: 0.75rem; display:flex; gap:0.5rem;">
-            <button class="btn-accent" style="padding:0.4rem 0.8rem; font-size:0.85rem;"
-                    onclick="openEditListing('${l.id}')">
+            <button class="btn-accent edit-listing-btn" style="padding:0.4rem 0.8rem; font-size:0.85rem;" data-id="${l.id}">
               Edit
             </button>
-            <button class="btn-accent" style="padding:0.4rem 0.8rem; font-size:0.85rem; background:${l.status === 'closed' ? '#28a745' : 'var(--color-error)'};"
-                  onclick="toggleListingStatus('${l.id}', '${l.status}')">
+            <button class="btn-accent toggle-status-btn" style="padding:0.4rem 0.8rem; font-size:0.85rem; background:${l.status === 'closed' ? '#28a745' : 'var(--color-error)'};" data-id="${l.id}" data-status="${l.status}">
             ${l.status === 'closed' ? 'Mark Active' : 'Mark SOLD'}
           </button>
           </td>
@@ -405,6 +403,22 @@ async function loadAdminListings() {
 
     html += `</tbody></table>`;
     container.innerHTML = html;
+    
+    // Add event listeners to the buttons after they're added to the DOM
+    document.querySelectorAll('.edit-listing-btn').forEach(button => {
+      button.addEventListener('click', (e) => {
+        const id = e.target.getAttribute('data-id');
+        openEditListing(id);
+      });
+    });
+    
+    document.querySelectorAll('.toggle-status-btn').forEach(button => {
+      button.addEventListener('click', (e) => {
+        const id = e.target.getAttribute('data-id');
+        const status = e.target.getAttribute('data-status');
+        toggleListingStatus(id, status);
+      });
+    });
   } catch (err) {
     console.error('loadAdminListings error:', err);
     container.innerHTML = '<p>Error loading listings.</p>';
