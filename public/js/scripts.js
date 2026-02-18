@@ -30,12 +30,12 @@ if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
   console.error('Supabase env vars missing – add <meta name="supabase-url"> and <meta name="supabase-anon-key"> in <head>');
 }
 
-let supabase = null;
+let supabaseClient = null;
 
 // Wait for Supabase to load from CDN
 function initSupabase() {
   if (window.supabase && SUPABASE_URL && SUPABASE_ANON_KEY) {
-    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
   } else {
     console.warn('Supabase not ready yet – retrying...');
     setTimeout(initSupabase, 100);
@@ -147,7 +147,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // Reviews – preview + modal pagination
 // =============================
 async function loadReviews(page = 1, limit = 3, containerId = 'reviews-container', includeGoogleReviews = true) {
-  if (!supabase) return console.warn('Supabase not ready');
+  if (!supabaseClient) return console.warn('Supabase not ready');
 
   try {
     const res = await fetch('/api/reviews');
@@ -655,7 +655,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   const session = localStorage.getItem('sb-session');
-  if (session && supabase) {
+  if (session && supabaseClient) {
     $('#dashboard-modal').classList.add('show');
     document.body.style.overflow = 'hidden';
     loginBtn.textContent = 'Dashboard';
@@ -675,12 +675,12 @@ $('#dashboard-modal .modal-close')?.addEventListener('click', () => {
 // Login
 $('#login-form')?.addEventListener('submit', async (e) => {
   e.preventDefault();
-  if (!supabase) return alert('Supabase not loaded yet. Try again.');
+  if (!supabaseClient) return alert('Supabase not loaded yet. Try again.');
 
   const email = $('#login-email').value.trim();
   const password = $('#login-password').value;
 
-  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+  const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
   if (error) {
     alert('Login failed: ' + error.message);
     return;
