@@ -113,6 +113,8 @@ header, section {
   font-size: 1rem;
   transition: color 0.3s ease;
   white-space: nowrap; /* keeps links neat, no wrapping mid-word */
+  padding: 0.5rem 0.25rem; /* increased padding to prevent cursor flicker */
+  display: inline-block; /* stabilizes hover area */
 }
 
 .site-nav a:hover {
