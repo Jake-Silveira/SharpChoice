@@ -19,6 +19,8 @@ SharpChoice is a real estate website for "Sharp Choice Real Estate", built as a 
 - Up to 3 custom sections (About, Services, Reviews)
 - Google Reviews callouts and links (updated to "See my Google Reviews")
 - Keller Williams (KW) logo prominently displayed in footer to show affiliation
+- CSP-compliant event handling (no inline handlers)
+- Stable navigation hover areas (no cursor flicker)
 
 ## Architecture
 
@@ -208,6 +210,12 @@ The application is designed for deployment on platforms that support Node.js app
 - Ensure Supabase and Resend services are properly configured
 - Configure the domain name and SSL certificate
 - Set up Google Analytics tracking if applicable
+
+## Recent Updates
+- **Feb 2026**: Fixed supabase variable naming conflict with CDN global (renamed to `supabaseClient`)
+- **Feb 2026**: Fixed cursor flicker on header navigation hover (added padding to nav links)
+- **Dec 2025**: Fixed listing edit functionality by replacing inline event handlers with event listeners (CSP compliance)
+- **Nov 2025**: Added KW logo to footer and optimized site header images
 
 ## Security Configuration
 

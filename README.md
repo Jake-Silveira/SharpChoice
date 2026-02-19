@@ -21,6 +21,8 @@ Check out the live website: [www.sharpchoicerealestate.com](https://www.sharpcho
 - Up to 3 custom sections (About, Services, Reviews)
 - Google Reviews callouts and links (updated to "See my Google Reviews")
 - Keller Williams (KW) logo prominently displayed in footer to show affiliation
+- CSP-compliant event handling (no inline handlers)
+- Stable navigation hover areas (no cursor flicker)
 
 ## Architecture
 - **Frontend**: Vanilla JavaScript, HTML5, CSS3
@@ -52,3 +54,9 @@ This application implements Content Security Policy (CSP) headers to enhance sec
 
 ## Deployment
 The application is currently deployed on Render at: [www.sharpchoicerealestate.com](https://www.sharpchoicerealestate.com)
+
+## Recent Updates
+- **Feb 2026**: Fixed supabase variable naming conflict with CDN global (renamed to `supabaseClient`)
+- **Feb 2026**: Fixed cursor flicker on header navigation hover (added padding to nav links)
+- **Dec 2025**: Fixed listing edit functionality by replacing inline event handlers with event listeners (CSP compliance)
+- **Nov 2025**: Added KW logo to footer and optimized site header images
