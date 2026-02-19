@@ -1573,6 +1573,7 @@ header, section {
 }
 /* Utility */
 .hidden { display: none !important; }
+.text-center { text-align: center; }
 .text-success { color: var(--color-success); }
 .text-error { color: var(--color-error); }
 .mt-1 { margin-top: 1rem; }
