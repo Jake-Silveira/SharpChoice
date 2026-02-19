@@ -229,6 +229,42 @@ async function loadReviews(page = 1, limit = 3, containerId = 'reviews-container
 }
 
 // =============================
+// AggregateRating Schema Update
+// =============================
+async function updateAggregateRating() {
+  try {
+    const res = await fetch('/api/reviews');
+    if (!res.ok) return;
+    const reviews = await res.json();
+
+    if (!Array.isArray(reviews) || reviews.length === 0) return;
+
+    // Calculate average rating
+    const totalRating = reviews.reduce((sum, r) => sum + (r.rating || 0), 0);
+    const averageRating = (totalRating / reviews.length).toFixed(1);
+    const reviewCount = reviews.length;
+
+    // Update the JSON-LD schema
+    const schemaScript = document.getElementById('localbusiness-schema');
+    if (!schemaScript) return;
+
+    const schema = JSON.parse(schemaScript.textContent);
+    schema.aggregateRating = {
+      "@type": "AggregateRating",
+      "ratingValue": averageRating,
+      "reviewCount": reviewCount.toString(),
+      "bestRating": "5",
+      "worstRating": "1"
+    };
+
+    schemaScript.textContent = JSON.stringify(schema);
+    console.log(`AggregateRating updated: ${averageRating} stars from ${reviewCount} reviews`);
+  } catch (err) {
+    console.error('updateAggregateRating error:', err.message);
+  }
+}
+
+// =============================
 // Featured Listings (DEBUG + FIXED)
 // =============================
 async function loadFeaturedListings() {
@@ -580,6 +616,7 @@ $('#edit-listing-modal')?.addEventListener('click', (e) => {
 // =============================
 document.addEventListener('DOMContentLoaded', () => {
   loadReviews(1, 3, 'reviews-container');
+  updateAggregateRating();
   loadFeaturedListings();
 
   // Reviews Modal
