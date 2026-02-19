@@ -7,6 +7,7 @@ import { Resend } from "resend";
 import validator from "validator";
 import rateLimit from "express-rate-limit";
 import helmet from "helmet";
+import { google } from "googleapis";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -14,6 +15,16 @@ const PORT = process.env.PORT || 3000;
 // === Resolve __dirname for ESM ===
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+// === Google Business Profile Configuration ===
+// TODO: After Google Business account verification:
+// 1. Get your Business Account ID from Google Business Profile API
+// 2. Set up OAuth 2.0 credentials or API key in Google Cloud Console
+// 3. Add these environment variables:
+//    - GOOGLE_BUSINESS_ACCOUNT_ID: Your verified business account ID
+//    - GOOGLE_API_KEY: Your Google API key with Business Profile API enabled
+const GOOGLE_BUSINESS_ACCOUNT_ID = process.env.GOOGLE_BUSINESS_ACCOUNT_ID || '';
+const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY || '';
 
 // === Middleware ===
 app.use(helmet({
@@ -201,6 +212,127 @@ app.post("/api/reviews", requireAuth, async (req, res) => {
   } catch (err) {
     console.error("Add review error:", err);
     res.status(500).json({ error: "Failed to add review" });
+  }
+});
+
+// === Google Reviews Sync ===
+// Helper function to fetch reviews from Google Business Profile API
+async function fetchGoogleReviews() {
+  if (!GOOGLE_BUSINESS_ACCOUNT_ID || !GOOGLE_API_KEY) {
+    throw new Error("Google API credentials not configured. Please set GOOGLE_BUSINESS_ACCOUNT_ID and GOOGLE_API_KEY environment variables.");
+  }
+
+  try {
+    // Initialize Google Business Profile API
+    const businessprofile = google.mybusinessbusinessinformation('v1');
+    
+    // Fetch reviews for the business account
+    // Note: This requires OAuth 2.0 setup with proper scopes
+    // Scope needed: https://www.googleapis.com/auth/business.manage
+    const response = await businessprofile.accounts.locations.reviews.list({
+      name: `accounts/${GOOGLE_BUSINESS_ACCOUNT_ID}/locations/${GOOGLE_BUSINESS_ACCOUNT_ID}`,
+      key: GOOGLE_API_KEY,
+    });
+
+    return response.data.reviews || [];
+  } catch (err) {
+    console.error("Google API error:", err.message);
+    throw new Error(`Failed to fetch Google reviews: ${err.message}`);
+  }
+}
+
+// Helper function to convert Google review data to our schema
+function parseGoogleReview(googleReview) {
+  return {
+    author_name: googleReview.author?.displayName || 'Anonymous',
+    comment: googleReview.comment?.text || '',
+    rating: googleReview.starRating || 5,
+    google_review_id: googleReview.name || null, // Store Google's review ID for deduplication
+    review_time: googleReview.createTime ? new Date(googleReview.createTime).toISOString() : new Date().toISOString(),
+  };
+}
+
+// POST endpoint to sync Google reviews to Supabase
+app.post("/api/sync-google-reviews", requireAuth, async (req, res) => {
+  console.log("Starting Google Reviews sync...");
+  
+  try {
+    // Fetch reviews from Google
+    const googleReviews = await fetchGoogleReviews();
+    
+    if (!googleReviews || googleReviews.length === 0) {
+      return res.json({ 
+        success: true, 
+        message: "No reviews found on Google",
+        synced: 0 
+      });
+    }
+
+    console.log(`Fetched ${googleReviews.length} reviews from Google`);
+
+    let syncedCount = 0;
+    let updatedCount = 0;
+
+    // Process each Google review
+    for (const googleReview of googleReviews) {
+      const reviewData = parseGoogleReview(googleReview);
+      
+      // Check if review already exists (by Google review ID or matching comment)
+      const { data: existingReviews } = await supabase
+        .from("reviews")
+        .select("id")
+        .eq("google_review_id", reviewData.google_review_id)
+        .limit(1);
+
+      if (existingReviews && existingReviews.length > 0) {
+        // Update existing review
+        const { error } = await supabase
+          .from("reviews")
+          .update({
+            rating: reviewData.rating,
+            comment: reviewData.comment,
+            author_name: reviewData.author_name,
+          })
+          .eq("id", existingReviews[0].id);
+
+        if (!error) {
+          updatedCount++;
+          syncedCount++;
+        }
+      } else {
+        // Insert new review
+        const { error } = await supabase
+          .from("reviews")
+          .insert([{
+            author_name: reviewData.author_name,
+            comment: reviewData.comment,
+            rating: reviewData.rating,
+            google_review_id: reviewData.google_review_id,
+            created_at: reviewData.review_time,
+          }]);
+
+        if (!error) {
+          syncedCount++;
+        }
+      }
+    }
+
+    console.log(`Sync complete: ${syncedCount} reviews processed (${updatedCount} updated)`);
+    
+    res.json({
+      success: true,
+      message: `Successfully synced ${syncedCount} reviews from Google`,
+      synced: syncedCount,
+      updated: updatedCount,
+      total: googleReviews.length,
+    });
+
+  } catch (err) {
+    console.error("Google Reviews sync error:", err.message);
+    res.status(500).json({ 
+      error: "Failed to sync Google reviews",
+      details: err.message 
+    });
   }
 });
 

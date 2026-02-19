@@ -83,6 +83,7 @@ SharpChoice is a real estate website for "Sharp Choice Real Estate", built as a 
 - `POST /api/listings`: Add new listing
 - `PATCH /api/listings/:id`: Update listing
 - `POST /api/upload-image`: Upload images
+- `POST /api/sync-google-reviews`: Sync reviews from Google Business Profile (requires auth)
 
 ## Environment Variables
 
@@ -91,6 +92,8 @@ The application requires the following environment variables:
 - `SUPABASE_SERVICE_ROLE_KEY`: Your Supabase service role key (for server-side operations)
 - `RESEND_API_KEY`: Your Resend API key for email notifications
 - `PORT`: Port for the server (defaults to 3000)
+- `GOOGLE_BUSINESS_ACCOUNT_ID`: (Optional) Google Business Profile account ID for review sync
+- `GOOGLE_API_KEY`: (Optional) Google API key with Business Profile API enabled
 
 ## Security Features
 
@@ -128,6 +131,8 @@ The application implements several security measures:
    SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
    RESEND_API_KEY=your_resend_api_key
    PORT=3000
+   GOOGLE_BUSINESS_ACCOUNT_ID=your_google_business_account_id (after verification)
+   GOOGLE_API_KEY=your_google_api_key (after verification)
    ```
 
 4. **Update frontend Supabase config**
@@ -197,7 +202,8 @@ The application includes an admin dashboard accessible through authentication:
 
 ### Tables
 - `listings`: Property information (address, price, beds, baths, sqft, photos, metadata)
-- `reviews`: Client testimonials (author_name, comment, rating, created_at)
+- `reviews`: Client testimonials (author_name, comment, rating, google_review_id*, created_at)
+  - *`google_review_id`: Optional field storing Google's review ID for deduplication during sync
 - `contacts`: Contact form submissions (name, email, message, opt_in, created_at)
 
 ### Storage
