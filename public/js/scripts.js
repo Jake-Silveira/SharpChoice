@@ -888,6 +888,53 @@ $('#add-review-form')?.addEventListener('submit', async (e) => {
   }
 });
 
+// Sync Google Reviews
+$('#sync-google-reviews-btn')?.addEventListener('click', async () => {
+  const statusEl = $('#google-sync-status');
+  const btn = $('#sync-google-reviews-btn');
+  
+  if (!statusEl || !btn) return;
+  
+  const session = JSON.parse(localStorage.getItem('sb-session') || '{}');
+  
+  // Set loading state
+  btn.disabled = true;
+  btn.textContent = '⏳ Syncing...';
+  statusEl.innerHTML = '<span class="text-primary">Connecting to Google...</span>';
+  
+  try {
+    const res = await fetch('/api/sync-google-reviews', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${session.access_token || ''}`,
+      },
+    });
+    
+    const data = await res.json();
+    
+    if (res.ok) {
+      statusEl.innerHTML = `<span class="text-success">✓ ${data.message} (${data.updated} updated)</span>`;
+      // Reload reviews to show newly synced ones
+      loadReviews();
+    } else {
+      statusEl.innerHTML = `<span class="text-error">✗ Error: ${data.error || 'Sync failed'}</span>`;
+    }
+  } catch (err) {
+    console.error('Google sync error:', err);
+    statusEl.innerHTML = `<span class="text-error">✗ Connection error: ${err.message}</span>`;
+  } finally {
+    // Reset button state
+    btn.disabled = false;
+    btn.textContent = '🔄 Pull Google Reviews';
+    
+    // Clear status after 5 seconds
+    setTimeout(() => {
+      if (statusEl) statusEl.innerHTML = '';
+    }, 5000);
+  }
+});
+
 // Add Listing
 $('#add-listing-form')?.addEventListener('submit', async (e) => {
   e.preventDefault();

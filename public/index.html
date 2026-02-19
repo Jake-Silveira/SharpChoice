@@ -411,6 +411,17 @@
             <input type="number" id="review-rating" min="1" max="5" placeholder="Rating" required>
             <button type="submit" id="add-review-btn">Add Review</button>
           </form>
+          
+          <hr style="margin:1.5rem 0; border:none; border-top:1px solid #eee;">
+          
+          <h3>Sync Google Reviews</h3>
+          <p style="font-size:0.9rem; color:#666; margin-bottom:1rem;">
+            Pull reviews from your Google Business Profile. Requires Google account verification.
+          </p>
+          <button type="button" id="sync-google-reviews-btn" class="btn-primary" style="background:#4285f4; border-color:#4285f4;">
+            🔄 Pull Google Reviews
+          </button>
+          <div id="google-sync-status" role="status" aria-live="polite" style="margin-top:0.5rem;"></div>
         </div>
 
         <!-- ====================== LISTINGS SECTION ====================== -->
