@@ -1929,6 +1929,58 @@ body {
   font-style: italic;
 }
 
+/* Mobile optimization for write review modal */
+@media (max-width: 768px) {
+  #write-review-modal .modal-content {
+    max-height: 90vh;
+    padding: 1.25rem 1rem;
+  }
+  
+  #write-review-modal h2 {
+    font-size: 1.3rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .review-notice {
+    font-size: 0.85rem;
+    margin-bottom: 1rem;
+  }
+  
+  #write-review-form {
+    gap: 1rem;
+  }
+  
+  #write-review-form .form-group {
+    gap: 0.4rem;
+  }
+  
+  #write-review-form input[type="text"],
+  #write-review-form input[type="email"],
+  #write-review-form textarea {
+    padding: 0.65rem;
+    font-size: 0.95rem;
+  }
+  
+  #write-review-form textarea {
+    min-height: 80px;
+    rows: 3;
+  }
+  
+  #write-review-form button[type="submit"] {
+    padding: 0.75rem 1.25rem;
+    font-size: 0.95rem;
+  }
+  
+  #write-review-form .opt-in-container {
+    font-size: 0.85rem;
+  }
+  
+  #write-review-form .opt-in-container input[type="checkbox"] {
+    width: 1rem;
+    height: 1rem;
+  }
+}
+
 /* Write Review Form Styling */
 #write-review-form {
   display: flex;
