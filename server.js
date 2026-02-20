@@ -35,7 +35,7 @@ app.use(helmet({
       scriptSrc: ["'self'", "https://cdn.jsdelivr.net"],
       imgSrc: ["'self'", "data:", "https://*.supabase.co", "https://*.supabase.com"],
       fontSrc: ["'self'", "https://fonts.gstatic.com"],
-      connectSrc: ["'self'", "https://*.supabase.co", "https://*.supabase.com", "https://api.resend.com"],
+      connectSrc: ["'self'", "https://*.supabase.co", "https://*.supabase.com", "https://api.resend.com", "https://cdn.jsdelivr.net"],
       frameSrc: ["'self'"],
       objectSrc: ["'none'"],
       frameAncestors: ["'none'"]
