@@ -371,16 +371,16 @@ function parseGoogleReview(googleReview) {
 // POST endpoint to sync Google reviews to Supabase
 app.post("/api/sync-google-reviews", requireAuth, async (req, res) => {
   console.log("Starting Google Reviews sync...");
-  
+
   try {
     // Fetch reviews from Google
     const googleReviews = await fetchGoogleReviews();
-    
+
     if (!googleReviews || googleReviews.length === 0) {
-      return res.json({ 
-        success: true, 
+      return res.json({
+        success: true,
         message: "No reviews found on Google",
-        synced: 0 
+        synced: 0
       });
     }
 
@@ -392,7 +392,7 @@ app.post("/api/sync-google-reviews", requireAuth, async (req, res) => {
     // Process each Google review
     for (const googleReview of googleReviews) {
       const reviewData = parseGoogleReview(googleReview);
-      
+
       // Check if review already exists (by Google review ID or matching comment)
       const { data: existingReviews } = await supabase
         .from("reviews")
@@ -408,6 +408,7 @@ app.post("/api/sync-google-reviews", requireAuth, async (req, res) => {
             rating: reviewData.rating,
             comment: reviewData.comment,
             author_name: reviewData.author_name,
+            status: 'confirmed', // Ensure Google reviews are always confirmed
           })
           .eq("id", existingReviews[0].id);
 
@@ -425,6 +426,7 @@ app.post("/api/sync-google-reviews", requireAuth, async (req, res) => {
             rating: reviewData.rating,
             google_review_id: reviewData.google_review_id,
             created_at: reviewData.review_time,
+            status: 'confirmed', // Google reviews are auto-confirmed
           }]);
 
         if (!error) {
@@ -434,7 +436,7 @@ app.post("/api/sync-google-reviews", requireAuth, async (req, res) => {
     }
 
     console.log(`Sync complete: ${syncedCount} reviews processed (${updatedCount} updated)`);
-    
+
     res.json({
       success: true,
       message: `Successfully synced ${syncedCount} reviews from Google`,
@@ -445,9 +447,9 @@ app.post("/api/sync-google-reviews", requireAuth, async (req, res) => {
 
   } catch (err) {
     console.error("Google Reviews sync error:", err.message);
-    res.status(500).json({ 
+    res.status(500).json({
       error: "Failed to sync Google reviews",
-      details: err.message 
+      details: err.message
     });
   }
 });
