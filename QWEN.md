@@ -7,6 +7,11 @@ SharpChoice is a real estate website for "Sharp Choice Real Estate", built as a 
 ### Key Features (Tier 2 Package):
 - Real estate listings management (add, edit, view)
 - Client reviews system with Google Reviews integration
+- **Public review submission with admin moderation**
+  - "Write a Review" modal form with star rating
+  - Reviews submitted as "pending" status
+  - Admin dashboard screens pending reviews (approve/delete)
+  - Email notifications to admin on new submissions
 - Contact form with email notifications
 - Admin dashboard for content management
 - Mobile-responsive design
@@ -72,13 +77,17 @@ SharpChoice is a real estate website for "Sharp Choice Real Estate", built as a 
 ## API Endpoints
 
 ### Public Endpoints
-- `GET /api/reviews`: Fetch all client reviews
+- `GET /api/reviews`: Fetch all confirmed client reviews
+- `POST /api/reviews/submit`: Submit a review for moderation (pending status)
 - `GET /api/listings[?status=active]`: Fetch property listings (with optional status filter)
 - `POST /api/contact`: Submit contact form (name, email, message, privacy consent)
 - `POST /api/upload-image`: Upload property photos to Supabase Storage
 
 ### Admin Endpoints (require JWT authentication)
-- `POST /api/reviews`: Add new review
+- `POST /api/reviews`: Add new review (auto-confirmed)
+- `GET /api/reviews/pending`: Fetch pending reviews awaiting moderation
+- `POST /api/reviews/:id/approve`: Approve a pending review (set to confirmed)
+- `POST /api/reviews/:id/delete`: Delete a pending review (set to deleted)
 - `GET /api/listings/:id`: Get single listing
 - `POST /api/listings`: Add new listing
 - `PATCH /api/listings/:id`: Update listing
@@ -201,13 +210,45 @@ The application includes an admin dashboard accessible through authentication:
 ## Database Schema (Supabase)
 
 ### Tables
-- `listings`: Property information (address, price, beds, baths, sqft, photos, metadata)
-- `reviews`: Client testimonials (author_name, comment, rating, google_review_id*, created_at)
-  - *`google_review_id`: Optional field storing Google's review ID for deduplication during sync
+- `listings`: Property information (address, city, state, zip, price, beds, baths, sqft, photos, status, metadata, created_at)
+- `reviews`: Client testimonials
+  - `id`: Primary key
+  - `author_name`: Review author name
+  - `comment`: Review text
+  - `rating`: Star rating (1-5)
+  - `email`: Submitter's email (for public submissions, not displayed publicly)
+  - `status`: Review status ('pending', 'confirmed', 'deleted')
+  - `google_review_id`: Google's review ID for deduplication during sync
+  - `created_at`: Timestamp
 - `contacts`: Contact form submissions (name, email, message, opt_in, created_at)
 
 ### Storage
 - `listings-images`: Property photos stored in Supabase Storage with public URLs
+
+### Database Migration Required
+Before deploying, run this SQL in Supabase SQL Editor:
+
+```sql
+-- Add status column for review moderation
+ALTER TABLE reviews 
+ADD COLUMN IF NOT EXISTS status TEXT DEFAULT 'confirmed' 
+CHECK (status IN ('pending', 'confirmed', 'deleted'));
+
+-- Add email column for public submissions
+ALTER TABLE reviews 
+ADD COLUMN IF NOT EXISTS email TEXT;
+
+-- Add google_review_id for Google sync deduplication
+ALTER TABLE reviews 
+ADD COLUMN IF NOT EXISTS google_review_id TEXT;
+
+-- Set existing reviews to confirmed
+UPDATE reviews SET status = 'confirmed' WHERE status IS NULL;
+
+-- Add indexes for performance
+CREATE INDEX IF NOT EXISTS idx_reviews_status ON reviews(status);
+CREATE INDEX IF NOT EXISTS idx_reviews_google_id ON reviews(google_review_id);
+```
 
 ## Deployment
 
@@ -218,6 +259,13 @@ The application is designed for deployment on platforms that support Node.js app
 - Set up Google Analytics tracking if applicable
 
 ## Recent Updates
+- **Feb 2026**: Added public review submission with admin moderation
+  - New "Write a Review" modal with star rating component
+  - Reviews submitted with "pending" status requiring admin approval
+  - Admin dashboard "Pending Reviews" section with approve/delete actions
+  - Email notifications to admin on new review submissions
+  - Google Reviews sync auto-confirms imported reviews
+  - Mobile-optimized modal form styling
 - **Feb 2026**: Fixed supabase variable naming conflict with CDN global (renamed to `supabaseClient`)
 - **Feb 2026**: Fixed cursor flicker on header navigation hover (added padding to nav links)
 - **Dec 2025**: Fixed listing edit functionality by replacing inline event handlers with event listeners (CSP compliance)
