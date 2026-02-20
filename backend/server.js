@@ -43,7 +43,7 @@ app.use(helmet({
   }
 })); // Add security headers with custom CSP
 app.use(express.json({ limit: "10mb" })); // Support base64 image uploads
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, "../frontend")));
 
 // === Clients ===
 const supabase = createClient(
@@ -609,7 +609,7 @@ app.post("/api/upload-image", async (req, res) => {
 
 // === SPA Fallback (must be last) ===
 app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "index.html"));
+  res.sendFile(path.join(__dirname, "../frontend", "index.html"));
 });
 
 // === Start Server ===

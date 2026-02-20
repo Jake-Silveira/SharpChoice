@@ -2,8 +2,8 @@ const sharp = require('sharp');
 const path = require('path');
 
 // Define paths
-const inputPath = path.join(__dirname, 'public/assets/profile.jpg');
-const outputPath = path.join(__dirname, 'public/assets/profile_resized.jpg');
+const inputPath = path.join(__dirname, 'frontend/assets/profile.jpg');
+const outputPath = path.join(__dirname, 'frontend/assets/profile_resized.jpg');
 
 // Resize the image maintaining aspect ratio
 async function resizeImage() {

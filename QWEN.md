@@ -61,18 +61,20 @@ SharpChoice is a real estate website for "Sharp Choice Real Estate", built as a 
 ## Key Files and Structure
 
 ### Backend Files
-- `server.js`: Main Express server with API routes and middleware
+- `backend/server.js`: Main Express server with API routes and middleware
+- `backend/package.json`: Project dependencies and start script
 
 ### Frontend Files
-- `public/index.html`: Main SPA template with structured data and SEO tags
-- `public/js/scripts.js`: Client-side JavaScript logic for API calls and UI interactions
-- `public/css/styles.css`: Custom CSS with responsive design and animations
-- `public/privacy.html`: Privacy policy page
-- `public/terms.html`: Terms of service page
+- `frontend/index.html`: Main SPA template with structured data and SEO tags
+- `frontend/js/scripts.js`: Client-side JavaScript logic for API calls and UI interactions
+- `frontend/css/styles.css`: Custom CSS with responsive design and animations
+- `frontend/privacy.html`: Privacy policy page
+- `frontend/terms.html`: Terms of service page
+- `frontend/assets/`: Static assets (images, SVGs)
+- `frontend/manifest.json`: Web app manifest
 
 ### Configuration
-- `package.json`: Project dependencies and start script
-- Environment variables for Supabase and email service configuration
+- Environment variables for Supabase and email service configuration (`.env` in backend/)
 
 ## API Endpoints
 
@@ -104,6 +106,8 @@ The application requires the following environment variables:
 - `GOOGLE_BUSINESS_ACCOUNT_ID`: (Optional) Google Business Profile account ID for review sync
 - `GOOGLE_API_KEY`: (Optional) Google API key with Business Profile API enabled
 
+These should be set in a `.env` file in the `backend/` directory.
+
 ## Security Features
 
 The application implements several security measures:
@@ -134,7 +138,7 @@ The application implements several security measures:
    ```
 
 3. **Configure environment variables**
-   Create a `.env` file in the root directory with the required environment variables:
+   Create a `.env` file in the `backend/` directory with the required environment variables:
    ```
    SUPABASE_URL=your_supabase_url
    SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
@@ -145,7 +149,7 @@ The application implements several security measures:
    ```
 
 4. **Update frontend Supabase config**
-   In `public/index.html`, update the Supabase meta tags:
+   In `frontend/index.html`, update the Supabase meta tags:
    ```html
    <meta name="supabase-url" content="YOUR_SUPABASE_URL">
    <meta name="supabase-anon-key" content="YOUR_SUPABASE_ANON_KEY">
@@ -153,7 +157,7 @@ The application implements several security measures:
 
 5. **Start the server**
    ```bash
-   npm start
+   cd backend && npm start
    ```
 
 6. **Access the application**
@@ -253,10 +257,12 @@ CREATE INDEX IF NOT EXISTS idx_reviews_google_id ON reviews(google_review_id);
 ## Deployment
 
 The application is designed for deployment on platforms that support Node.js applications:
+- Set the working directory to `backend/`
 - Set up environment variables in the deployment environment
 - Ensure Supabase and Resend services are properly configured
 - Configure the domain name and SSL certificate
 - Set up Google Analytics tracking if applicable
+- The `backend/` folder serves static files from `../frontend/`
 
 ## Recent Updates
 - **Feb 2026**: Added public review submission with admin moderation
