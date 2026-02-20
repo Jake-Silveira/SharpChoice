@@ -176,9 +176,11 @@ app.post("/api/contact", contactLimiter, async (req, res) => {
 // === Reviews API ===
 app.get("/api/reviews", async (req, res) => {
   try {
+    // Only return confirmed reviews for public display
     const { data, error } = await supabase
       .from("reviews")
       .select("*")
+      .eq("status", "confirmed")
       .order("created_at", { ascending: false });
 
     if (error) throw error;
@@ -186,6 +188,66 @@ app.get("/api/reviews", async (req, res) => {
   } catch (err) {
     console.error("Fetch reviews error:", err);
     res.status(500).json({ error: "Failed to fetch reviews" });
+  }
+});
+
+// Public review submission (goes to pending status)
+app.post("/api/reviews/submit", async (req, res) => {
+  let { author_name, email, comment, rating } = req.body;
+
+  // Sanitize inputs
+  author_name = sanitizeInput(author_name);
+  email = validator.isEmail(email) ? validator.normalizeEmail(email) : '';
+  comment = sanitizeInput(comment);
+  rating = Number(rating);
+
+  if (!author_name || !email || !comment || rating == null || rating < 1 || rating > 5) {
+    return res.status(400).json({ error: "Missing or invalid fields: author_name, email, comment, rating (1-5)" });
+  }
+
+  try {
+    // Insert with 'pending' status
+    const { error } = await supabase
+      .from("reviews")
+      .insert([{ 
+        author_name, 
+        comment, 
+        rating,
+        email, // Store email for admin reference (not displayed publicly)
+        status: 'pending' 
+      }]);
+
+    if (error) throw error;
+
+    // Send email notification to admin
+    try {
+      await resend.emails.send({
+        from: "Website Reviews <contact@sharpchoicerealestate.com>",
+        to: "sharpchoicerealestate@gmail.com",
+        reply_to: email,
+        subject: `New Review Submission from ${author_name}`,
+        html: `
+          <h2>New Review Pending Approval</h2>
+          <p><strong>From:</strong> ${author_name} (${email})</p>
+          <p><strong>Rating:</strong> ${'★'.repeat(rating)}${'☆'.repeat(5 - rating)} (${rating}/5)</p>
+          <p><strong>Comment:</strong></p>
+          <blockquote style="background:#f8f9fa; padding:1rem; border-left:4px solid #b8a89f; margin:1rem 0;">
+            "${comment}"
+          </blockquote>
+          <p style="color:#666; font-size:0.9rem;">
+            Log in to the admin dashboard to approve or delete this review.
+          </p>
+        `,
+      });
+    } catch (emailErr) {
+      console.error("Failed to send admin notification email:", emailErr);
+      // Don't fail the request if email fails
+    }
+
+    res.json({ success: true, message: "Review submitted for approval" });
+  } catch (err) {
+    console.error("Submit review error:", err);
+    res.status(500).json({ error: "Failed to submit review" });
   }
 });
 
@@ -203,15 +265,69 @@ app.post("/api/reviews", requireAuth, async (req, res) => {
   }
 
   try {
+    // Admin-added reviews are auto-confirmed
     const { error } = await supabase
       .from("reviews")
-      .insert([{ author_name, comment, rating: Number(rating) }]);
+      .insert([{ author_name, comment, rating: Number(rating), status: 'confirmed' }]);
 
     if (error) throw error;
     res.json({ success: true });
   } catch (err) {
     console.error("Add review error:", err);
     res.status(500).json({ error: "Failed to add review" });
+  }
+});
+
+// === Pending Reviews (Admin Only) ===
+app.get("/api/reviews/pending", requireAuth, async (req, res) => {
+  try {
+    const { data, error } = await supabase
+      .from("reviews")
+      .select("id, author_name, comment, rating, email, created_at, status")
+      .eq("status", "pending")
+      .order("created_at", { ascending: false });
+
+    if (error) throw error;
+    res.json(data);
+  } catch (err) {
+    console.error("Fetch pending reviews error:", err);
+    res.status(500).json({ error: "Failed to fetch pending reviews" });
+  }
+});
+
+// Approve or delete pending review (Admin Only)
+app.post("/api/reviews/:id/approve", requireAuth, async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const { error } = await supabase
+      .from("reviews")
+      .update({ status: 'confirmed' })
+      .eq("id", id);
+
+    if (error) throw error;
+    res.json({ success: true, message: "Review approved" });
+  } catch (err) {
+    console.error("Approve review error:", err);
+    res.status(500).json({ error: "Failed to approve review" });
+  }
+});
+
+app.post("/api/reviews/:id/delete", requireAuth, async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    // Soft delete by setting status to 'deleted'
+    const { error } = await supabase
+      .from("reviews")
+      .update({ status: 'deleted' })
+      .eq("id", id);
+
+    if (error) throw error;
+    res.json({ success: true, message: "Review deleted" });
+  } catch (err) {
+    console.error("Delete review error:", err);
+    res.status(500).json({ error: "Failed to delete review" });
   }
 });
 

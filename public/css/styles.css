@@ -1911,5 +1911,129 @@ body {
   filter: grayscale(0%) brightness(1);
 }
 
+/* Write Review Modal Styles */
+.review-notice {
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 1.5rem;
+  font-style: italic;
+}
+
+/* Star Rating */
+.star-rating {
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: flex-end;
+  gap: 0.25rem;
+  font-size: 2rem;
+  unicode-bidi: bidi-override;
+  direction: rtl;
+}
+
+.star-rating input {
+  display: none;
+}
+
+.star-rating label {
+  cursor: pointer;
+  color: #ddd;
+  transition: color 0.2s ease;
+}
+
+.star-rating label:hover,
+.star-rating label:hover ~ label,
+.star-rating input:checked ~ label {
+  color: #f5a623;
+}
+
+.star-rating input:focus + label {
+  outline: 2px solid #f5a623;
+  outline-offset: 2px;
+}
+
+/* Reviews Actions Container */
+.reviews-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 1.5rem;
+  flex-wrap: wrap;
+}
+
+/* Pending Review Item in Admin */
+.pending-review-item {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: var(--border-radius);
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.pending-review-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.pending-review-author {
+  font-weight: 600;
+  color: var(--color-dark);
+}
+
+.pending-review-rating {
+  color: #f5a623;
+  font-size: 1.1rem;
+}
+
+.pending-review-comment {
+  color: #495057;
+  margin-bottom: 0.75rem;
+  font-style: italic;
+}
+
+.pending-review-email {
+  font-size: 0.85rem;
+  color: #6c757d;
+  margin-bottom: 0.75rem;
+}
+
+.pending-review-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.btn-approve {
+  background: var(--color-success);
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: var(--transition);
+}
+
+.btn-approve:hover {
+  background: #218838;
+}
+
+.btn-delete-review {
+  background: var(--color-error);
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: var(--transition);
+}
+
+.btn-delete-review:hover {
+  background: #c82333;
+}
+
 
 

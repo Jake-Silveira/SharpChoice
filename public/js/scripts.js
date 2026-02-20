@@ -728,6 +728,7 @@ $('#login-form')?.addEventListener('submit', async (e) => {
   $('#dashboard-modal').classList.add('show');
   document.body.style.overflow = 'hidden';
   $('#admin-login-btn').textContent = 'Dashboard';
+  loadPendingReviews(); // Load pending reviews when admin logs in
 });
 
 // Logout
@@ -745,6 +746,7 @@ $('#reviews-tab')?.addEventListener('click', () => {
   $('#listings-section').style.display = 'none';
   $('#reviews-tab').classList.add('tab-active');
   $('#listings-tab').classList.remove('tab-active');
+  loadPendingReviews(); // Load pending reviews when tab is shown
 });
 $('#listings-tab')?.addEventListener('click', () => {
   $('#reviews-section').style.display = 'none';
@@ -887,6 +889,201 @@ $('#add-review-form')?.addEventListener('submit', async (e) => {
     alert('Error: ' + (err.error || 'unknown'));
   }
 });
+
+// =============================
+// Write a Review Modal (Public)
+// =============================
+const writeReviewModal = $('#write-review-modal');
+const writeReviewBtn = $('#write-review-btn');
+const closeWriteReviewBtn = writeReviewModal?.querySelector('.modal-close');
+const writeReviewForm = $('#write-review-form');
+const writeReviewStatus = $('#review-form-status');
+
+const openWriteReviewModal = () => {
+  writeReviewModal?.classList.add('show');
+  document.body.style.overflow = 'hidden';
+};
+
+const closeWriteReviewModal = () => {
+  writeReviewModal?.classList.remove('show');
+  document.body.style.overflow = '';
+  writeReviewForm?.reset();
+  if (writeReviewStatus) writeReviewStatus.textContent = '';
+};
+
+writeReviewBtn?.addEventListener('click', openWriteReviewModal);
+closeWriteReviewBtn?.addEventListener('click', closeWriteReviewModal);
+writeReviewModal?.addEventListener('click', (e) => {
+  if (e.target.id === 'write-review-modal') closeWriteReviewModal();
+});
+
+// Write Review Form Submission
+writeReviewForm?.addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const consentChecked = $('#review-consent')?.checked ?? false;
+  if (!consentChecked) {
+    if (writeReviewStatus) {
+      writeReviewStatus.textContent = 'You must agree to the Terms of Service to submit.';
+      writeReviewStatus.style.color = 'red';
+    }
+    return;
+  }
+
+  const payload = {
+    author_name: $('#review-author-name').value.trim(),
+    email: $('#review-author-email').value.trim(),
+    rating: Number($('#review-rating').value),
+    comment: $('#review-comment').value.trim(),
+  };
+
+  if (!payload.author_name || !payload.email || !payload.rating || !payload.comment) {
+    if (writeReviewStatus) {
+      writeReviewStatus.textContent = 'Please fill in all required fields.';
+      writeReviewStatus.style.color = 'red';
+    }
+    return;
+  }
+
+  if (writeReviewStatus) {
+    writeReviewStatus.textContent = 'Submitting...';
+    writeReviewStatus.style.color = '';
+  }
+
+  try {
+    const res = await fetch('/api/reviews/submit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+
+    const data = await res.json();
+    if (!res.ok) {
+      throw new Error(data.error || 'Submission failed');
+    }
+
+    if (writeReviewStatus) {
+      writeReviewStatus.textContent = 'Thank you! Your review will be posted after review.';
+      writeReviewStatus.style.color = 'green';
+    }
+    writeReviewForm.reset();
+    setTimeout(() => {
+      closeWriteReviewModal();
+    }, 3000);
+  } catch (err) {
+    console.error('Submit review error:', err);
+    if (writeReviewStatus) {
+      writeReviewStatus.textContent = err.message || 'Error – please try again later.';
+      writeReviewStatus.style.color = 'red';
+    }
+  }
+});
+
+// =============================
+// Admin: Load Pending Reviews
+// =============================
+async function loadPendingReviews() {
+  const container = $('#pending-reviews-container');
+  if (!container) return;
+
+  const session = JSON.parse(localStorage.getItem('sb-session') || '{}');
+  const token = session.access_token || '';
+  if (!token) {
+    container.innerHTML = '<p>Please log in to view pending reviews.</p>';
+    return;
+  }
+
+  try {
+    const res = await fetch('/api/reviews/pending', {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error || 'Failed to load pending reviews');
+    }
+
+    const reviews = await res.json();
+    container.innerHTML = '';
+
+    if (!Array.isArray(reviews) || reviews.length === 0) {
+      container.innerHTML = '<p>No pending reviews.</p>';
+      return;
+    }
+
+    reviews.forEach((r) => {
+      const stars = '★'.repeat(r.rating || 0) + '☆'.repeat(5 - (r.rating || 0));
+      const authorName = sanitizeHTML(r.author_name || 'Anonymous');
+      const comment = sanitizeRichHTML(r.comment || '');
+      const email = sanitizeHTML(r.email || 'No email provided');
+      const submittedDate = r.created_at ? new Date(r.created_at).toLocaleDateString() : 'Unknown';
+
+      const item = document.createElement('div');
+      item.className = 'pending-review-item';
+      item.innerHTML = `
+        <div class="pending-review-header">
+          <span class="pending-review-author">${authorName}</span>
+          <span class="pending-review-rating" title="${r.rating} out of 5 stars">${stars}</span>
+        </div>
+        <p class="pending-review-comment">"${comment}"</p>
+        <p class="pending-review-email">📧 ${email}</p>
+        <p style="font-size:0.75rem; color:#999; margin-bottom:0.5rem;">Submitted: ${submittedDate}</p>
+        <div class="pending-review-actions">
+          <button class="btn-approve" data-id="${r.id}" data-action="approve">✓ Approve</button>
+          <button class="btn-delete-review" data-id="${r.id}" data-action="delete">✕ Delete</button>
+        </div>
+      `;
+      container.appendChild(item);
+    });
+
+    // Add event listeners to approve/delete buttons
+    container.querySelectorAll('.btn-approve, .btn-delete-review').forEach((btn) => {
+      btn.addEventListener('click', handlePendingReviewAction);
+    });
+  } catch (err) {
+    console.error('loadPendingReviews error:', err);
+    container.innerHTML = '<p>Error loading pending reviews.</p>';
+  }
+}
+
+// Handle approve/delete actions for pending reviews
+async function handlePendingReviewAction(e) {
+  const button = e.target;
+  const id = button.getAttribute('data-id');
+  const action = button.getAttribute('data-action');
+
+  const session = JSON.parse(localStorage.getItem('sb-session') || '{}');
+  const token = session.access_token || '';
+  if (!token) {
+    alert('You must be logged in.');
+    return;
+  }
+
+  if (action === 'approve') {
+    if (!confirm('Approve this review and publish it to the site?')) return;
+  } else if (action === 'delete') {
+    if (!confirm('Delete this review permanently? This cannot be undone.')) return;
+  }
+
+  try {
+    const res = await fetch(`/api/reviews/${id}/${action}`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error || 'Action failed');
+    }
+
+    alert(action === 'approve' ? 'Review approved and published!' : 'Review deleted.');
+    loadPendingReviews();
+    loadReviews(); // Refresh public reviews if approved
+  } catch (err) {
+    console.error('Pending review action error:', err);
+    alert('Error: ' + err.message);
+  }
+}
 
 // Sync Google Reviews
 $('#sync-google-reviews-btn')?.addEventListener('click', async () => {
