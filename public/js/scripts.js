@@ -258,7 +258,6 @@ async function updateAggregateRating() {
     };
 
     schemaScript.textContent = JSON.stringify(schema);
-    console.log(`AggregateRating updated: ${averageRating} stars from ${reviewCount} reviews`);
   } catch (err) {
     console.error('updateAggregateRating error:', err.message);
   }
@@ -292,8 +291,6 @@ async function loadFeaturedListings() {
       grid.innerHTML = '<p>No active listings at this time.</p>';
       return;
     }
-
-    console.log('Raw listings from API:', listings); // ← DEBUG
 
     listings.forEach((l) => {
       const price = new Intl.NumberFormat('en-US', {
