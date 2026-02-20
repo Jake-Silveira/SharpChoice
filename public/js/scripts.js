@@ -917,6 +917,56 @@ writeReviewModal?.addEventListener('click', (e) => {
   if (e.target.id === 'write-review-modal') closeWriteReviewModal();
 });
 
+// Star rating hover effect - fill from left to right
+document.querySelectorAll('.star-rating').forEach((container) => {
+  const labels = container.querySelectorAll('label');
+  
+  labels.forEach((label) => {
+    label.addEventListener('mouseenter', () => {
+      const index = parseInt(label.getAttribute('data-index'));
+      labels.forEach((lbl, idx) => {
+        if (idx < index) {
+          lbl.classList.add('hovered');
+        } else {
+          lbl.classList.remove('hovered');
+        }
+      });
+    });
+    
+    label.addEventListener('mouseleave', () => {
+      labels.forEach((lbl) => lbl.classList.remove('hovered'));
+    });
+    
+    label.addEventListener('click', () => {
+      // Update filled state based on selected rating
+      const index = parseInt(label.getAttribute('data-index'));
+      labels.forEach((lbl, idx) => {
+        if (idx < index) {
+          lbl.classList.add('filled');
+        } else {
+          lbl.classList.remove('filled');
+        }
+      });
+    });
+  });
+  
+  // Handle change event to update filled stars
+  container.querySelectorAll('input').forEach((input) => {
+    input.addEventListener('change', () => {
+      if (input.checked) {
+        const index = parseInt(input.value);
+        labels.forEach((lbl, idx) => {
+          if (idx < index) {
+            lbl.classList.add('filled');
+          } else {
+            lbl.classList.remove('filled');
+          }
+        });
+      }
+    });
+  });
+});
+
 // Write Review Form Submission
 writeReviewForm?.addEventListener('submit', async (e) => {
   e.preventDefault();
@@ -930,14 +980,15 @@ writeReviewForm?.addEventListener('submit', async (e) => {
     return;
   }
 
-  const payload = {
-    author_name: $('#review-author-name').value.trim(),
-    email: $('#review-author-email').value.trim(),
-    rating: Number($('#review-rating').value),
-    comment: $('#review-comment').value.trim(),
-  };
+  const authorName = $('#review-author-name')?.value?.trim() || '';
+  const email = $('#review-author-email')?.value?.trim() || '';
+  const comment = $('#review-comment')?.value?.trim() || '';
+  
+  // Get selected rating - check if any radio is checked
+  const selectedRating = document.querySelector('input[name="rating"]:checked');
+  const rating = selectedRating ? Number(selectedRating.value) : 0;
 
-  if (!payload.author_name || !payload.email || !payload.rating || !payload.comment) {
+  if (!authorName || !email || !comment || rating === 0) {
     if (writeReviewStatus) {
       writeReviewStatus.textContent = 'Please fill in all required fields.';
       writeReviewStatus.style.color = 'red';
@@ -954,7 +1005,7 @@ writeReviewForm?.addEventListener('submit', async (e) => {
     const res = await fetch('/api/reviews/submit', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
+      body: JSON.stringify({ author_name: authorName, email, comment, rating }),
     });
 
     const data = await res.json();
@@ -967,6 +1018,8 @@ writeReviewForm?.addEventListener('submit', async (e) => {
       writeReviewStatus.style.color = 'green';
     }
     writeReviewForm.reset();
+    // Clear filled stars
+    document.querySelectorAll('.star-rating label').forEach(lbl => lbl.classList.remove('filled'));
     setTimeout(() => {
       closeWriteReviewModal();
     }, 3000);

@@ -849,6 +849,12 @@ header, section {
   background: var(--color-primary);
 }
 
+/* Write Review button - match More Reviews button size */
+#write-review-btn {
+  font-size: 1rem;
+  padding: 0.6rem 1.2rem;
+}
+
 
 /* Map */
 .map-wrapper {
@@ -1912,6 +1918,10 @@ body {
 }
 
 /* Write Review Modal Styles */
+#write-review-modal .modal-content {
+  max-width: 600px;
+}
+
 .review-notice {
   font-size: 0.9rem;
   color: #666;
@@ -1919,15 +1929,11 @@ body {
   font-style: italic;
 }
 
-/* Star Rating */
+/* Star Rating - fills left to right */
 .star-rating {
   display: flex;
-  flex-direction: row-reverse;
-  justify-content: flex-end;
   gap: 0.25rem;
   font-size: 2rem;
-  unicode-bidi: bidi-override;
-  direction: rtl;
 }
 
 .star-rating input {
@@ -1937,12 +1943,12 @@ body {
 .star-rating label {
   cursor: pointer;
   color: #ddd;
-  transition: color 0.2s ease;
+  transition: color 0.15s ease;
 }
 
-.star-rating label:hover,
-.star-rating label:hover ~ label,
-.star-rating input:checked ~ label {
+/* Selected star and all previous stars are filled gold */
+.star-rating label.filled,
+.star-rating label.hovered {
   color: #f5a623;
 }
 
