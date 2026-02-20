@@ -1929,6 +1929,106 @@ body {
   font-style: italic;
 }
 
+/* Write Review Form Styling */
+#write-review-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+#write-review-form .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+#write-review-form label {
+  font-weight: 600;
+  color: var(--color-dark);
+  font-size: 0.95rem;
+}
+
+#write-review-form input[type="text"],
+#write-review-form input[type="email"],
+#write-review-form textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: var(--border-radius);
+  font-family: inherit;
+  font-size: 1rem;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  box-sizing: border-box;
+}
+
+#write-review-form input[type="text"]:focus,
+#write-review-form input[type="email"]:focus,
+#write-review-form textarea:focus {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px rgba(216, 180, 160, 0.2);
+  outline: none;
+}
+
+#write-review-form textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+#write-review-form .opt-in-container {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  color: #555;
+  line-height: 1.4;
+}
+
+#write-review-form .opt-in-container input[type="checkbox"] {
+  width: 1.1rem;
+  height: 1.1rem;
+  cursor: pointer;
+  flex-shrink: 0;
+  margin-top: 0.25rem;
+}
+
+#write-review-form .opt-in-container label {
+  cursor: pointer;
+  margin: 0;
+  font-weight: 400;
+}
+
+#write-review-form .opt-in-container a {
+  color: var(--color-primary);
+  text-decoration: underline;
+}
+
+#write-review-form .opt-in-container a:hover {
+  color: var(--color-accent);
+}
+
+#write-review-form button[type="submit"] {
+  width: 100%;
+  padding: 0.875rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: var(--border-radius);
+  background: var(--color-accent);
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+#write-review-form button[type="submit"]:hover {
+  background: var(--color-primary);
+}
+
+#review-form-status {
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+  text-align: center;
+}
+
 /* Star Rating - fills left to right */
 .star-rating {
   display: flex;
