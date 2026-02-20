@@ -918,43 +918,29 @@ writeReviewModal?.addEventListener('click', (e) => {
 });
 
 // Star rating hover effect - fill from left to right
-document.querySelectorAll('.star-rating').forEach((container) => {
-  const labels = container.querySelectorAll('label');
-  
-  labels.forEach((label) => {
-    label.addEventListener('mouseenter', () => {
-      const index = parseInt(label.getAttribute('data-index'));
-      labels.forEach((lbl, idx) => {
-        if (idx < index) {
-          lbl.classList.add('hovered');
-        } else {
-          lbl.classList.remove('hovered');
-        }
+function initStarRating() {
+  document.querySelectorAll('.star-rating').forEach((container) => {
+    const labels = container.querySelectorAll('label');
+
+    labels.forEach((label) => {
+      label.addEventListener('mouseenter', () => {
+        const index = parseInt(label.getAttribute('data-index'));
+        labels.forEach((lbl, idx) => {
+          if (idx < index) {
+            lbl.classList.add('hovered');
+          } else {
+            lbl.classList.remove('hovered');
+          }
+        });
       });
-    });
-    
-    label.addEventListener('mouseleave', () => {
-      labels.forEach((lbl) => lbl.classList.remove('hovered'));
-    });
-    
-    label.addEventListener('click', () => {
-      // Update filled state based on selected rating
-      const index = parseInt(label.getAttribute('data-index'));
-      labels.forEach((lbl, idx) => {
-        if (idx < index) {
-          lbl.classList.add('filled');
-        } else {
-          lbl.classList.remove('filled');
-        }
+
+      label.addEventListener('mouseleave', () => {
+        labels.forEach((lbl) => lbl.classList.remove('hovered'));
       });
-    });
-  });
-  
-  // Handle change event to update filled stars
-  container.querySelectorAll('input').forEach((input) => {
-    input.addEventListener('change', () => {
-      if (input.checked) {
-        const index = parseInt(input.value);
+
+      label.addEventListener('click', () => {
+        // Update filled state based on selected rating
+        const index = parseInt(label.getAttribute('data-index'));
         labels.forEach((lbl, idx) => {
           if (idx < index) {
             lbl.classList.add('filled');
@@ -962,10 +948,33 @@ document.querySelectorAll('.star-rating').forEach((container) => {
             lbl.classList.remove('filled');
           }
         });
-      }
+      });
+    });
+
+    // Handle change event to update filled stars
+    container.querySelectorAll('input').forEach((input) => {
+      input.addEventListener('change', () => {
+        if (input.checked) {
+          const index = parseInt(input.value);
+          labels.forEach((lbl, idx) => {
+            if (idx < index) {
+              lbl.classList.add('filled');
+            } else {
+              lbl.classList.remove('filled');
+            }
+          });
+        }
+      });
     });
   });
-});
+}
+
+// Initialize star rating when DOM is ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initStarRating);
+} else {
+  initStarRating();
+}
 
 // Write Review Form Submission
 writeReviewForm?.addEventListener('submit', async (e) => {
