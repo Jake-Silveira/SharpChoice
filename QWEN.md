@@ -99,12 +99,24 @@ SharpChoice is a real estate website for "Sharp Choice Real Estate", built as a 
 ## Environment Variables
 
 The application requires the following environment variables:
+
+### Core Services
 - `SUPABASE_URL`: Your Supabase project URL
 - `SUPABASE_SERVICE_ROLE_KEY`: Your Supabase service role key (for server-side operations)
 - `RESEND_API_KEY`: Your Resend API key for email notifications
 - `PORT`: Port for the server (defaults to 3000)
-- `GOOGLE_BUSINESS_ACCOUNT_ID`: (Optional) Google Business Profile account ID for review sync
-- `GOOGLE_API_KEY`: (Optional) Google API key with Business Profile API enabled
+
+### Google Business Profile Integration (Production)
+To enable Google Reviews sync, you need to set up Google Cloud credentials:
+
+**Option 1: Service Account (Recommended for Production)**
+- `GOOGLE_BUSINESS_ACCOUNT_ID`: Your Google Business Profile account ID (format: `accounts/1234567890` or just `1234567890`)
+- `GOOGLE_CLIENT_EMAIL`: Service account email from Google Cloud Console (e.g., `your-service-account@project-id.iam.gserviceaccount.com`)
+- `GOOGLE_PRIVATE_KEY`: Service account private key (replace newlines with `\n` in the value)
+
+**Option 2: API Key (Fallback, Less Secure)**
+- `GOOGLE_BUSINESS_ACCOUNT_ID`: Your Google Business Profile account ID
+- `GOOGLE_API_KEY`: API key with Business Profile API enabled
 
 These should be set in a `.env` file in the `backend/` directory.
 
@@ -144,23 +156,56 @@ The application implements several security measures:
    SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
    RESEND_API_KEY=your_resend_api_key
    PORT=3000
-   GOOGLE_BUSINESS_ACCOUNT_ID=your_google_business_account_id (after verification)
-   GOOGLE_API_KEY=your_google_api_key (after verification)
    ```
 
-4. **Update frontend Supabase config**
+4. **Configure Google Business Profile Integration** (for Google Reviews sync)
+   
+   **Step A: Get your Google Business Account ID**
+   - Go to [Google Business Profile](https://businessprofile.google.com/)
+   - Your account ID can be found in the URL or via the API
+   - Format: `accounts/1234567890` or just `1234567890`
+   
+   **Step B: Create a Service Account (Recommended)**
+   1. Go to [Google Cloud Console](https://console.cloud.google.com/)
+   2. Create a new project or select existing one
+   3. Enable the "Google Business Profile API"
+   4. Go to "APIs & Services" > "Credentials"
+   5. Click "Create Credentials" > "Service Account"
+   6. Fill in service account details and click "Create"
+   7. Grant the service account access to your Business Profile
+   8. Go to the "Keys" tab > "Add Key" > "Create new key"
+   9. Choose JSON format and download the key file
+   10. Extract the `client_email` and `private_key` from the JSON file
+   11. Add to your `.env` file:
+       ```
+       GOOGLE_BUSINESS_ACCOUNT_ID=accounts/your_account_id
+       GOOGLE_CLIENT_EMAIL=your-service-account@project-id.iam.gserviceaccount.com
+       GOOGLE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\nYOUR_KEY_HERE\n-----END PRIVATE KEY-----\n"
+       ```
+   
+   **Step C: Alternative - Use API Key (Less Secure)**
+   1. In Google Cloud Console, go to "APIs & Services" > "Credentials"
+   2. Click "Create Credentials" > "API Key"
+   3. Restrict the API key to only allow Business Profile API
+   4. Add to your `.env` file:
+       ```
+       GOOGLE_BUSINESS_ACCOUNT_ID=your_account_id
+       GOOGLE_API_KEY=your_api_key
+       ```
+
+5. **Update frontend Supabase config**
    In `frontend/index.html`, update the Supabase meta tags:
    ```html
    <meta name="supabase-url" content="YOUR_SUPABASE_URL">
    <meta name="supabase-anon-key" content="YOUR_SUPABASE_ANON_KEY">
    ```
 
-5. **Start the server**
+6. **Start the server**
    ```bash
    cd backend && npm start
    ```
 
-6. **Access the application**
+7. **Access the application**
    Open `http://localhost:3000` in your browser
 
 ## Deployment

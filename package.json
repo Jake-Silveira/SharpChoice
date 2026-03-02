@@ -1,0 +1,14 @@
+{
+  "name": "sharpchoice-real-estate",
+  "version": "1.0.0",
+  "description": "SharpChoice Real Estate - Monorepo root",
+  "private": true,
+  "scripts": {
+    "install:backend": "cd backend && npm install",
+    "start": "cd backend && npm start",
+    "build": "echo 'No build step required'"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
