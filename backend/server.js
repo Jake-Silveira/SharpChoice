@@ -142,16 +142,20 @@ app.get("/api/test-google-access", requireAuth, async (req, res) => {
 
     const client = await auth.getClient();
     
-    // Use the correct API: Business Information API
-    // Reference: https://developers.google.com/my-business/reference/rest/v1/accounts
-    const businessprofile = google.businessprofile('v1');
+    // Use the correct API: mybusinessbusinessinformation v1
+    // https://developers.google.com/my-business/reference/rest/v1
+    const mybusiness = google.mybusinessbusinessinformation({
+      version: 'v1',
+      auth: client,
+    });
     
-    // Get account info
+    console.log('[Test] Testing account access for:', accountId);
+    
+    // Get account info first
     let accountName = 'Unknown';
     try {
-      const accountResponse = await businessprofile.accounts.get({
+      const accountResponse = await mybusiness.accounts.get({
         name: `accounts/${accountId}`,
-        auth: client,
       });
       accountName = accountResponse.data.displayName || accountResponse.data.accountName || 'Unknown';
       console.log('[Test] Account found:', accountName);
@@ -163,9 +167,8 @@ app.get("/api/test-google-access", requireAuth, async (req, res) => {
     // Test reviews access - this is the main thing we need
     console.log('[Test] Fetching reviews for accounts/' + accountId + '/locations/' + accountId);
     
-    const response = await businessprofile.accounts.locations.reviews.list({
+    const response = await mybusiness.accounts.locations.reviews.list({
       name: `accounts/${accountId}/locations/${accountId}`,
-      auth: client,
     });
 
     const reviews = response.data.reviews || [];
@@ -185,6 +188,7 @@ app.get("/api/test-google-access", requireAuth, async (req, res) => {
     
   } catch (err) {
     console.error('[Test] Google access test failed:', err.message);
+    console.error('[Test] Full error:', JSON.stringify(err, Object.getOwnPropertyNames(err), 2));
     res.status(500).json({
       success: false,
       error: err.message,
@@ -524,8 +528,11 @@ async function fetchGoogleReviews() {
     const auth = getGoogleAuthClient();
 
     // Initialize Google Business Profile API client
-    // Using the correct API name: businessprofile (not mybusinessbusinessinformation)
-    const businessprofile = google.businessprofile('v1');
+    // Using mybusinessbusinessinformation API with proper initialization
+    const mybusiness = google.mybusinessbusinessinformation({
+      version: 'v1',
+      auth: auth ? await auth.getClient() : undefined,
+    });
 
     // Extract account ID from the full resource name if needed
     // Format can be "accounts/1234567890" or just "1234567890"
@@ -536,14 +543,12 @@ async function fetchGoogleReviews() {
 
     if (auth) {
       // Use OAuth 2.0 service account authentication
-      const authClient = await auth.getClient();
-      response = await businessprofile.accounts.locations.reviews.list({
+      response = await mybusiness.accounts.locations.reviews.list({
         name: `accounts/${accountId}/locations/${locationId}`,
-        auth: authClient,
       });
     } else {
       // Fallback to API key authentication
-      response = await businessprofile.accounts.locations.reviews.list({
+      response = await mybusiness.accounts.locations.reviews.list({
         name: `accounts/${accountId}/locations/${locationId}`,
         key: GOOGLE_API_KEY,
       });
@@ -554,7 +559,7 @@ async function fetchGoogleReviews() {
     return reviews;
   } catch (err) {
     console.error("Google Business Profile API error:", err.message);
-    
+
     // Provide more specific error messages
     if (err.message.includes('403')) {
       throw new Error("Access denied. Ensure your Google service account has the 'business.manage' scope and proper permissions.");
