@@ -546,20 +546,31 @@ async function fetchGoogleReviews() {
         // If My Business API fails, try Places API fallback
         console.log('My Business API failed, checking for Places API fallback...');
         
-        if (process.env.GOOGLE_PLACES_API_KEY && process.env.GOOGLE_PLACE_ID) {
-          const placesUrl = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${process.env.GOOGLE_PLACE_ID}&fields=reviews&key=${process.env.GOOGLE_PLACES_API_KEY}`;
-          const placesResponse = await fetch(placesUrl);
-          const placesData = await placesResponse.json();
+        if (process.env.GOOGLE_PLACES_API_KEY) {
+          // Try to get Place ID from environment or auto-discover
+          let placeId = process.env.GOOGLE_PLACE_ID;
           
-          if (placesData.result && placesData.result.reviews) {
-            console.log(`Successfully fetched ${placesData.result.reviews.length} reviews from Places API`);
-            // Convert Places API format to our format
-            return placesData.result.reviews.map(review => ({
-              reviewer: { displayName: review.author_name },
-              rating: review.rating,
-              comment: review.text,
-              createTime: review.time,
-            }));
+          if (!placeId && GOOGLE_BUSINESS_ACCOUNT_ID) {
+            // Auto-discover Place ID using business account info
+            console.log('No Place ID configured, attempting auto-discovery...');
+            placeId = await discoverPlaceId(process.env.GOOGLE_PLACES_API_KEY, accountId);
+          }
+          
+          if (placeId) {
+            const placesUrl = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&fields=reviews&key=${process.env.GOOGLE_PLACES_API_KEY}`;
+            const placesResponse = await fetch(placesUrl);
+            const placesData = await placesResponse.json();
+            
+            if (placesData.result && placesData.result.reviews) {
+              console.log(`Successfully fetched ${placesData.result.reviews.length} reviews from Places API`);
+              // Convert Places API format to our format
+              return placesData.result.reviews.map(review => ({
+                reviewer: { displayName: review.author_name },
+                rating: review.rating,
+                comment: review.text,
+                createTime: review.time,
+              }));
+            }
           }
         }
         
@@ -587,11 +598,21 @@ async function fetchGoogleReviews() {
     
     // Provide more specific error messages
     if (err.message.includes('403') || err.message.includes('PERMISSION_DENIED')) {
-      throw new Error(
-        "Access denied. You need to enable the Google My Business API in your Google Cloud project.\n" +
-        "Go to: https://console.cloud.google.com/apis/library/mybusiness.googleapis.com\n" +
-        "Or enable these APIs: businessprofileperformance.googleapis.com, mybusinessaccountmanagement.googleapis.com, mybusinessbusinessinformation.googleapis.com"
-      );
+      if (err.message.includes('mybusiness.googleapis.com')) {
+        // Check if Places API is available as fallback
+        if (process.env.GOOGLE_PLACES_API_KEY) {
+          console.log('My Business API unavailable, Places API fallback available');
+          // Will be handled in the try block above
+        } else {
+          throw new Error(
+            "Access denied. You need to enable the Google My Business API in your Google Cloud project.\n" +
+            "Go to: https://console.cloud.google.com/apis/library/mybusiness.googleapis.com\n" +
+            "Or enable these APIs: businessprofileperformance.googleapis.com, mybusinessaccountmanagement.googleapis.com, mybusinessbusinessinformation.googleapis.com\n" +
+            "Alternatively, add GOOGLE_PLACES_API_KEY environment variable to use Places API fallback."
+          );
+        }
+      }
+      throw new Error("Access denied. Check service account permissions and API enablement.");
     }
     if (err.message.includes('404')) {
       throw new Error("Business account not found. Verify your GOOGLE_BUSINESS_ACCOUNT_ID is correct.");
@@ -601,6 +622,42 @@ async function fetchGoogleReviews() {
     }
     
     throw new Error(`Failed to fetch Google reviews: ${err.message}`);
+  }
+}
+
+/**
+ * Auto-discover Place ID using Business Profile account information
+ * @param {string} apiKey - Places API key
+ * @param {string} accountId - Google Business Account ID
+ * @returns {Promise<string|null>} Place ID if found
+ */
+async function discoverPlaceId(apiKey, accountId) {
+  try {
+    // Try to get business name from account ID
+    // Format a search query based on common business naming
+    const searchQueries = [
+      `Sharp Choice Real Estate Austin TX`,
+      `Sharp Choice Real Estate`,
+      `accounts/${accountId}`, // Try using account ID directly
+    ];
+    
+    for (const query of searchQueries) {
+      const url = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${encodeURIComponent(query)}&key=${apiKey}`;
+      const response = await fetch(url);
+      const data = await response.json();
+      
+      if (data.results && data.results.length > 0) {
+        const placeId = data.results[0].place_id;
+        console.log(`Auto-discovered Place ID: ${placeId} for query: ${query}`);
+        return placeId;
+      }
+    }
+    
+    console.log('Could not auto-discover Place ID');
+    return null;
+  } catch (err) {
+    console.error('Error discovering Place ID:', err.message);
+    return null;
   }
 }
 
