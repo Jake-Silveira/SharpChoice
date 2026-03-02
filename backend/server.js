@@ -142,27 +142,14 @@ app.get("/api/test-google-access", requireAuth, async (req, res) => {
 
     const client = await auth.getClient();
     
-    // Use the correct API: mybusinessbusinessinformation v1
-    // https://developers.google.com/my-business/reference/rest/v1
-    const mybusiness = google.mybusinessbusinessinformation({
-      version: 'v1',
+    // Use the correct API: mybusiness v4 (for reviews)
+    // https://developers.google.com/my-business/reference/rest/v4/accounts.locations.reviews
+    const mybusiness = google.mybusiness({
+      version: 'v4',
       auth: client,
     });
     
     console.log('[Test] Testing account access for:', accountId);
-    
-    // Get account info first
-    let accountName = 'Unknown';
-    try {
-      const accountResponse = await mybusiness.accounts.get({
-        name: `accounts/${accountId}`,
-      });
-      accountName = accountResponse.data.displayName || accountResponse.data.accountName || 'Unknown';
-      console.log('[Test] Account found:', accountName);
-    } catch (accountErr) {
-      console.warn('[Test] Could not get account details:', accountErr.message);
-      // Continue anyway - we can still test reviews
-    }
     
     // Test reviews access - this is the main thing we need
     console.log('[Test] Fetching reviews for accounts/' + accountId + '/locations/' + accountId);
@@ -177,12 +164,11 @@ app.get("/api/test-google-access", requireAuth, async (req, res) => {
     res.json({
       success: true,
       message: 'Google Business Profile access verified',
-      account_name: accountName,
       reviews_count: reviews.length,
       sample_review: reviews.length > 0 ? {
-        author: reviews[0].author?.displayName,
+        author: reviews[0].reviewer?.displayName || reviews[0].author?.displayName,
         rating: reviews[0].starRating,
-        comment: reviews[0].comment?.text?.substring(0, 100),
+        comment: reviews[0].comment?.substring(0, 100),
       } : null,
     });
     
@@ -527,10 +513,10 @@ async function fetchGoogleReviews() {
   try {
     const auth = getGoogleAuthClient();
 
-    // Initialize Google Business Profile API client
-    // Using mybusinessbusinessinformation API with proper initialization
-    const mybusiness = google.mybusinessbusinessinformation({
-      version: 'v1',
+    // Initialize Google Business Profile API client (v4 for reviews)
+    // https://developers.google.com/my-business/reference/rest/v4/accounts.locations.reviews
+    const mybusiness = google.mybusiness({
+      version: 'v4',
       auth: auth ? await auth.getClient() : undefined,
     });
 
@@ -577,18 +563,38 @@ async function fetchGoogleReviews() {
 
 /**
  * Parse a Google review object into our database schema
- * @param {Object} googleReview - Raw Google review object
+ * @param {Object} googleReview - Raw Google review object (v4 API format)
  * @returns {Object} Parsed review data
  */
 function parseGoogleReview(googleReview) {
   return {
-    author_name: googleReview.author?.displayName || 'Anonymous',
-    comment: googleReview.comment?.text || '',
-    rating: googleReview.starRating || 5,
+    // v4 API uses 'reviewer' instead of 'author'
+    author_name: googleReview.reviewer?.displayName || googleReview.author?.displayName || 'Anonymous',
+    // v4 API has comment as a string, not an object with 'text'
+    comment: googleReview.comment || googleReview.comment?.text || '',
+    // v4 API uses string enum for starRating (e.g., "FIVE" instead of 5)
+    rating: convertStarRating(googleReview.starRating) || googleReview.rating || 5,
     google_review_id: googleReview.name || null, // Store Google's review ID for deduplication
     review_time: googleReview.createTime ? new Date(googleReview.createTime).toISOString() : new Date().toISOString(),
     language_code: googleReview.languageCode || 'en',
   };
+}
+
+/**
+ * Convert Google's star rating enum to numeric value
+ * v4 API uses: "ONE", "TWO", "THREE", "FOUR", "FIVE"
+ * @param {string} starRating - Star rating enum
+ * @returns {number} Numeric rating 1-5
+ */
+function convertStarRating(starRating) {
+  const ratingMap = {
+    'ONE': 1,
+    'TWO': 2,
+    'THREE': 3,
+    'FOUR': 4,
+    'FIVE': 5,
+  };
+  return ratingMap[starRating] || 0;
 }
 
 /**
