@@ -30,6 +30,9 @@ const GOOGLE_PRIVATE_KEY = process.env.GOOGLE_PRIVATE_KEY || '';
 const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY || '';
 
 // === Middleware ===
+// Trust proxy for proper rate limiting behind Render's load balancer
+app.set('trust proxy', 1);
+
 app.use(helmet({
   contentSecurityPolicy: {
     directives: {
