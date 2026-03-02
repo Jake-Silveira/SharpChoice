@@ -178,14 +178,33 @@ app.get("/api/test-google-access", requireAuth, async (req, res) => {
 // Helper function to provide specific help based on error
 function getGoogleAccessHelp(errorMessage) {
   if (errorMessage.includes('403') || errorMessage.includes('PERMISSION_DENIED')) {
+    if (errorMessage.includes('mybusiness.googleapis.com')) {
+      return {
+        issue: 'Google My Business API is not enabled in your Google Cloud project',
+        fix: 'Enable the required APIs in Google Cloud Console',
+        steps: [
+          'Go to: https://console.cloud.google.com/apis/library',
+          'Search for and enable EACH of these APIs:',
+          '  1. My Business Account Management API',
+          '  2. My Business Business Information API', 
+          '  3. Business Profile Performance API',
+          '  4. My Business Verifications API',
+          'Wait 2-5 minutes for APIs to propagate',
+          'Then test again'
+        ],
+        alternativeFix: 'Or use Places API fallback - add GOOGLE_PLACES_API_KEY and GOOGLE_PLACE_ID environment variables'
+      };
+    }
     return {
       issue: 'Service account lacks permission to access Business Profile',
-      fix: 'Grant access via API Explorer: https://developers.google.com/my-business/content/api-explorer#v1/accounts/{name}/members/create',
+      fix: 'Grant access via Google Business Profile',
       steps: [
-        'Click "Try this API" and sign in',
-        `Set name to: accounts/${GOOGLE_BUSINESS_ACCOUNT_ID.replace('accounts/', '')}`,
-        'Set request body: {"role": "OWNER", "account": {"type": "SERVICE_ACCOUNT", "email": "' + GOOGLE_CLIENT_EMAIL + '"}}',
-        'Click "Execute"'
+        'Go to: https://businessprofile.google.com/',
+        'Select your business',
+        'Click "Users" → "+ Invite user"',
+        `Enter: ${GOOGLE_CLIENT_EMAIL}`,
+        'Select "Manager" role',
+        'Click "SEND" (the service account won\'t receive email but should get access)'
       ]
     };
   }
@@ -194,7 +213,7 @@ function getGoogleAccessHelp(errorMessage) {
       issue: 'Authentication failed - invalid credentials',
       fix: 'Regenerate service account key in Google Cloud Console',
       steps: [
-        'Go to https://console.cloud.google.com/apis/credentials',
+        'Go to: https://console.cloud.google.com/apis/credentials',
         'Find your service account',
         'Delete old key and create new one',
         'Update GOOGLE_PRIVATE_KEY in Render environment variables'
@@ -206,7 +225,7 @@ function getGoogleAccessHelp(errorMessage) {
       issue: 'Business account not found',
       fix: 'Verify your GOOGLE_BUSINESS_ACCOUNT_ID',
       steps: [
-        'Go to https://businessprofile.google.com/',
+        'Go to: https://businessprofile.google.com/',
         'Select your business',
         'Copy the account ID from the URL',
         'Update GOOGLE_BUSINESS_ACCOUNT_ID in Render'
@@ -499,7 +518,8 @@ function getGoogleAuthClient() {
 
 /**
  * Fetch reviews from Google Business Profile API using direct HTTP request
- * The reviews API is only available via direct HTTP, not through the googleapis wrapper
+ * Note: Google has deprecated the old My Business API. We now use the 
+ * Business Profile Performance API or fall back to Places API.
  * @returns {Promise<Array>} Array of Google review objects
  */
 async function fetchGoogleReviews() {
@@ -513,19 +533,49 @@ async function fetchGoogleReviews() {
     const client = auth ? await auth.getClient() : null;
     
     if (client) {
-      // Use OAuth 2.0 - make direct HTTP request to the API
+      // Try the new Business Profile API first
+      // Note: This requires enabling businessprofileperformance.googleapis.com
       const url = `https://mybusiness.googleapis.com/v4/accounts/${accountId}/locations/${locationId}/reviews`;
       
-      const response = await client.request({ url });
-      const reviews = response.data.reviews || [];
-      console.log(`Successfully fetched ${reviews.length} reviews from Google Business Profile (OAuth)`);
-      return reviews;
+      try {
+        const response = await client.request({ url });
+        const reviews = response.data.reviews || [];
+        console.log(`Successfully fetched ${reviews.length} reviews from Google Business Profile (My Business API)`);
+        return reviews;
+      } catch (apiErr) {
+        // If My Business API fails, try Places API fallback
+        console.log('My Business API failed, checking for Places API fallback...');
+        
+        if (process.env.GOOGLE_PLACES_API_KEY && process.env.GOOGLE_PLACE_ID) {
+          const placesUrl = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${process.env.GOOGLE_PLACE_ID}&fields=reviews&key=${process.env.GOOGLE_PLACES_API_KEY}`;
+          const placesResponse = await fetch(placesUrl);
+          const placesData = await placesResponse.json();
+          
+          if (placesData.result && placesData.result.reviews) {
+            console.log(`Successfully fetched ${placesData.result.reviews.length} reviews from Places API`);
+            // Convert Places API format to our format
+            return placesData.result.reviews.map(review => ({
+              reviewer: { displayName: review.author_name },
+              rating: review.rating,
+              comment: review.text,
+              createTime: review.time,
+            }));
+          }
+        }
+        
+        throw apiErr;
+      }
     } else if (GOOGLE_API_KEY) {
-      // Fallback to API key
+      // Fallback to API key with My Business API
       const url = `https://mybusiness.googleapis.com/v4/accounts/${accountId}/locations/${locationId}/reviews?key=${GOOGLE_API_KEY}`;
       
       const response = await fetch(url);
       const data = await response.json();
+      
+      if (data.error) {
+        throw new Error(data.error.message);
+      }
+      
       const reviews = data.reviews || [];
       console.log(`Successfully fetched ${reviews.length} reviews from Google Business Profile (API Key)`);
       return reviews;
@@ -536,8 +586,12 @@ async function fetchGoogleReviews() {
     console.error("Google Business Profile API error:", err.message);
     
     // Provide more specific error messages
-    if (err.message.includes('403')) {
-      throw new Error("Access denied. Ensure your service account has the 'business.manage' scope and proper permissions.");
+    if (err.message.includes('403') || err.message.includes('PERMISSION_DENIED')) {
+      throw new Error(
+        "Access denied. You need to enable the Google My Business API in your Google Cloud project.\n" +
+        "Go to: https://console.cloud.google.com/apis/library/mybusiness.googleapis.com\n" +
+        "Or enable these APIs: businessprofileperformance.googleapis.com, mybusinessaccountmanagement.googleapis.com, mybusinessbusinessinformation.googleapis.com"
+      );
     }
     if (err.message.includes('404')) {
       throw new Error("Business account not found. Verify your GOOGLE_BUSINESS_ACCOUNT_ID is correct.");
