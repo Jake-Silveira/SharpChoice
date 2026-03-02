@@ -141,30 +141,45 @@ app.get("/api/test-google-access", requireAuth, async (req, res) => {
     });
 
     const client = await auth.getClient();
-    const businessprofile = google.mybusinessbusinessinformation('v1');
     
-    // Test account access
-    const accountResponse = await businessprofile.accounts.get({
-      name: `accounts/${accountId}`,
-      auth: client,
-    });
+    // Use the correct API: Business Information API
+    // Reference: https://developers.google.com/my-business/reference/rest/v1/accounts
+    const businessprofile = google.businessprofile('v1');
     
-    // Test reviews access
+    // Get account info
+    let accountName = 'Unknown';
+    try {
+      const accountResponse = await businessprofile.accounts.get({
+        name: `accounts/${accountId}`,
+        auth: client,
+      });
+      accountName = accountResponse.data.displayName || accountResponse.data.accountName || 'Unknown';
+      console.log('[Test] Account found:', accountName);
+    } catch (accountErr) {
+      console.warn('[Test] Could not get account details:', accountErr.message);
+      // Continue anyway - we can still test reviews
+    }
+    
+    // Test reviews access - this is the main thing we need
+    console.log('[Test] Fetching reviews for accounts/' + accountId + '/locations/' + accountId);
+    
     const response = await businessprofile.accounts.locations.reviews.list({
       name: `accounts/${accountId}/locations/${accountId}`,
       auth: client,
     });
 
     const reviews = response.data.reviews || [];
+    console.log('[Test] Found', reviews.length, 'reviews');
     
     res.json({
       success: true,
       message: 'Google Business Profile access verified',
-      account_name: accountResponse.data.accountName,
+      account_name: accountName,
       reviews_count: reviews.length,
       sample_review: reviews.length > 0 ? {
         author: reviews[0].author?.displayName,
         rating: reviews[0].starRating,
+        comment: reviews[0].comment?.text?.substring(0, 100),
       } : null,
     });
     
@@ -507,9 +522,10 @@ function getGoogleAuthClient() {
 async function fetchGoogleReviews() {
   try {
     const auth = getGoogleAuthClient();
-    
+
     // Initialize Google Business Profile API client
-    const businessprofile = google.mybusinessbusinessinformation('v1');
+    // Using the correct API name: businessprofile (not mybusinessbusinessinformation)
+    const businessprofile = google.businessprofile('v1');
 
     // Extract account ID from the full resource name if needed
     // Format can be "accounts/1234567890" or just "1234567890"
@@ -517,7 +533,7 @@ async function fetchGoogleReviews() {
     const locationId = accountId; // Typically location ID matches account ID for single-location businesses
 
     let response;
-    
+
     if (auth) {
       // Use OAuth 2.0 service account authentication
       const authClient = await auth.getClient();
