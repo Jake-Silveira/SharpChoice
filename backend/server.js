@@ -142,21 +142,13 @@ app.get("/api/test-google-access", requireAuth, async (req, res) => {
 
     const client = await auth.getClient();
     
-    // Use the correct API: mybusiness v4 (for reviews)
-    // https://developers.google.com/my-business/reference/rest/v4/accounts.locations.reviews
-    const mybusiness = google.mybusiness({
-      version: 'v4',
-      auth: client,
-    });
-    
     console.log('[Test] Testing account access for:', accountId);
     
-    // Test reviews access - this is the main thing we need
+    // Test reviews access using direct HTTP request
     console.log('[Test] Fetching reviews for accounts/' + accountId + '/locations/' + accountId);
     
-    const response = await mybusiness.accounts.locations.reviews.list({
-      name: `accounts/${accountId}/locations/${accountId}`,
-    });
+    const url = `https://mybusiness.googleapis.com/v4/accounts/${accountId}/locations/${accountId}/reviews`;
+    const response = await client.request({ url });
 
     const reviews = response.data.reviews || [];
     console.log('[Test] Found', reviews.length, 'reviews');
@@ -168,7 +160,7 @@ app.get("/api/test-google-access", requireAuth, async (req, res) => {
       sample_review: reviews.length > 0 ? {
         author: reviews[0].reviewer?.displayName || reviews[0].author?.displayName,
         rating: reviews[0].starRating,
-        comment: reviews[0].comment?.substring(0, 100),
+        comment: reviews[0].comment,
       } : null,
     });
     
@@ -506,49 +498,46 @@ function getGoogleAuthClient() {
 }
 
 /**
- * Fetch reviews from Google Business Profile API
+ * Fetch reviews from Google Business Profile API using direct HTTP request
+ * The reviews API is only available via direct HTTP, not through the googleapis wrapper
  * @returns {Promise<Array>} Array of Google review objects
  */
 async function fetchGoogleReviews() {
+  const accountId = GOOGLE_BUSINESS_ACCOUNT_ID.replace('accounts/', '');
+  const locationId = accountId;
+  
   try {
     const auth = getGoogleAuthClient();
-
-    // Initialize Google Business Profile API client (v4 for reviews)
-    // https://developers.google.com/my-business/reference/rest/v4/accounts.locations.reviews
-    const mybusiness = google.mybusiness({
-      version: 'v4',
-      auth: auth ? await auth.getClient() : undefined,
-    });
-
-    // Extract account ID from the full resource name if needed
-    // Format can be "accounts/1234567890" or just "1234567890"
-    const accountId = GOOGLE_BUSINESS_ACCOUNT_ID.replace('accounts/', '');
-    const locationId = accountId; // Typically location ID matches account ID for single-location businesses
-
-    let response;
-
-    if (auth) {
-      // Use OAuth 2.0 service account authentication
-      response = await mybusiness.accounts.locations.reviews.list({
-        name: `accounts/${accountId}/locations/${locationId}`,
-      });
+    
+    // Get authenticated client
+    const client = auth ? await auth.getClient() : null;
+    
+    if (client) {
+      // Use OAuth 2.0 - make direct HTTP request to the API
+      const url = `https://mybusiness.googleapis.com/v4/accounts/${accountId}/locations/${locationId}/reviews`;
+      
+      const response = await client.request({ url });
+      const reviews = response.data.reviews || [];
+      console.log(`Successfully fetched ${reviews.length} reviews from Google Business Profile (OAuth)`);
+      return reviews;
+    } else if (GOOGLE_API_KEY) {
+      // Fallback to API key
+      const url = `https://mybusiness.googleapis.com/v4/accounts/${accountId}/locations/${locationId}/reviews?key=${GOOGLE_API_KEY}`;
+      
+      const response = await fetch(url);
+      const data = await response.json();
+      const reviews = data.reviews || [];
+      console.log(`Successfully fetched ${reviews.length} reviews from Google Business Profile (API Key)`);
+      return reviews;
     } else {
-      // Fallback to API key authentication
-      response = await mybusiness.accounts.locations.reviews.list({
-        name: `accounts/${accountId}/locations/${locationId}`,
-        key: GOOGLE_API_KEY,
-      });
+      throw new Error("No authentication method available");
     }
-
-    const reviews = response.data.reviews || [];
-    console.log(`Successfully fetched ${reviews.length} reviews from Google Business Profile`);
-    return reviews;
   } catch (err) {
     console.error("Google Business Profile API error:", err.message);
-
+    
     // Provide more specific error messages
     if (err.message.includes('403')) {
-      throw new Error("Access denied. Ensure your Google service account has the 'business.manage' scope and proper permissions.");
+      throw new Error("Access denied. Ensure your service account has the 'business.manage' scope and proper permissions.");
     }
     if (err.message.includes('404')) {
       throw new Error("Business account not found. Verify your GOOGLE_BUSINESS_ACCOUNT_ID is correct.");
