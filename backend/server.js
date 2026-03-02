@@ -170,10 +170,88 @@ app.get("/api/test-google-access", requireAuth, async (req, res) => {
   } catch (err) {
     console.error('[Test] Google access test failed:', err.message);
     console.error('[Test] Full error:', JSON.stringify(err, Object.getOwnPropertyNames(err), 2));
+    
+    // If My Business API fails, test Places API fallback
+    if (process.env.GOOGLE_PLACES_API_KEY) {
+      console.log('[Test] Testing Places API fallback...');
+      try {
+        const placeId = process.env.GOOGLE_PLACE_ID || await discoverPlaceId(process.env.GOOGLE_PLACES_API_KEY, accountId);
+        
+        if (placeId) {
+          const placesUrl = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&fields=reviews&key=${process.env.GOOGLE_PLACES_API_KEY}`;
+          const placesResponse = await fetch(placesUrl);
+          const placesData = await placesResponse.json();
+          
+          if (placesData.result && placesData.result.reviews) {
+            console.log('[Test] Places API fallback successful:', placesData.result.reviews.length, 'reviews');
+            return res.json({
+              success: true,
+              message: 'My Business API failed, but Places API fallback works!',
+              place_id: placeId,
+              reviews_count: placesData.result.reviews.length,
+              sample_review: placesData.result.reviews[0],
+              recommendation: 'Add GOOGLE_PLACE_ID environment variable with value: ' + placeId,
+            });
+          }
+        }
+      } catch (placesErr) {
+        console.error('[Test] Places API fallback also failed:', placesErr.message);
+      }
+    }
+    
     res.status(500).json({
       success: false,
       error: err.message,
       help: getGoogleAccessHelp(err.message),
+    });
+  }
+});
+
+// === Set Place ID Endpoint (Admin Only) ===
+// Allows admin to manually set Place ID after finding it
+app.post("/api/set-google-place-id", requireAuth, async (req, res) => {
+  const { place_id } = req.body;
+  
+  if (!place_id) {
+    return res.status(400).json({ error: 'place_id is required' });
+  }
+  
+  console.log('[Place ID] Received Place ID:', place_id);
+  console.log('[Place ID] NOTE: This is not persisted. Add GOOGLE_PLACE_ID to your environment variables.');
+  
+  // Test if this Place ID works
+  if (!process.env.GOOGLE_PLACES_API_KEY) {
+    return res.status(400).json({ 
+      error: 'GOOGLE_PLACES_API_KEY not configured',
+      recommendation: 'Add GOOGLE_PLACES_API_KEY to your Render environment variables'
+    });
+  }
+  
+  try {
+    const placesUrl = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${place_id}&fields=reviews&key=${process.env.GOOGLE_PLACES_API_KEY}`;
+    const placesResponse = await fetch(placesUrl);
+    const placesData = await placesResponse.json();
+    
+    if (placesData.result && placesData.result.reviews) {
+      res.json({
+        success: true,
+        message: 'Place ID is valid!',
+        place_id: place_id,
+        reviews_count: placesData.result.reviews.length,
+        business_name: placesData.result.name,
+        recommendation: 'Add GOOGLE_PLACE_ID=' + place_id + ' to your Render environment variables',
+      });
+    } else {
+      res.status(400).json({
+        success: false,
+        error: 'Place ID returned no reviews',
+        details: placesData,
+      });
+    }
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      error: err.message,
     });
   }
 });
@@ -636,27 +714,48 @@ async function fetchGoogleReviews() {
  */
 async function discoverPlaceId(apiKey, accountId) {
   try {
-    // Try to get business name from account ID
-    // Format a search query based on common business naming
+    // Try multiple search queries to find the business
     const searchQueries = [
       `Sharp Choice Real Estate Austin TX`,
+      `Sharp Choice Real Estate Texas`,
       `Sharp Choice Real Estate`,
-      `accounts/${accountId}`, // Try using account ID directly
+      `Sharp Real Estate Austin TX`,
+      `Choice Real Estate Austin TX`,
     ];
     
     for (const query of searchQueries) {
-      const url = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${encodeURIComponent(query)}&key=${apiKey}`;
-      const response = await fetch(url);
-      const data = await response.json();
-      
-      if (data.results && data.results.length > 0) {
-        const placeId = data.results[0].place_id;
-        console.log(`Auto-discovered Place ID: ${placeId} for query: ${query}`);
-        return placeId;
+      try {
+        const url = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${encodeURIComponent(query)}&key=${apiKey}`;
+        console.log(`Searching Places API for: ${query}`);
+        const response = await fetch(url);
+        const data = await response.json();
+        
+        if (data.status === 'ZERO_RESULTS') {
+          console.log(`No results for: ${query}`);
+          continue;
+        }
+        
+        if (data.status === 'REQUEST_DENIED') {
+          console.log(`Places API request denied: ${data.error_message}`);
+          continue;
+        }
+        
+        if (data.results && data.results.length > 0) {
+          const placeId = data.results[0].place_id;
+          const name = data.results[0].name;
+          const address = data.results[0].formatted_address;
+          console.log(`✅ Auto-discovered Place ID: ${placeId}`);
+          console.log(`   Name: ${name}`);
+          console.log(`   Address: ${address}`);
+          return placeId;
+        }
+      } catch (err) {
+        console.log(`Error searching for "${query}": ${err.message}`);
+        continue;
       }
     }
     
-    console.log('Could not auto-discover Place ID');
+    console.log('❌ Could not auto-discover Place ID after trying all queries');
     return null;
   } catch (err) {
     console.error('Error discovering Place ID:', err.message);
