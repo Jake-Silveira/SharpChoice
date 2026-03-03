@@ -292,7 +292,7 @@
       <h2 id="reviews-heading" class="text-center">What Clients Say</h2>
 
       <div id="reviews-container" aria-live="polite">
-        <!-- Dynamic -->
+        <!-- Dynamic reviews from Supabase -->
       </div>
       <div class="reviews-actions" style="display: flex; gap: 1rem; justify-content: center; margin-top: 1.5rem; flex-wrap: wrap;">
         <button id="see-more-reviews" class="btn-accent">
@@ -301,6 +301,43 @@
         <button id="write-review-btn" class="btn-primary">
           Write a Review
         </button>
+      </div>
+      
+      <!-- Google Reviews Section -->
+      <div style="margin-top: 3rem; text-align: center;">
+        <h3 style="margin-bottom: 1rem;">See Our Google Reviews</h3>
+        <p style="margin-bottom: 1.5rem; color: #666;">Check out what our clients are saying on Google</p>
+        
+        <!-- Button to view Google Reviews -->
+        <a href="https://www.google.com/search?q=Sharp+Choice+Real+Estate" 
+           target="_blank" 
+           rel="noopener noreferrer" 
+           class="btn-primary" 
+           style="display: inline-block; margin-bottom: 2rem; text-decoration: none;">
+          ⭐ View Our Google Reviews
+        </a>
+        
+        <!-- Jotform Google Reviews Widget Placeholder -->
+        <!-- To activate: 
+             1. Go to https://www.jotform.com/google-reviews-widget/
+             2. Create free account and connect your Google Business Profile
+             3. Copy your widget embed code
+             4. Replace the comment below with your embed code
+        -->
+        <!-- 
+        <div id="jotform-google-reviews"></div>
+        <script src="https://cdn.jotform.com/reviews/widget.js" data-widget-id="YOUR_WIDGET_ID_HERE"></script>
+        -->
+        
+        <!-- Placeholder message (remove when you add the widget) -->
+        <div style="background: #f8f9fa; padding: 2rem; border-radius: 8px; max-width: 600px; margin: 0 auto;">
+          <p style="color: #666; font-size: 0.95rem;">
+            📍 <em>Live Google Reviews widget will appear here once configured.</em>
+          </p>
+          <p style="color: #999; font-size: 0.85rem; margin-top: 0.5rem;">
+            (Admin: Add Jotform widget embed code in index.html)
+          </p>
+        </div>
       </div>
     </section>
 
@@ -467,17 +504,6 @@
             <input type="number" id="review-rating" min="1" max="5" placeholder="Rating" required>
             <button type="submit" id="add-review-btn">Add Review</button>
           </form>
-
-          <hr style="margin:1.5rem 0; border:none; border-top:1px solid #eee;">
-
-          <h3>Sync Google Reviews</h3>
-          <p style="font-size:0.9rem; color:#666; margin-bottom:1rem;">
-            Pull reviews from your Google Business Profile. Requires Google account verification.
-          </p>
-          <button type="button" id="sync-google-reviews-btn" class="btn-primary" style="background:#4285f4; border-color:#4285f4;">
-            🔄 Pull Google Reviews
-          </button>
-          <div id="google-sync-status" role="status" aria-live="polite" style="margin-top:0.5rem;"></div>
 
           <hr style="margin:1.5rem 0; border:none; border-top:1px solid #eee;">
 

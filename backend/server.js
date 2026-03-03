@@ -16,19 +16,6 @@ const PORT = process.env.PORT || 3000;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// === Google Business Profile Configuration ===
-// Production configuration for Google Business Profile API integration
-// Required environment variables:
-// - GOOGLE_BUSINESS_ACCOUNT_ID: Your verified business account ID (format: "accounts/1234567890")
-// - GOOGLE_CLIENT_EMAIL: Service account email from Google Cloud Console
-// - GOOGLE_PRIVATE_KEY: Service account private key (with newlines replaced by \n)
-// Optional:
-// - GOOGLE_API_KEY: API key for fallback (if using API key auth instead of OAuth)
-const GOOGLE_BUSINESS_ACCOUNT_ID = process.env.GOOGLE_BUSINESS_ACCOUNT_ID || '';
-const GOOGLE_CLIENT_EMAIL = process.env.GOOGLE_CLIENT_EMAIL || '';
-const GOOGLE_PRIVATE_KEY = process.env.GOOGLE_PRIVATE_KEY || '';
-const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY || '';
-
 // === Middleware ===
 // Trust proxy for proper rate limiting behind Render's load balancer
 app.set('trust proxy', 1);
@@ -68,17 +55,6 @@ const contactLimiter = rateLimit({
   },
   standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
-});
-
-// Rate limiter for Google Reviews sync (more restrictive - admin operation)
-const syncLimiter = rateLimit({
-  windowMs: 60 * 60 * 1000, // 1 hour
-  max: 10, // Limit each IP to 10 sync requests per hour
-  message: {
-    error: 'Too many sync requests from this IP, please try again later.'
-  },
-  standardHeaders: true,
-  legacyHeaders: false,
 });
 
 // === Sanitization utility functions ===
