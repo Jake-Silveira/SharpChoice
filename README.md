@@ -8,7 +8,7 @@ Check out the live website: [www.sharpchoicerealestate.com](https://www.sharpcho
 
 ## Project Features (Tier 2 Package)
 - Real estate listings management (add, edit, view)
-- Client reviews system with Google Reviews integration
+- Client reviews system with moderation
 - Contact form with email notifications
 - Admin dashboard for content management
 - Mobile-responsive design
@@ -19,7 +19,6 @@ Check out the live website: [www.sharpchoicerealestate.com](https://www.sharpcho
 - Enhanced security with input sanitization and rate limiting
 - Google Analytics integration
 - Up to 3 custom sections (About, Services, Reviews)
-- Google Reviews callouts and links (updated to "See my Google Reviews")
 - Keller Williams (KW) logo prominently displayed in footer to show affiliation
 - CSP-compliant event handling (no inline handlers)
 - Stable navigation hover areas (no cursor flicker)
@@ -61,7 +60,6 @@ The application is currently deployed on Render at: [www.sharpchoicerealestate.c
   - Reviews submitted as "pending" and require admin approval
   - Admin dashboard shows pending reviews with approve/delete actions
   - Email notifications to admin on new review submissions
-  - Google Reviews sync auto-confirms imported reviews
 - **Feb 2026**: Fixed supabase variable naming conflict with CDN global (renamed to `supabaseClient`)
 - **Feb 2026**: Fixed cursor flicker on header navigation hover (added padding to nav links)
 - **Dec 2025**: Fixed listing edit functionality by replacing inline event handlers with event listeners (CSP compliance)

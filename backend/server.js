@@ -412,8 +412,6 @@ app.post("/api/upload-image", async (req, res) => {
 
     if (!data?.publicUrl) throw new Error("Failed to get public URL");
 
-    console.log('Uploaded image public URL:', data.publicUrl); // ← DEBUG
-
     res.json({ url: data.publicUrl });
   } catch (err) {
     console.error("Upload error:", err.message || err);

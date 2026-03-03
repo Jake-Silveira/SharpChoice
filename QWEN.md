@@ -6,7 +6,7 @@ SharpChoice is a real estate website for "Sharp Choice Real Estate", built as a 
 
 ### Key Features (Tier 2 Package):
 - Real estate listings management (add, edit, view)
-- Client reviews system with Google Reviews integration
+- Client reviews system with moderation
 - **Public review submission with admin moderation**
   - "Write a Review" modal form with star rating
   - Reviews submitted as "pending" status
@@ -22,7 +22,6 @@ SharpChoice is a real estate website for "Sharp Choice Real Estate", built as a 
 - Enhanced security with input sanitization and rate limiting
 - Google Analytics integration
 - Up to 3 custom sections (About, Services, Reviews)
-- Google Reviews callouts and links (updated to "See my Google Reviews")
 - Keller Williams (KW) logo prominently displayed in footer to show affiliation
 - CSP-compliant event handling (no inline handlers)
 - Stable navigation hover areas (no cursor flicker)
@@ -94,7 +93,6 @@ SharpChoice is a real estate website for "Sharp Choice Real Estate", built as a 
 - `POST /api/listings`: Add new listing
 - `PATCH /api/listings/:id`: Update listing
 - `POST /api/upload-image`: Upload images
-- `POST /api/sync-google-reviews`: Sync reviews from Google Business Profile (requires auth)
 
 ## Environment Variables
 
@@ -105,18 +103,6 @@ The application requires the following environment variables:
 - `SUPABASE_SERVICE_ROLE_KEY`: Your Supabase service role key (for server-side operations)
 - `RESEND_API_KEY`: Your Resend API key for email notifications
 - `PORT`: Port for the server (defaults to 3000)
-
-### Google Business Profile Integration (Production)
-To enable Google Reviews sync, you need to set up Google Cloud credentials:
-
-**Option 1: Service Account (Recommended for Production)**
-- `GOOGLE_BUSINESS_ACCOUNT_ID`: Your Google Business Profile account ID (format: `accounts/1234567890` or just `1234567890`)
-- `GOOGLE_CLIENT_EMAIL`: Service account email from Google Cloud Console (e.g., `your-service-account@project-id.iam.gserviceaccount.com`)
-- `GOOGLE_PRIVATE_KEY`: Service account private key (replace newlines with `\n` in the value)
-
-**Option 2: API Key (Fallback, Less Secure)**
-- `GOOGLE_BUSINESS_ACCOUNT_ID`: Your Google Business Profile account ID
-- `GOOGLE_API_KEY`: API key with Business Profile API enabled
 
 These should be set in a `.env` file in the `backend/` directory.
 
@@ -158,54 +144,19 @@ The application implements several security measures:
    PORT=3000
    ```
 
-4. **Configure Google Business Profile Integration** (for Google Reviews sync)
-   
-   **Step A: Get your Google Business Account ID**
-   - Go to [Google Business Profile](https://businessprofile.google.com/)
-   - Your account ID can be found in the URL or via the API
-   - Format: `accounts/1234567890` or just `1234567890`
-   
-   **Step B: Create a Service Account (Recommended)**
-   1. Go to [Google Cloud Console](https://console.cloud.google.com/)
-   2. Create a new project or select existing one
-   3. Enable the "Google Business Profile API"
-   4. Go to "APIs & Services" > "Credentials"
-   5. Click "Create Credentials" > "Service Account"
-   6. Fill in service account details and click "Create"
-   7. Grant the service account access to your Business Profile
-   8. Go to the "Keys" tab > "Add Key" > "Create new key"
-   9. Choose JSON format and download the key file
-   10. Extract the `client_email` and `private_key` from the JSON file
-   11. Add to your `.env` file:
-       ```
-       GOOGLE_BUSINESS_ACCOUNT_ID=accounts/your_account_id
-       GOOGLE_CLIENT_EMAIL=your-service-account@project-id.iam.gserviceaccount.com
-       GOOGLE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\nYOUR_KEY_HERE\n-----END PRIVATE KEY-----\n"
-       ```
-   
-   **Step C: Alternative - Use API Key (Less Secure)**
-   1. In Google Cloud Console, go to "APIs & Services" > "Credentials"
-   2. Click "Create Credentials" > "API Key"
-   3. Restrict the API key to only allow Business Profile API
-   4. Add to your `.env` file:
-       ```
-       GOOGLE_BUSINESS_ACCOUNT_ID=your_account_id
-       GOOGLE_API_KEY=your_api_key
-       ```
-
-5. **Update frontend Supabase config**
+4. **Update frontend Supabase config**
    In `frontend/index.html`, update the Supabase meta tags:
    ```html
    <meta name="supabase-url" content="YOUR_SUPABASE_URL">
    <meta name="supabase-anon-key" content="YOUR_SUPABASE_ANON_KEY">
    ```
 
-6. **Start the server**
+5. **Start the server**
    ```bash
    cd backend && npm start
    ```
 
-7. **Access the application**
+6. **Access the application**
    Open `http://localhost:3000` in your browser
 
 ## Deployment
@@ -267,7 +218,6 @@ The application includes an admin dashboard accessible through authentication:
   - `rating`: Star rating (1-5)
   - `email`: Submitter's email (for public submissions, not displayed publicly)
   - `status`: Review status ('pending', 'confirmed', 'deleted')
-  - `google_review_id`: Google's review ID for deduplication during sync
   - `created_at`: Timestamp
 - `contacts`: Contact form submissions (name, email, message, opt_in, created_at)
 
@@ -279,24 +229,19 @@ Before deploying, run this SQL in Supabase SQL Editor:
 
 ```sql
 -- Add status column for review moderation
-ALTER TABLE reviews 
-ADD COLUMN IF NOT EXISTS status TEXT DEFAULT 'confirmed' 
+ALTER TABLE reviews
+ADD COLUMN IF NOT EXISTS status TEXT DEFAULT 'confirmed'
 CHECK (status IN ('pending', 'confirmed', 'deleted'));
 
 -- Add email column for public submissions
-ALTER TABLE reviews 
+ALTER TABLE reviews
 ADD COLUMN IF NOT EXISTS email TEXT;
-
--- Add google_review_id for Google sync deduplication
-ALTER TABLE reviews 
-ADD COLUMN IF NOT EXISTS google_review_id TEXT;
 
 -- Set existing reviews to confirmed
 UPDATE reviews SET status = 'confirmed' WHERE status IS NULL;
 
 -- Add indexes for performance
 CREATE INDEX IF NOT EXISTS idx_reviews_status ON reviews(status);
-CREATE INDEX IF NOT EXISTS idx_reviews_google_id ON reviews(google_review_id);
 ```
 
 ## Deployment
@@ -315,7 +260,6 @@ The application is designed for deployment on platforms that support Node.js app
   - Reviews submitted with "pending" status requiring admin approval
   - Admin dashboard "Pending Reviews" section with approve/delete actions
   - Email notifications to admin on new review submissions
-  - Google Reviews sync auto-confirms imported reviews
   - Mobile-optimized modal form styling
 - **Feb 2026**: Fixed supabase variable naming conflict with CDN global (renamed to `supabaseClient`)
 - **Feb 2026**: Fixed cursor flicker on header navigation hover (added padding to nav links)
