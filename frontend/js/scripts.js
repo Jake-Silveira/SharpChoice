@@ -1310,9 +1310,10 @@ function openGallery(listing) {
   const mainImage = modal.querySelector('.gallery-main-image');
   const thumbnailsContainer = modal.querySelector('.gallery-thumbnails');
   const titleEl = modal.querySelector('#gallery-title');
-  
+  const detailsContainer = modal.querySelector('.gallery-property-details');
+
   if (!modal || !mainImage || !thumbnailsContainer) return;
-  
+
   // Get images
   const photos = listing.photos || [];
   if (photos.length === 0) {
@@ -1320,16 +1321,16 @@ function openGallery(listing) {
   } else {
     currentGalleryImages = photos.map(p => ({ url: ensurePublicUrl(p.url) }));
   }
-  
+
   currentGalleryIndex = 0;
-  
+
   // Set title
   titleEl.textContent = listing.address || 'Property Gallery';
-  
+
   // Update main image
   mainImage.src = currentGalleryImages[0].url;
   mainImage.alt = listing.address || 'Property photo';
-  
+
   // Create thumbnails
   thumbnailsContainer.innerHTML = '';
   currentGalleryImages.forEach((img, index) => {
@@ -1343,11 +1344,46 @@ function openGallery(listing) {
     });
     thumbnailsContainer.appendChild(thumb);
   });
-  
+
+  // Populate property details
+  if (detailsContainer) {
+    const price = new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      maximumFractionDigits: 0,
+    }).format(listing.price);
+
+    const cityState = [listing.city, listing.state].filter(Boolean).join(', ');
+    const zip = listing.zip ? ` ${listing.zip}` : '';
+
+    detailsContainer.innerHTML = `
+      <div class="detail-item">
+        <span class="detail-label">Price</span>
+        <span class="detail-value price">${price}</span>
+      </div>
+      <div class="detail-item">
+        <span class="detail-label">Bedrooms</span>
+        <span class="detail-value">${listing.beds || '—'}</span>
+      </div>
+      <div class="detail-item">
+        <span class="detail-label">Bathrooms</span>
+        <span class="detail-value">${listing.baths || '—'}</span>
+      </div>
+      <div class="detail-item">
+        <span class="detail-label">Square Feet</span>
+        <span class="detail-value">${listing.sqft ? Number(listing.sqft).toLocaleString() : '—'}</span>
+      </div>
+      <div class="detail-item">
+        <span class="detail-label">Location</span>
+        <span class="detail-value">${cityState}${zip}</span>
+      </div>
+    `;
+  }
+
   // Show modal
   modal.classList.add('show');
   document.body.style.overflow = 'hidden';
-  
+
   // Update nav buttons
   updateGalleryNav();
 }

@@ -716,9 +716,18 @@
       <button class="gallery-nav prev" aria-label="Previous image">&#8249;</button>
       <button class="gallery-nav next" aria-label="Next image">&#8250;</button>
       <div class="modal-body">
-        <h2 id="gallery-title" style="color: #fff; padding: 1rem; margin: 0; font-family: var(--font-heading);"></h2>
-        <img class="gallery-main-image" src="" alt="Listing photo" />
-        <div class="gallery-thumbnails"></div>
+        <!-- Image Section - Top Half -->
+        <div class="gallery-image-section">
+          <img class="gallery-main-image" src="" alt="Listing photo" />
+          <div class="gallery-address-overlay">
+            <h2 id="gallery-title"></h2>
+          </div>
+        </div>
+        <!-- Details Section - Bottom Half -->
+        <div class="gallery-details-section">
+          <div class="gallery-property-details"></div>
+          <div class="gallery-thumbnails"></div>
+        </div>
       </div>
     </div>
   </div>
