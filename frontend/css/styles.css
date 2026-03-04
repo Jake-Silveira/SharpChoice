@@ -821,6 +821,25 @@ header, section {
   font-size: 1.1rem;
 }
 
+/* Google Review Callout */
+.google-review-callout {
+  text-align: center;
+  margin-top: 2rem;
+  padding: 1rem;
+  background: #f9f9f9;
+  border-radius: var(--border-radius);
+  font-size: 0.95rem;
+}
+
+.google-review-callout a {
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+.google-review-callout a:hover {
+  color: var(--color-accent);
+}
+
 .review-pagination button {
   background: var(--color-accent);
   color: #fff;
@@ -1815,6 +1834,27 @@ header, section {
 .text-success { color: var(--color-success); }
 .text-error { color: var(--color-error); }
 .mt-1 { margin-top: 1rem; }
+
+/* Global Link Styles */
+a {
+  color: var(--color-primary);
+  text-decoration: underline;
+  transition: color 0.3s ease;
+}
+
+a:hover {
+  color: var(--color-accent);
+}
+
+/* Remove underline from nav links and buttons */
+.site-nav a,
+.btn-accent,
+.btn-primary,
+.modal-close,
+.gallery-nav,
+.back-link {
+  text-decoration: none;
+}
 
 /* Fade-in on scroll */
 .fade-on-scroll {
