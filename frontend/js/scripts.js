@@ -1274,18 +1274,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Back to top
 const backToTop = $('#back-to-top');
-const siteHeader = document.querySelector('.site-header');
-
 window.addEventListener('scroll', () => {
-  // Back to top button
   backToTop.classList.toggle('show', window.scrollY > 500);
-  
-  // Header background on scroll
-  if (siteHeader) {
-    siteHeader.classList.toggle('scrolled', window.scrollY > 50);
-  }
 });
-
 backToTop?.addEventListener('click', () => {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 });

@@ -54,7 +54,6 @@ body {
   font-size: 16px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  padding-top: 120px; /* Compensate for hero negative margin */
 }
 
 /* Global Headings - Luxury Typography */
@@ -114,29 +113,13 @@ header, section {
   padding: 3rem 0;
 }
 
-/* Header - Transparent for Hero Background Extension */
+/* Header */
 .site-header {
-  position: relative;
-  background: transparent;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  border-bottom: 1px solid #eee;
+  background: #fff;
   width: 100%;
   box-sizing: border-box;
   overflow-x: hidden;
-  z-index: 100;
-}
-
-.site-header.scrolled {
-  background: rgba(255, 255, 255, 0.98);
-  border-bottom: 1px solid #eee;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.site-header.scrolled .site-nav a {
-  color: var(--color-dark);
-}
-
-.site-header.scrolled .brand-name {
-  color: var(--color-dark);
 }
 
 .header-inner {
@@ -145,7 +128,7 @@ header, section {
   justify-content: space-between;
   flex-wrap: nowrap;
   gap: .3rem;
-  padding: 1rem 1rem;
+  padding: 0.75rem 1rem;
   max-width: 1200px;
   margin: 0 auto;
   box-sizing: border-box;
@@ -204,13 +187,12 @@ header, section {
 
 .site-nav a {
   text-decoration: none;
-  color: #fff;
+  color: var(--color-dark);
   font-size: 1rem;
   transition: color 0.3s ease;
   white-space: nowrap;
   padding: 0.5rem 0.25rem;
   display: inline-block;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
 }
 
 .site-nav a:hover {
@@ -218,18 +200,16 @@ header, section {
 }
 
 .site-nav .cta {
-  background: rgba(255, 255, 255, 0.2);
+  background: var(--color-accent);
   color: #fff;
   padding: 0.5rem 1rem;
   border-radius: 6px;
   transition: background 0.3s ease;
   white-space: nowrap;
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 .site-nav .cta:hover {
-  background: rgba(255, 255, 255, 0.3);
+  background: var(--color-primary);
 }
 
 /* Responsive Adjustments */
@@ -275,8 +255,6 @@ header, section {
   padding: 5rem 1rem;
   box-sizing: border-box;
   overflow: hidden;
-  margin-top: -120px; /* Pull up to overlap header area only */
-  z-index: 1;
 }
 
 /* Subtle overlay for better text contrast */
@@ -357,20 +335,10 @@ header, section {
 
 /* RESPONSIVE DESIGN */
 @media (max-width: 768px) {
-  body {
-    padding-top: 0;
-  }
-  
   .hero {
-    margin-top: 0;
     padding: 3rem 1rem;
     background: linear-gradient(135deg, rgba(28, 28, 28, 0.7) 0%, rgba(42, 42, 42, 0.65) 100%),
                 url('../assets/justin-wallace-cB_LQ6NGkq4-unsplash.jpg') center/cover no-repeat;
-  }
-  
-  .site-header {
-    background: rgba(255, 255, 255, 0.98);
-    border-bottom: 1px solid #eee;
   }
 
   .hero-inner {
