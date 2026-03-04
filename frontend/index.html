@@ -582,7 +582,7 @@
           <form id="add-review-form">
             <input type="text" id="review-name" placeholder="Client Name" required>
             <textarea id="review-text" placeholder="Review Comment" required></textarea>
-            <input type="number" id="review-rating" min="1" max="5" placeholder="Rating" required>
+            <input type="number" id="review-rating" min="1" max="5" placeholder="Rating (1-5)" required>
             <button type="submit" id="add-review-btn">Add Review</button>
           </form>
 
@@ -709,7 +709,21 @@
     </div>
   </footer>
 
-  <button id="sticky-cta" class="sticky-cta">Chat Now</button>
+  <!-- Image Gallery Modal -->
+  <div id="gallery-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="gallery-title">
+    <div class="modal-content">
+      <button class="modal-close" aria-label="Close gallery">&times;</button>
+      <button class="gallery-nav prev" aria-label="Previous image">&#8249;</button>
+      <button class="gallery-nav next" aria-label="Next image">&#8250;</button>
+      <div class="modal-body">
+        <h2 id="gallery-title" style="color: #fff; padding: 1rem; margin: 0; font-family: var(--font-heading);"></h2>
+        <img class="gallery-main-image" src="" alt="Listing photo" />
+        <div class="gallery-thumbnails"></div>
+      </div>
+    </div>
+  </div>
+
+  <button id="sticky-cta" class="sticky-cta">Contact Now</button>
   <!-- Scripts -->
   <script src="js/scripts.js" defer></script>
 </body>

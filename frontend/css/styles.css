@@ -1,4 +1,4 @@
-/* Root Variables (unchanged, included for reference) */
+/* Root Variables - Refined for High-End Feel */
 :root {
   --color-primary: #b8a89f;
   --color-accent: #d8b4a0;
@@ -9,6 +9,14 @@
   --max-width: 1100px;
   --border-radius: 8px;
   --transition: all 0.3s ease;
+  
+  /* Typography - Luxury fonts */
+  --font-heading: 'Playfair Display', Georgia, serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  
+  /* Enhanced transitions */
+  --transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-elegant: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 /* Accessibility - Skip Link */
@@ -40,9 +48,34 @@ html {
 
 body {
   margin: 0;
-  font-family: "Open Sans", Arial, sans-serif;
+  font-family: var(--font-body);
   color: var(--color-dark);
-  line-height: 1.5;
+  line-height: 1.6;
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Global Headings - Luxury Typography */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  line-height: 1.3;
+  margin: 0 0 1rem 0;
+  letter-spacing: 0.02em;
+}
+
+h1 { font-size: 2.5rem; }
+h2 { font-size: 2rem; }
+h3 { font-size: 1.5rem; }
+h4 { font-size: 1.25rem; }
+h5 { font-size: 1.1rem; }
+h6 { font-size: 1rem; }
+
+@media (max-width: 768px) {
+  h1 { font-size: 2rem; }
+  h2 { font-size: 1.75rem; }
+  h3 { font-size: 1.25rem; }
 }
 
 html, body {
@@ -110,6 +143,9 @@ header, section {
   font-size: 2rem;
   line-height: 1.2;
   word-break: break-word;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  letter-spacing: 0.02em;
 }
 
 /* Navigation */
@@ -603,86 +639,140 @@ header, section {
   }
 }
 
-/* Listings */
+/* Listings - High-End Redesign */
 .listings-grid {
   display: grid;
-  gap: 1rem;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
 }
 
+@media (max-width: 768px) {
+  .listings-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Luxury Property Card */
 .listing {
-  border: 1px solid #eee;
-  border-radius: var(--border-radius);
-  padding: 1rem;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  overflow: hidden; /* Prevent content overflow */
-  display: flex;
-  flex-direction: column;
+  position: relative;
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  cursor: pointer;
+  transition: var(--transition-elegant);
+  aspect-ratio: 3 / 4;
+  background: var(--color-dark);
 }
 
-/* Photo Section – Constrain height to prevent extension */
+.listing:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
+}
+
+/* Photo Section - Full Bleed */
 .listing .photo-section {
-  position: relative;
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
-  aspect-ratio: 16 / 9; /* Locks to landscape; change to 1/1 for square if needed */
+  height: 100%;
   overflow: hidden;
-  border-radius: 6px;
-  margin-bottom: 1rem;
 }
 
 .listing .main-photo {
   width: 100%;
   height: 100%;
-  object-fit: cover; /* Crops to fit without distortion */
-  display: block;
-}
-
-/* Carousel for Additional Thumbs – Horizontal Scroll */
-.listing .photo-carousel {
-  display: flex;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  gap: 0.5rem;
-  margin-top: 0.5rem;
-  padding-bottom: 0.5rem;
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-
-.listing .photo-carousel::-webkit-scrollbar {
-  display: none;
-}
-
-.listing .photo-thumb {
-  flex: 0 0 80px; /* Smaller thumbs for homepage */
-  height: 80px;
   object-fit: cover;
-  border-radius: 6px;
-  scroll-snap-align: start;
-  cursor: pointer;
-  transition: transform 0.2s;
+  display: block;
+  transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
-.listing .photo-thumb:hover {
+.listing:hover .main-photo {
   transform: scale(1.05);
 }
 
-/* Modal-Specific Overrides (larger in modal) */
-#all-listings-modal .listing .photo-thumb {
-  flex: 0 0 100px;
-  height: 100px;
+/* Overlay Gradient - ensures text readability */
+.listing::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 60%;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.6) 50%, transparent 100%);
+  pointer-events: none;
+  z-index: 1;
 }
 
-/* Responsive: Smaller on mobile */
-@media (max-width: 768px) {
-  .listing .photo-section {
-    aspect-ratio: 4 / 3; /* Slightly taller on small screens */
-  }
-  
-  .listing .photo-thumb {
-    flex: 0 0 60px;
-    height: 60px;
-  }
+/* Text Overlay */
+.listing .text-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 1.5rem;
+  z-index: 2;
+  color: #fff;
+  transform: translateY(8px);
+  transition: transform 0.4s ease;
+}
+
+.listing:hover .text-overlay {
+  transform: translateY(0);
+}
+
+.listing .text-overlay h3 {
+  font-size: 1.4rem;
+  margin-bottom: 0.5rem;
+  color: #fff;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.listing .text-overlay .property-details {
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  margin-bottom: 0.5rem;
+  opacity: 0.95;
+}
+
+.listing .text-overlay .price {
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-accent);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Status Badge */
+.listing .status-badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-top: 0.75rem;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(8px);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.listing .status-active {
+  background: rgba(40, 167, 69, 0.85);
+  border-color: rgba(40, 167, 69, 0.5);
+}
+
+.listing .status-closed {
+  background: rgba(230, 57, 70, 0.85);
+  border-color: rgba(230, 57, 70, 0.5);
+}
+
+/* Remove old carousel styles */
+.listing .photo-carousel,
+.listing .photo-thumb {
+  display: none;
 }
 
 /* Reviews */
@@ -854,6 +944,125 @@ header, section {
 
 .modal-close:hover {
   color: var(--color-accent);
+}
+
+/* Image Gallery Modal - High-End */
+#gallery-modal .modal-content {
+  max-width: 1200px;
+  padding: 0;
+  background: #000;
+}
+
+#gallery-modal .modal-body {
+  margin: 0;
+  padding: 0;
+  max-height: none;
+  display: block;
+}
+
+.gallery-main-image {
+  width: 100%;
+  height: 70vh;
+  object-fit: contain;
+  background: #000;
+  display: block;
+}
+
+.gallery-thumbnails {
+  display: flex;
+  gap: 0.5rem;
+  padding: 1rem;
+  overflow-x: auto;
+  background: #111;
+  justify-content: center;
+}
+
+.gallery-thumbnail {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 4px;
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  flex-shrink: 0;
+}
+
+.gallery-thumbnail:hover,
+.gallery-thumbnail.active {
+  opacity: 1;
+  transform: scale(1.05);
+  outline: 2px solid var(--color-accent);
+}
+
+#gallery-modal .modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  transition: background 0.3s ease;
+  z-index: 10;
+}
+
+#gallery-modal .modal-close:hover {
+  background: rgba(0, 0, 0, 0.9);
+}
+
+/* Gallery navigation arrows */
+.gallery-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  border: none;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.3s ease;
+  z-index: 10;
+}
+
+.gallery-nav:hover {
+  background: rgba(0, 0, 0, 0.9);
+}
+
+.gallery-nav.prev {
+  left: 1rem;
+}
+
+.gallery-nav.next {
+  right: 1rem;
+}
+
+@media (max-width: 768px) {
+  .gallery-main-image {
+    height: 50vh;
+  }
+  
+  .gallery-thumbnail {
+    width: 70px;
+    height: 70px;
+  }
+  
+  .gallery-nav {
+    width: 40px;
+    height: 40px;
+    font-size: 1.2rem;
+  }
 }
 
 /* Button accent reuse */

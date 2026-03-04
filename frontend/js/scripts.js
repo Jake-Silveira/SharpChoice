@@ -303,18 +303,39 @@ async function loadFeaturedListings() {
       article.className = 'listing';
       article.dataset.id = l.id;
 
-      // PHOTOS
-      renderPhotos(l.photos, article);
+      // Create photo section with main image
+      const photoSection = document.createElement('div');
+      photoSection.className = 'photo-section';
+      
+      const mainImg = document.createElement('img');
+      mainImg.className = 'main-photo';
+      const photos = l.photos || [];
+      if (photos.length > 0) {
+        mainImg.src = ensurePublicUrl(photos[0].url);
+      } else {
+        mainImg.src = 'assets/placeholder.jpg';
+      }
+      mainImg.alt = 'Main listing photo';
+      mainImg.loading = 'lazy';
+      photoSection.appendChild(mainImg);
+      article.appendChild(photoSection);
 
-      // TEXT
-      const text = document.createElement('div');
-      text.innerHTML = `
+      // Create text overlay
+      const textOverlay = document.createElement('div');
+      textOverlay.className = 'text-overlay';
+      textOverlay.innerHTML = `
         <h3>${sanitizeHTML(l.address)}</h3>
-        <p>${sanitizeHTML(l.beds)} bed • ${sanitizeHTML(l.baths)} bath • ${sanitizeHTML(l.sqft)} sqft</p>
+        <p class="property-details">${sanitizeHTML(l.beds)} bed • ${sanitizeHTML(l.baths)} bath • ${sanitizeHTML(l.sqft)} sqft</p>
         <p class="price">${price}</p>
         <span class="status-badge status-active">For Sale</span>
       `;
-      article.appendChild(text);
+      article.appendChild(textOverlay);
+      
+      // Add click handler for gallery
+      article.addEventListener('click', () => {
+        openGallery(l);
+      });
+
       grid.appendChild(article);
     });
   } catch (err) {
@@ -356,18 +377,38 @@ async function loadAllListings() {
         ? '<span class="status-badge status-closed">SOLD</span>'
         : '<span class="status-badge status-active">For Sale</span>';
 
-      // ---- PHOTOS ----
-      renderPhotos(l.photos, article);
+      // Create photo section with main image
+      const photoSection = document.createElement('div');
+      photoSection.className = 'photo-section';
+      
+      const mainImg = document.createElement('img');
+      mainImg.className = 'main-photo';
+      const photos = l.photos || [];
+      if (photos.length > 0) {
+        mainImg.src = ensurePublicUrl(photos[0].url);
+      } else {
+        mainImg.src = 'assets/placeholder.jpg';
+      }
+      mainImg.alt = 'Main listing photo';
+      mainImg.loading = 'lazy';
+      photoSection.appendChild(mainImg);
+      article.appendChild(photoSection);
 
-      // ---- TEXT ----
-      const text = document.createElement('div');
-      text.innerHTML = `
+      // Create text overlay
+      const textOverlay = document.createElement('div');
+      textOverlay.className = 'text-overlay';
+      textOverlay.innerHTML = `
         <h3>${sanitizeHTML(l.address)}, ${sanitizeHTML(l.city)} ${sanitizeHTML(l.zip)}</h3>
-        <p>${sanitizeHTML(l.beds)} bed • ${sanitizeHTML(l.baths)} bath • ${sanitizeHTML(l.sqft)} sqft</p>
+        <p class="property-details">${sanitizeHTML(l.beds)} bed • ${sanitizeHTML(l.baths)} bath • ${sanitizeHTML(l.sqft)} sqft</p>
         <p class="price">${price}</p>
         ${statusBadge}
       `;
-      article.appendChild(text);
+      article.appendChild(textOverlay);
+      
+      // Add click handler for gallery
+      article.addEventListener('click', () => {
+        openGallery(l);
+      });
 
       container.appendChild(article);
     });
@@ -790,7 +831,7 @@ function parseJSONSafe(str) {
   try { return JSON.parse(str); } catch { return {}; }
 }
 
-// ---------- PHOTO RENDERER (FIXED) ----------
+// ---------- PHOTO RENDERER (Simplified for new card design) ----------
 function renderPhotos(photos = [], container) {
   // ---- No photos → placeholder ----
   if (!photos || !Array.isArray(photos) || photos.length === 0) {
@@ -804,7 +845,7 @@ function renderPhotos(photos = [], container) {
     return;
   }
 
-  // ---- MAIN PHOTO ----
+  // ---- MAIN PHOTO ONLY ----
   const mainContainer = document.createElement('div');
   mainContainer.className = 'main-photo-container';
 
@@ -820,26 +861,6 @@ function renderPhotos(photos = [], container) {
   };
   mainContainer.appendChild(mainImg);
   container.appendChild(mainContainer);
-
-  // ---- THUMBNAIL CAROUSEL ----
-  const carousel = document.createElement('div');
-  carousel.className = 'photo-carousel';
-
-  photos.forEach(p => {
-    const thumb = document.createElement('img');
-    const thumbUrl = ensurePublicUrl(p.url);
-    thumb.src = thumbUrl;
-    thumb.alt = 'Listing thumbnail';
-    thumb.className = 'photo-thumb';
-    thumb.loading = 'lazy';
-    thumb.onerror = () => {
-      thumb.src = 'assets/placeholder.jpg';
-      console.warn('Thumbnail failed to load:', p.url);
-    };
-    carousel.appendChild(thumb);
-  });
-
-  container.appendChild(carousel);
 
   // Helper: convert any Supabase URL to public version
   function ensurePublicUrl(url) {
@@ -1225,26 +1246,6 @@ $('#add-listing-form')?.addEventListener('submit', async (e) => {
   }
 });
 
-// ---------- LIGHTBOX ----------
-document.addEventListener('click', e => {
-  if (e.target.matches('.photo-thumb')) {
-    const lightbox = document.createElement('div');
-    lightbox.style.cssText = `
-      position:fixed; inset:0; background:rgba(0,0,0,.85);
-      display:flex; align-items:center; justify-content:center;
-      z-index:2000; cursor:pointer;
-    `;
-    const img = document.createElement('img');
-    img.src = e.target.src;
-    img.style.maxWidth = '90%';
-    img.style.maxHeight = '90%';
-    img.style.borderRadius = '8px';
-    lightbox.appendChild(img);
-    lightbox.onclick = () => lightbox.remove();
-    document.body.appendChild(lightbox);
-  }
-});
-
 // =============================
 // Fade-in on Scroll
 // =============================
@@ -1296,4 +1297,133 @@ document.addEventListener('DOMContentLoaded', () => {
 $('#sticky-cta')?.addEventListener('click', () => {
   $('#contact').scrollIntoView({ behavior: 'smooth' });
   setTimeout(() => $('#contactName')?.focus(), 800);
+});
+
+// =============================
+// Image Gallery Modal
+// =============================
+let currentGalleryImages = [];
+let currentGalleryIndex = 0;
+
+function openGallery(listing) {
+  const modal = $('#gallery-modal');
+  const mainImage = modal.querySelector('.gallery-main-image');
+  const thumbnailsContainer = modal.querySelector('.gallery-thumbnails');
+  const titleEl = modal.querySelector('#gallery-title');
+  
+  if (!modal || !mainImage || !thumbnailsContainer) return;
+  
+  // Get images
+  const photos = listing.photos || [];
+  if (photos.length === 0) {
+    currentGalleryImages = [{ url: 'assets/placeholder.jpg' }];
+  } else {
+    currentGalleryImages = photos.map(p => ({ url: ensurePublicUrl(p.url) }));
+  }
+  
+  currentGalleryIndex = 0;
+  
+  // Set title
+  titleEl.textContent = listing.address || 'Property Gallery';
+  
+  // Update main image
+  mainImage.src = currentGalleryImages[0].url;
+  mainImage.alt = listing.address || 'Property photo';
+  
+  // Create thumbnails
+  thumbnailsContainer.innerHTML = '';
+  currentGalleryImages.forEach((img, index) => {
+    const thumb = document.createElement('img');
+    thumb.className = 'gallery-thumbnail' + (index === 0 ? ' active' : '');
+    thumb.src = img.url;
+    thumb.alt = `Photo ${index + 1}`;
+    thumb.addEventListener('click', () => {
+      currentGalleryIndex = index;
+      updateGalleryImage();
+    });
+    thumbnailsContainer.appendChild(thumb);
+  });
+  
+  // Show modal
+  modal.classList.add('show');
+  document.body.style.overflow = 'hidden';
+  
+  // Update nav buttons
+  updateGalleryNav();
+}
+
+function closeGallery() {
+  const modal = $('#gallery-modal');
+  if (modal) {
+    modal.classList.remove('show');
+    document.body.style.overflow = '';
+  }
+  currentGalleryImages = [];
+  currentGalleryIndex = 0;
+}
+
+function updateGalleryImage() {
+  const modal = $('#gallery-modal');
+  const mainImage = modal.querySelector('.gallery-main-image');
+  const thumbnails = modal.querySelectorAll('.gallery-thumbnail');
+  
+  if (!mainImage) return;
+  
+  mainImage.src = currentGalleryImages[currentGalleryIndex].url;
+  mainImage.alt = `Photo ${currentGalleryIndex + 1}`;
+  
+  thumbnails.forEach((thumb, index) => {
+    thumb.classList.toggle('active', index === currentGalleryIndex);
+  });
+  
+  updateGalleryNav();
+}
+
+function updateGalleryNav() {
+  const prevBtn = document.querySelector('.gallery-nav.prev');
+  const nextBtn = document.querySelector('.gallery-nav.next');
+  
+  if (prevBtn) prevBtn.style.visibility = currentGalleryIndex === 0 ? 'hidden' : 'visible';
+  if (nextBtn) nextBtn.style.visibility = currentGalleryIndex >= currentGalleryImages.length - 1 ? 'hidden' : 'visible';
+}
+
+function nextGalleryImage() {
+  if (currentGalleryIndex < currentGalleryImages.length - 1) {
+    currentGalleryIndex++;
+    updateGalleryImage();
+  }
+}
+
+function prevGalleryImage() {
+  if (currentGalleryIndex > 0) {
+    currentGalleryIndex--;
+    updateGalleryImage();
+  }
+}
+
+// Gallery event listeners
+document.addEventListener('DOMContentLoaded', () => {
+  // Close button
+  document.querySelector('#gallery-modal .modal-close')?.addEventListener('click', closeGallery);
+  
+  // Navigation buttons
+  document.querySelector('.gallery-nav.prev')?.addEventListener('click', prevGalleryImage);
+  document.querySelector('.gallery-nav.next')?.addEventListener('click', nextGalleryImage);
+  
+  // Close on backdrop click
+  document.querySelector('#gallery-modal')?.addEventListener('click', (e) => {
+    if (e.target.id === 'gallery-modal') {
+      closeGallery();
+    }
+  });
+  
+  // Keyboard navigation
+  document.addEventListener('keydown', (e) => {
+    const modal = $('#gallery-modal');
+    if (!modal || !modal.classList.contains('show')) return;
+    
+    if (e.key === 'Escape') closeGallery();
+    if (e.key === 'ArrowLeft') prevGalleryImage();
+    if (e.key === 'ArrowRight') nextGalleryImage();
+  });
 });
