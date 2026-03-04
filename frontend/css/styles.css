@@ -884,37 +884,41 @@ header, section {
   pointer-events: auto;
 }
 
-/* Base Modal Styles - Improved for all screen sizes */
-.modal {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem;
-}
-
 .modal-content {
   background: #fff;
   border-radius: 12px;
   padding: 2rem;
-  width: 100%;
   max-width: 800px;
-  max-height: 85vh;
-  min-height: auto;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
   position: relative;
   display: flex;
   flex-direction: column;
-  animation: modalSlideIn 0.3s ease forwards;
+  max-height: 90vh;
+  animation: fadeIn 0.3s ease forwards;
 }
 
-@keyframes modalSlideIn {
-  from {
-    opacity: 0;
-    transform: translateY(-20px) scale(0.95);
+/* Mobile – full-width, tighter padding, smaller close button */
+@media (max-width: 768px) {
+  .modal {
+    padding: 1rem;           /* less side padding on the overlay */
   }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
+
+  .modal-content {
+    max-width: none;         /* remove the hard 800px cap */
+    padding: 1.5rem;         /* a bit less breathing room */
+    border-radius: 8px;
+  }
+
+  .modal-close {
+    font-size: 1.5rem;       /* smaller X */
+    top: 0.75rem;
+    right: 0.75rem;
+  }
+
+  .modal-body {
+    max-height: 65vh;        /* leave room for pagination */
+    padding-right: 0.25rem;  /* tiny right gutter for scroll bar */
   }
 }
 
@@ -923,63 +927,9 @@ header, section {
   flex: 1;
   margin-top: 1rem;
   padding-right: 0.5rem;
-  display: block;
-  max-height: calc(85vh - 120px);
-}
-
-/* Modal close button */
-.modal-close {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  background: rgba(255, 255, 255, 0.9);
-  border: none;
-  font-size: 2rem;
-  color: var(--color-dark);
-  cursor: pointer;
-  transition: color 0.3s ease, background 0.3s ease;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 10;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.modal-close:hover {
-  background: #fff;
-  color: var(--color-accent);
-}
-
-/* Mobile - Better responsive behavior */
-@media (max-width: 768px) {
-  .modal {
-    padding: 1rem;
-    align-items: flex-start;
-  }
-
-  .modal-content {
-    max-width: none;
-    max-height: 90vh;
-    padding: 1.5rem;
-    border-radius: 8px;
-    min-height: auto;
-  }
-
-  .modal-body {
-    max-height: calc(90vh - 100px);
-    padding-right: 0.25rem;
-  }
-
-  .modal-close {
-    width: 36px;
-    height: 36px;
-    font-size: 1.5rem;
-    top: 0.75rem;
-    right: 0.75rem;
-  }
+  flex-direction: column;
+  max-height: 70vh;
 }
 
 .review-pagination {
@@ -987,7 +937,7 @@ header, section {
   bottom: 0;
   background: #fff;
   padding: 1rem 0;
-  margin-top: auto;
+  margin-top: auto; 
   text-align: center;
   border-top: 1px solid #eee;
   z-index: 10;
@@ -997,30 +947,6 @@ header, section {
 .review-pagination button {
   padding: 0.6rem 1.2rem;
   font-size: 0.95rem;
-}
-
-/* All Listings Modal - Wide for property cards */
-#all-listings-modal .modal-content {
-  max-width: 1400px;
-  padding: 2.5rem;
-}
-
-#all-listings-modal .modal-body {
-  max-height: calc(85vh - 140px);
-}
-
-#all-listings-modal h2 {
-  font-size: 2rem;
-  margin-bottom: 1.5rem;
-}
-
-/* Reviews Modal */
-#reviews-modal .modal-content {
-  max-width: 700px;
-}
-
-#reviews-modal .modal-body {
-  max-height: calc(85vh - 140px);
 }
 
 .modal-close {
@@ -1653,16 +1579,15 @@ header, section {
 
 /* Login Modal (centered, compact) */
 #login-modal .modal-content {
-  max-width: 450px;
+  max-width: 420px;
   text-align: center;
-  padding: 2.5rem 2rem;
+  padding: 2rem;
 }
 
 #login-modal h3 {
   margin: 0 0 1.5rem;
   color: var(--color-dark);
   font-size: 1.5rem;
-  font-family: var(--font-heading);
 }
 
 #login-form {
@@ -1672,18 +1597,16 @@ header, section {
 }
 
 #login-form input {
-  padding: 0.875rem;
+  padding: 0.75rem;
   border: 1px solid #ddd;
   border-radius: var(--border-radius);
   font-size: 1rem;
   font-family: inherit;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 #login-form input:focus {
   border-color: var(--color-accent);
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(216, 180, 160, 0.2);
+  outline: 2px solid rgba(216, 180, 160, 0.3);
 }
 
 #login-form button {
@@ -1692,26 +1615,15 @@ header, section {
   border-style: none;
   color: #fff;
   margin-top: 0.5rem;
-  padding: 0.875rem;
+  padding: 0.75rem;
   font-weight: 600;
-  cursor: pointer;
-  transition: background 0.3s ease, transform 0.2s ease;
 }
 
-#login-form button:hover {
-  background-color: var(--color-primary);
-  transform: translateY(-1px);
-}
-
-/* Dashboard Modal - Large, scrollable */
+/* Dashboard Modal – Wide, Scrollable */
 #dashboard-modal .modal-content {
-  max-width: 1100px;
-  padding: 2rem;
-  max-height: 90vh;
-}
-
-#dashboard-modal .modal-body {
-  max-height: calc(90vh - 140px);
+  padding: 1rem;
+  max-height: 92vh;
+  overflow-y: auto;
 }
 
 .dashboard-header {
@@ -1908,40 +1820,24 @@ header, section {
   background: #218838;
 }
 
-/* Edit Listing Modal */
+/* Edit listing modal */
 #edit-listing-modal .modal-content {
-  max-width: 700px;
   max-height: 90vh;
   overflow-y: auto;
 }
-
 #edit-listing-modal label {
   display: block;
-  margin-top: 1rem;
+  margin-top: 0.75rem;
   font-weight: 600;
-  font-size: 0.9rem;
-  color: var(--color-dark);
 }
-
 #edit-listing-modal input,
 #edit-listing-modal select,
 #edit-listing-modal textarea {
   width: 100%;
-  padding: 0.75rem;
-  margin-top: 0.5rem;
+  padding: 0.5rem;
+  margin-top: 0.25rem;
   border: 1px solid #ddd;
   border-radius: var(--border-radius);
-  font-size: 1rem;
-  font-family: inherit;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
-}
-
-#edit-listing-modal input:focus,
-#edit-listing-modal select:focus,
-#edit-listing-modal textarea:focus {
-  border-color: var(--color-accent);
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(216, 180, 160, 0.2);
 }
 
 .modal.show {
@@ -2378,13 +2274,7 @@ body {
 
 /* Write Review Modal Styles */
 #write-review-modal .modal-content {
-  max-width: 650px;
-}
-
-#write-review-modal h2 {
-  font-family: var(--font-heading);
-  font-size: 1.75rem;
-  margin-bottom: 0.5rem;
+  max-width: 600px;
 }
 
 .review-notice {
@@ -2394,6 +2284,59 @@ body {
   font-style: italic;
 }
 
+/* Mobile optimization for write review modal */
+@media (max-width: 768px) {
+  #write-review-modal .modal-content {
+    max-height: 90vh;
+    padding: 1.25rem 1rem;
+  }
+  
+  #write-review-modal h2 {
+    font-size: 1.3rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .review-notice {
+    font-size: 0.85rem;
+    margin-bottom: 1rem;
+  }
+  
+  #write-review-form {
+    gap: 1rem;
+  }
+  
+  #write-review-form .form-group {
+    gap: 0.4rem;
+  }
+  
+  #write-review-form input[type="text"],
+  #write-review-form input[type="email"],
+  #write-review-form textarea {
+    padding: 0.65rem;
+    font-size: 0.95rem;
+  }
+  
+  #write-review-form textarea {
+    min-height: 80px;
+    rows: 3;
+  }
+  
+  #write-review-form button[type="submit"] {
+    padding: 0.75rem 1.25rem;
+    font-size: 0.95rem;
+  }
+  
+  #write-review-form .opt-in-container {
+    font-size: 0.85rem;
+  }
+  
+  #write-review-form .opt-in-container input[type="checkbox"] {
+    width: 1rem;
+    height: 1rem;
+  }
+}
+
+/* Write Review Form Styling */
 #write-review-form {
   display: flex;
   flex-direction: column;
@@ -2404,68 +2347,6 @@ body {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-}
-
-#write-review-form label {
-  font-weight: 600;
-  font-size: 0.9rem;
-  color: var(--color-dark);
-}
-
-#write-review-form input[type="text"],
-#write-review-form input[type="email"],
-#write-review-form textarea {
-  padding: 0.875rem;
-  border: 1px solid #ddd;
-  border-radius: var(--border-radius);
-  font-size: 1rem;
-  font-family: inherit;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
-}
-
-#write-review-form input:focus,
-#write-review-form textarea:focus {
-  border-color: var(--color-accent);
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(216, 180, 160, 0.2);
-}
-
-#write-review-form textarea {
-  min-height: 120px;
-  resize: vertical;
-}
-
-/* Mobile optimization for write review modal */
-@media (max-width: 768px) {
-  #write-review-modal .modal-content {
-    max-height: 90vh;
-    padding: 1.5rem 1rem;
-  }
-
-  #write-review-modal h2 {
-    font-size: 1.4rem;
-  }
-
-  .review-notice {
-    font-size: 0.85rem;
-    margin-bottom: 1rem;
-  }
-
-  #write-review-form input[type="text"],
-  #write-review-form input[type="email"],
-  #write-review-form textarea {
-    padding: 0.75rem;
-    font-size: 0.95rem;
-  }
-
-  #write-review-form textarea {
-    min-height: 100px;
-  }
-
-  #write-review-form button[type="submit"] {
-    padding: 0.875rem 1.5rem;
-    font-size: 1rem;
-  }
 }
 
 #write-review-form label {
