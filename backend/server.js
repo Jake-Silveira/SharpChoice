@@ -26,10 +26,10 @@ app.use(helmet({
       defaultSrc: ["'self'"],
       styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://cdn.jsdelivr.net"],
       scriptSrc: ["'self'", "https://cdn.jsdelivr.net", "https://www.googletagmanager.com"],
-      imgSrc: ["'self'", "data:", "https://*.supabase.co", "https://*.supabase.com", "https://www.google-analytics.com", "https://www.googletagmanager.com", "https://maps.gstatic.com", "https://*.googleapis.com"],
+      imgSrc: ["'self'", "data:", "https://*.supabase.co", "https://*.supabase.com", "https://www.google-analytics.com", "https://www.googletagmanager.com", "https://maps.gstatic.com", "https://*.googleapis.com", "https://*.ggpht.com"],
       fontSrc: ["'self'", "https://fonts.gstatic.com"],
       connectSrc: ["'self'", "https://*.supabase.co", "https://*.supabase.com", "https://api.resend.com", "https://cdn.jsdelivr.net", "https://www.google-analytics.com", "https://*.analytics.google.com", "https://www.googletagmanager.com"],
-      frameSrc: ["'self'", "https://www.google.com", "https://www.google.co.uk", "https://maps.google.com", "https://maps.gstatic.com", "https://*.google.com"],
+      frameSrc: ["'self'", "https://www.google.com", "https://www.google.co.uk", "https://maps.google.com", "https://maps.gstatic.com", "https://*.google.com", "https://www.google.com/maps/d/"],
       objectSrc: ["'none'"],
       frameAncestors: ["'none'"]
     }
