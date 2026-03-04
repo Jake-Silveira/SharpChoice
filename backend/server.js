@@ -210,7 +210,7 @@ app.post("/api/reviews/submit", async (req, res) => {
           <p style="color:#666; font-size:0.9rem; margin-top:2rem;">
             <em>This is an automated confirmation. Please do not reply directly to this email.</em><br>
             <strong>Sharp Choice Real Estate</strong><br>
-            Stephanie Sharp - Real Estate Broker<br>
+            Stephanie Sharp - Real Estate Agent<br>
             Austin, TX | Phone: <a href="tel:+15125672807">+1-512-567-2807</a><br>
             www.sharpchoicerealestate.com
           </p>
