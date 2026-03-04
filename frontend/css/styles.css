@@ -223,6 +223,7 @@ header, section {
   font-size: 1.1rem;
   margin-bottom: 2rem;
   color: #ddd;
+  text-align: center;
 }
 
 .hero-buttons {
