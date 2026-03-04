@@ -9,7 +9,7 @@ The SharpChoice Real Estate website uses **Resend** for all email notifications.
 
 #### Admin Notification
 - **Trigger:** User submits contact form
-- **To:** `sharpchoicerealestate@gmail.com`
+- **To:** `stephanie@sharpchoicerealestate.com`
 - **From:** `Website Contact <contact@sharpchoicerealestate.com>`
 - **Reply-To:** User's email
 - **Subject:** "New Contact Form Submission from {name}"
@@ -26,7 +26,7 @@ The SharpChoice Real Estate website uses **Resend** for all email notifications.
 
 #### Admin Notification
 - **Trigger:** User submits a review
-- **To:** `sharpchoicerealestate@gmail.com`
+- **To:** `stephanie@sharpchoicerealestate.com`
 - **From:** `Website Reviews <contact@sharpchoicerealestate.com>`
 - **Reply-To:** User's email
 - **Subject:** "New Review Submission from {author_name}"
@@ -82,7 +82,7 @@ Edit `backend/server.js`:
 - Line ~343: Contact form admin notification
 - Line ~173: Review submission admin notification
 
-Change `"sharpchoicerealestate@gmail.com"` to your preferred email.
+Change `"stephanie@sharpchoicerealestate.com"` to your preferred email.
 
 ### Change From Address
 Once your domain is verified in Resend, you can use any email @sharpchoicerealestate.com:

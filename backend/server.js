@@ -171,7 +171,7 @@ app.post("/api/reviews/submit", async (req, res) => {
     try {
       await resend.emails.send({
         from: "Website Reviews <contact@sharpchoicerealestate.com>",
-        to: "sharpchoicerealestate@gmail.com",
+        to: "stephanie@sharpchoicerealestate.com",
         reply_to: email,
         subject: `New Review Submission from ${author_name}`,
         html: `
@@ -345,7 +345,7 @@ app.post("/api/contact", contactLimiter, async (req, res) => {
     try {
       await resend.emails.send({
         from: "Website Contact <contact@sharpchoicerealestate.com>",
-        to: "sharpchoicerealestate@gmail.com",
+        to: "stephanie@sharpchoicerealestate.com",
         reply_to: email,
         subject: `New Contact Form Submission from ${name}`,
         html: `
