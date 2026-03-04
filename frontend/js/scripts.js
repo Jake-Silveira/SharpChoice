@@ -799,6 +799,22 @@ $('#listings-tab')?.addEventListener('click', () => {
   $('#edit-listings-tab').classList.remove('tab-active');
 });
 
+// Utility: Convert Supabase URL to public version
+function ensurePublicUrl(url) {
+  if (!url) return 'assets/placeholder.jpg';
+  // If it's already a full public URL, return it
+  if (url.includes('supabase.co/storage/v1/object/public')) return url;
+  // If it's a token-based URL, strip token
+  try {
+    const u = new URL(url);
+    if (u.searchParams.has('token')) {
+      u.search = '';
+      return u.toString();
+    }
+  } catch {}
+  return url;
+}
+
 // ---- Sub-tab: Add Listing ----
 $('#add-listing-tab')?.addEventListener('click', () => {
   $('#add-listing-subsection').style.display = 'block';
@@ -861,22 +877,6 @@ function renderPhotos(photos = [], container) {
   };
   mainContainer.appendChild(mainImg);
   container.appendChild(mainContainer);
-
-  // Helper: convert any Supabase URL to public version
-  function ensurePublicUrl(url) {
-    if (!url) return 'assets/placeholder.jpg';
-    // If it's already a full public URL, return it
-    if (url.includes('supabase.co/storage/v1/object/public')) return url;
-    // If it's a token-based URL, strip token
-    try {
-      const u = new URL(url);
-      if (u.searchParams.has('token')) {
-        u.search = '';
-        return u.toString();
-      }
-    } catch {}
-    return url;
-  }
 }
 
 // Add Review
