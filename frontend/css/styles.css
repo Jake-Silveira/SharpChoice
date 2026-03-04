@@ -82,8 +82,8 @@ section > h2:first-child,
 #reviews-heading,
 #listings-heading,
 #services-heading {
-  margin-top: 1.5rem;
-  margin-bottom: 2rem;
+  margin-top: 3rem;
+  margin-bottom: 1rem;
 }
 
 @media (max-width: 768px) {
@@ -93,8 +93,8 @@ section > h2:first-child,
   
   section h2,
   section > h2:first-child {
-    margin-top: 1rem;
-    margin-bottom: 1.5rem;
+    margin-top: 2rem;
+    margin-bottom: 0.75rem;
   }
 }
 
