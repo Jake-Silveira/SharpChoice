@@ -228,7 +228,7 @@ header, section {
 .hero {
   width: 100%;
   position: relative;
-  background: linear-gradient(135deg, rgba(28, 28, 28, 0.85) 0%, rgba(42, 42, 42, 0.75) 100%),
+  background: linear-gradient(135deg, rgba(28, 28, 28, 0.65) 0%, rgba(42, 42, 42, 0.55) 100%),
               url('../assets/justin-wallace-cB_LQ6NGkq4-unsplash.jpg') center/cover no-repeat fixed;
   color: #fff;
   padding: 5rem 1rem;
@@ -244,7 +244,7 @@ header, section {
   left: 0;
   right: 0;
   bottom: 0;
-  background: radial-gradient(ellipse at center, transparent 0%, rgba(0, 0, 0, 0.2) 100%);
+  background: radial-gradient(ellipse at center, transparent 0%, rgba(0, 0, 0, 0.1) 100%);
   pointer-events: none;
   z-index: 0;
 }
@@ -316,7 +316,7 @@ header, section {
 @media (max-width: 768px) {
   .hero {
     padding: 3rem 1rem;
-    background: linear-gradient(135deg, rgba(28, 28, 28, 0.9) 0%, rgba(42, 42, 42, 0.85) 100%),
+    background: linear-gradient(135deg, rgba(28, 28, 28, 0.7) 0%, rgba(42, 42, 42, 0.65) 100%),
                 url('../assets/justin-wallace-cB_LQ6NGkq4-unsplash.jpg') center/cover no-repeat;
   }
 
