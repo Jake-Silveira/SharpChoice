@@ -187,8 +187,37 @@ app.post("/api/reviews/submit", async (req, res) => {
           </p>
         `,
       });
+
+      // Send thank you email to reviewer
+      await resend.emails.send({
+        from: "Sharp Choice Real Estate <contact@sharpchoicerealestate.com>",
+        to: email,
+        subject: "Thank You for Your Review!",
+        html: `
+          <h2>Thank You for Your Review, ${author_name}!</h2>
+          <p>We truly appreciate you taking the time to share your experience with Sharp Choice Real Estate.</p>
+          <p>Your review helps us serve our clients better and helps others in the community learn about our services.</p>
+          
+          <h3>Your Review Details:</h3>
+          <p><strong>Rating:</strong> ${'★'.repeat(rating)}${'☆'.repeat(5 - rating)} (${rating}/5)</p>
+          <blockquote style="background:#f8f9fa; padding:1rem; border-left:4px solid #b8a89f; margin:1rem 0;">
+            "${comment}"
+          </blockquote>
+          
+          <p><strong>What happens next?</strong></p>
+          <p>Your review will be posted to our website after a brief review process (usually within 24-48 hours).</p>
+          
+          <p style="color:#666; font-size:0.9rem; margin-top:2rem;">
+            <em>This is an automated confirmation. Please do not reply directly to this email.</em><br>
+            <strong>Sharp Choice Real Estate</strong><br>
+            Stephanie Sharp - Real Estate Broker<br>
+            Austin, TX | Phone: <a href="tel:+15125672807">+1-512-567-2807</a><br>
+            www.sharpchoicerealestate.com
+          </p>
+        `,
+      });
     } catch (emailErr) {
-      console.error("Failed to send admin notification email:", emailErr);
+      console.error("Failed to send review emails:", emailErr);
       // Don't fail the request if email fails
     }
 
@@ -276,6 +305,103 @@ app.post("/api/reviews/:id/delete", requireAuth, async (req, res) => {
   } catch (err) {
     console.error("Delete review error:", err);
     res.status(500).json({ error: "Failed to delete review" });
+  }
+});
+
+// === Contact Form API ===
+app.post("/api/contact", contactLimiter, async (req, res) => {
+  let { name, email, message, opt_in } = req.body;
+
+  // Sanitize inputs
+  name = sanitizeInput(name);
+  email = validator.isEmail(email) ? validator.normalizeEmail(email) : '';
+  message = sanitizeInput(message);
+  opt_in = Boolean(opt_in);
+
+  // Validation
+  if (!name || !email || !message) {
+    return res.status(400).json({ error: "Missing required fields: name, email, or message" });
+  }
+
+  if (!opt_in) {
+    return res.status(400).json({ error: "You must agree to the Privacy Policy to submit" });
+  }
+
+  try {
+    // Save to Supabase contacts table
+    const { error: insertError } = await supabase
+      .from("contacts")
+      .insert([{
+        name,
+        email,
+        message,
+        opt_in,
+        created_at: new Date().toISOString()
+      }]);
+
+    if (insertError) throw insertError;
+
+    // Send email notification to admin
+    try {
+      await resend.emails.send({
+        from: "Website Contact <contact@sharpchoicerealestate.com>",
+        to: "sharpchoicerealestate@gmail.com",
+        reply_to: email,
+        subject: `New Contact Form Submission from ${name}`,
+        html: `
+          <h2>New Contact Form Submission</h2>
+          <p><strong>From:</strong> ${name} (${email})</p>
+          <p><strong>Message:</strong></p>
+          <blockquote style="background:#f8f9fa; padding:1rem; border-left:4px solid #b8a89f; margin:1rem 0;">
+            "${message}"
+          </blockquote>
+          <p style="color:#666; font-size:0.9rem;">
+            This contact was submitted on ${new Date().toLocaleString('en-US', { 
+              dateStyle: 'long', 
+              timeStyle: 'short' 
+            })}
+          </p>
+        `,
+      });
+
+      // Send auto-reply confirmation to user
+      await resend.emails.send({
+        from: "Sharp Choice Real Estate <contact@sharpchoicerealestate.com>",
+        to: email,
+        subject: "Thank you for contacting Sharp Choice Real Estate",
+        html: `
+          <h2>Thank You for Your Message, ${name}!</h2>
+          <p>We've received your inquiry and appreciate you reaching out to Sharp Choice Real Estate.</p>
+          <p>Here's a copy of your message for your records:</p>
+          <blockquote style="background:#f8f9fa; padding:1rem; border-left:4px solid #b8a89f; margin:1rem 0;">
+            "${message}"
+          </blockquote>
+          <p><strong>What happens next?</strong></p>
+          <p>Stephanie or a member of our team will review your message and get back to you within 24-48 business hours.</p>
+          <p>For immediate assistance, you can reach us at:</p>
+          <ul>
+            <li><strong>Phone:</strong> <a href="tel:+15125672807">+1-512-567-2807</a></li>
+            <li><strong>Email:</strong> <a href="mailto:stephanie@sharpchoicerealestate.com">stephanie@sharpchoicerealestate.com</a></li>
+          </ul>
+          <p style="color:#666; font-size:0.9rem; margin-top:2rem;">
+            <em>This is an automated confirmation. Please do not reply directly to this email.</em><br>
+            <strong>Sharp Choice Real Estate</strong><br>
+            Austin, TX | www.sharpchoicerealestate.com
+          </p>
+        `,
+      });
+    } catch (emailErr) {
+      console.error("Failed to send contact form emails:", emailErr);
+      // Don't fail the request if email fails
+    }
+
+    res.json({ 
+      success: true, 
+      message: "Thank you for your message. We'll get back to you soon." 
+    });
+  } catch (err) {
+    console.error("Contact form submission error:", err);
+    res.status(500).json({ error: "Failed to submit contact form" });
   }
 });
 
