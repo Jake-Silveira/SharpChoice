@@ -249,8 +249,8 @@ header, section {
   width: 100%;
   position: relative;
   background: linear-gradient(135deg, rgba(28, 28, 28, 0.65) 0%, rgba(42, 42, 42, 0.55) 100%),
-              url('../assets/justin-wallace-cB_LQ6NGkq4-unsplash.jpg') center/cover no-repeat fixed;
-  background-position: center top;
+              url('../assets/justin-wallace-cB_LQ6NGkq4-unsplash.jpg') center center/cover no-repeat fixed;
+  background-position: center;
   color: #fff;
   padding: 5rem 1rem;
   box-sizing: border-box;
