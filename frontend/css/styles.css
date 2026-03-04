@@ -54,6 +54,7 @@ body {
   font-size: 16px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  padding-top: 120px; /* Compensate for hero negative margin */
 }
 
 /* Global Headings - Luxury Typography */
@@ -115,16 +116,13 @@ header, section {
 
 /* Header - Transparent for Hero Background Extension */
 .site-header {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 100;
+  position: relative;
   background: transparent;
   border-bottom: 1px solid rgba(255, 255, 255, 0.2);
   width: 100%;
   box-sizing: border-box;
   overflow-x: hidden;
+  z-index: 100;
 }
 
 .site-header.scrolled {
@@ -274,13 +272,11 @@ header, section {
               url('../assets/justin-wallace-cB_LQ6NGkq4-unsplash.jpg') center/cover no-repeat fixed;
   background-position: center top;
   color: #fff;
-  padding-top: 8rem;
-  padding-bottom: 3rem;
-  padding-left: 1rem;
-  padding-right: 1rem;
+  padding: 5rem 1rem;
   box-sizing: border-box;
   overflow: hidden;
-  margin-top: -80px; /* Pull up behind header */
+  margin-top: -120px; /* Pull up to overlap header area only */
+  z-index: 1;
 }
 
 /* Subtle overlay for better text contrast */
@@ -361,10 +357,20 @@ header, section {
 
 /* RESPONSIVE DESIGN */
 @media (max-width: 768px) {
+  body {
+    padding-top: 0;
+  }
+  
   .hero {
+    margin-top: 0;
     padding: 3rem 1rem;
     background: linear-gradient(135deg, rgba(28, 28, 28, 0.7) 0%, rgba(42, 42, 42, 0.65) 100%),
                 url('../assets/justin-wallace-cB_LQ6NGkq4-unsplash.jpg') center/cover no-repeat;
+  }
+  
+  .site-header {
+    background: rgba(255, 255, 255, 0.98);
+    border-bottom: 1px solid #eee;
   }
 
   .hero-inner {
