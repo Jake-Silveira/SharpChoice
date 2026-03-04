@@ -255,6 +255,15 @@ The application is designed for deployment on platforms that support Node.js app
 - The `backend/` folder serves static files from `../frontend/`
 
 ## Recent Updates
+- **Mar 2026**: Comprehensive SEO improvements
+  - Added robots.txt and sitemap.xml for search engine indexing
+  - Enhanced structured data (FAQPage, AggregateRating, BreadcrumbList schemas)
+  - Improved Open Graph and Twitter Card meta tags
+  - Added accessibility features (skip link, enhanced ARIA labels)
+  - Performance optimization (DNS prefetch, preconnect, resource preloading)
+  - Google Analytics 4 integration ready (commented out, requires ID)
+  - Updated privacy.html and terms.html with canonical URLs
+  - See SEO_IMPROVEMENTS.md for full details
 - **Feb 2026**: Added public review submission with admin moderation
   - New "Write a Review" modal with star rating component
   - Reviews submitted with "pending" status requiring admin approval

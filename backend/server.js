@@ -38,6 +38,17 @@ app.use(helmet({
 app.use(express.json({ limit: "10mb" })); // Support base64 image uploads
 app.use(express.static(path.join(__dirname, "../frontend")));
 
+// === Serve robots.txt and sitemap.xml ===
+app.get("/robots.txt", (req, res) => {
+  res.setHeader("Content-Type", "text/plain");
+  res.sendFile(path.join(__dirname, "../frontend/robots.txt"));
+});
+
+app.get("/sitemap.xml", (req, res) => {
+  res.setHeader("Content-Type", "application/xml");
+  res.sendFile(path.join(__dirname, "../frontend/sitemap.xml"));
+});
+
 // === Clients ===
 const supabase = createClient(
   process.env.SUPABASE_URL,

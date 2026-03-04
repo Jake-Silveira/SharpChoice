@@ -1,0 +1,28 @@
+# robots.txt for Sharp Choice Real Estate
+# https://sharpchoicerealestate.com
+
+User-agent: *
+Allow: /
+
+# Disallow admin-related paths (though they're protected by auth)
+Disallow: /api/
+Disallow: /admin/
+
+# Sitemap location
+Sitemap: https://sharpchoicerealestate.com/sitemap.xml
+
+# Crawl-delay for polite crawling (optional)
+Crawl-delay: 1
+
+# Block common bad bots
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: dotbot
+Disallow: /

@@ -14,10 +14,13 @@ Check out the live website: [www.sharpchoicerealestate.com](https://www.sharpcho
 - Mobile-responsive design
 - Optimized header with appropriately sized branding elements
 - Image optimization (logo and profile photo) to improve loading times
-- SEO-optimized with structured data (LocalBusiness and Service schemas)
+- **Enhanced SEO** with structured data (LocalBusiness, Service, FAQPage, Review schemas)
+- **Accessibility improvements** (WCAG-compliant skip links, ARIA labels)
+- **Performance optimization** (resource preloading, DNS prefetch, lazy loading)
 - Privacy policy and terms of service pages
 - Enhanced security with input sanitization and rate limiting
-- Google Analytics integration
+- Google Analytics 4 ready (optional integration)
+- robots.txt and XML sitemap for search engine indexing
 - Up to 3 custom sections (About, Services, Reviews)
 - Keller Williams (KW) logo prominently displayed in footer to show affiliation
 - CSP-compliant event handling (no inline handlers)
@@ -53,6 +56,16 @@ This application implements Content Security Policy (CSP) headers to enhance sec
 
 ## Deployment
 The application is currently deployed on Render at: [www.sharpchoicerealestate.com](https://www.sharpchoicerealestate.com)
+
+## SEO Features
+The site includes comprehensive SEO optimization:
+- **Structured Data**: LocalBusiness, Person, Service, FAQPage, AggregateRating, and BreadcrumbList schemas
+- **Search Engine Files**: robots.txt and sitemap.xml for proper indexing
+- **Enhanced Meta Tags**: Open Graph, Twitter Cards, and rich snippet support
+- **Accessibility**: WCAG-compliant skip links, ARIA labels, and keyboard navigation
+- **Performance**: Resource preloading, DNS prefetch, and lazy loading for images
+
+See [SEO_IMPROVEMENTS.md](./SEO_IMPROVEMENTS.md) for full details.
 
 ## Recent Updates
 - **Feb 2026**: Added public review submission with admin moderation

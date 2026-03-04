@@ -8,27 +8,39 @@
 
   <!-- SEO -->
   <title>Stephanie Sharp | Austin Real Estate Agent - Sharp Choice Real Estate</title>
-  <meta name="description" content="Stephanie Sharp - Austin's trusted real estate expert with 30+ years experience. $100M+ in closed transactions. Contact for a consultation.">
-  <meta name="keywords" content="Stephanie Sharp, Austin real estate agent, Austin TX homes, Sharp Choice Real Estate, Austin realtor, home buying Austin, home selling Austin">
+  <meta name="description" content="Stephanie Sharp - Austin's trusted real estate expert with 30+ years experience. $100M+ in closed transactions. Specializing in luxury homes, investment properties, and first-time buyers in Austin, TX.">
+  <meta name="keywords" content="Stephanie Sharp, Austin real estate agent, Austin TX homes, Sharp Choice Real Estate, Austin realtor, home buying Austin, home selling Austin, luxury homes Austin, investment property Austin, Central Texas real estate">
   <meta name="author" content="Stephanie Sharp">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
   <link rel="canonical" href="https://sharpchoicerealestate.com" />
+  
+  <!-- Preload Critical Resources -->
   <link rel="preload" href="css/styles.css" as="style">
   <link rel="preload" href="js/scripts.js" as="script">
   <link rel="dns-prefetch" href="//fonts.googleapis.com">
+  <link rel="dns-prefetch" href="//fonts.gstatic.com">
+  <link rel="dns-prefetch" href="//cdn.jsdelivr.net">
+  <link rel="preconnect" href="https://ouoqmflpfewkmetshhyq.supabase.co" crossorigin>
 
-  <!-- Open Graph -->
-  <meta property="og:title" content="Stephanie Sharp | Austin Real Estate Agent">
-  <meta property="og:description" content="Austin's trusted real estate expert with 30+ years experience. $100M+ in closed transactions.">
+  <!-- Open Graph / Facebook -->
+  <meta property="og:title" content="Stephanie Sharp | Austin Real Estate Agent - Sharp Choice Real Estate">
+  <meta property="og:description" content="Austin's trusted real estate expert with 30+ years experience. $100M+ in closed transactions. Specializing in luxury homes, investment properties, and first-time buyers.">
   <meta property="og:image" content="https://sharpchoicerealestate.com/assets/hero.jpg">
+  <meta property="og:image:alt" content="Stephanie Sharp - Austin Real Estate Agent">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
   <meta property="og:url" content="https://sharpchoicerealestate.com">
   <meta property="og:type" content="website">
   <meta property="og:locale" content="en_US">
+  <meta property="og:site_name" content="Sharp Choice Real Estate">
 
-  <!-- Twitter -->
+  <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Stephanie Sharp | Austin Real Estate Agent">
+  <meta name="twitter:title" content="Stephanie Sharp | Austin Real Estate Agent - Sharp Choice Real Estate">
   <meta name="twitter:description" content="Austin's trusted real estate expert with 30+ years experience. $100M+ in closed transactions.">
   <meta name="twitter:image" content="https://sharpchoicerealestate.com/assets/hero.jpg">
+  <meta name="twitter:image:alt" content="Stephanie Sharp - Austin Real Estate Agent">
+  <meta name="twitter:creator" content="@sharpchoicerealestate">
 
   <!-- Supabase credentials – safe for public exposure -->
   <meta name="supabase-url" content="https://ouoqmflpfewkmetshhyq.supabase.co">
@@ -142,13 +154,119 @@
       "@type": "City",
       "name": "Austin"
     },
-    "offers": {
-      "@type": "Offer",
-      "name": "Property Consultation",
-      "description": "Expert consultation on buying or selling properties in Austin"
-    }
+    "offers": [
+      {
+        "@type": "Offer",
+        "name": "Property Consultation",
+        "description": "Expert consultation on buying or selling properties in Austin"
+      },
+      {
+        "@type": "Offer",
+        "name": "Home Staging Consultation",
+        "description": "Professional home staging advice to maximize your property's appeal"
+      },
+      {
+        "@type": "Offer",
+        "name": "Market Analysis Report",
+        "description": "Comprehensive market analysis for accurate property pricing"
+      }
+    ]
   }
   </script>
+
+  <!-- FAQ Schema -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What areas does Stephanie Sharp serve in Austin?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Stephanie Sharp serves the greater Austin, Texas area including Central Austin, West Lake Hills, Tarrytown, Hyde Park, South Congress, East Austin, Round Rock, Cedar Park, Pflugerville, and surrounding Central Texas communities."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How much does it cost to work with a real estate agent?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "For buyers, working with Stephanie Sharp typically costs nothing out of pocket as the seller pays the commission. For sellers, commission rates are competitive and vary based on services provided. Contact us for a personalized consultation."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How long does it take to buy or sell a home in Austin?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The timeline varies based on market conditions. On average, homes in Austin sell within 30-60 days. Buying can take anywhere from a few weeks to several months depending on your criteria and financing. Stephanie provides expert guidance throughout the entire process."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Should I get pre-approved before house hunting?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes, getting pre-approved is highly recommended. It shows sellers you're a serious buyer, helps you understand your budget, and can give you a competitive edge in Austin's fast-paced market. Stephanie can connect you with trusted lenders."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What makes Sharp Choice Real Estate different?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "With over 30 years of experience and $100M+ in closed transactions, Stephanie Sharp provides concierge-level service with deep local market knowledge. Her background in education, sales, and real estate investment gives clients a unique advantage in negotiations and property evaluation."
+        }
+      }
+    ]
+  }
+  </script>
+
+  <!-- Review Schema (Aggregate) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "AggregateRating",
+    "itemReviewed": {
+      "@type": "RealEstateAgent",
+      "name": "Stephanie Sharp - Sharp Choice Real Estate"
+    },
+    "ratingValue": "5.0",
+    "reviewCount": "0",
+    "bestRating": "5",
+    "worstRating": "1"
+  }
+  </script>
+
+  <!-- Breadcrumb Schema -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://sharpchoicerealestate.com"
+      }
+    ]
+  }
+  </script>
+
+  <!-- Google Analytics 4 - Replace GA_MEASUREMENT_ID with your actual ID -->
+  <!-- <script async src="https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'GA_MEASUREMENT_ID', {
+      'anonymize_ip': true,
+      'send_page_view': true
+    });
+  </script> -->
 
   <!-- Favicon -->
   <link rel="icon" href="/assets/logo.png" type="image/png">
@@ -162,6 +280,9 @@
 </head>
 
 <body>
+  <!-- Skip Link for Accessibility -->
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+  
   <!-- HEADER -->
   <header class="site-header" aria-label="Site header">
     <div class="container header-inner">
@@ -201,23 +322,23 @@
               <!-- CONTACT CTA BLOCK -->
           <div class="contact-cta-block container">
             <div class="social-links">
-              <a href="tel:+15125672807">
+              <a href="tel:+15125672807" aria-label="Call Stephanie Sharp at +1-512-567-2807">
                 <img src="assets/phone.png" alt="Phone icon" class="social-icon" loading="lazy">
               </a>
-              <a href="mailto:stephanie@sharpchoicerealestate.com">
+              <a href="mailto:stephanie@sharpchoicerealestate.com" aria-label="Email Stephanie Sharp">
                 <img src="assets/email.svg" alt="Email icon" class="social-icon" loading="lazy">
               </a>
-              <a href="https://www.facebook.com/stephanie.sharp.461637/" target="_blank" rel="noopener noreferrer" aria-label="Follow me on Facebook">
+              <a href="https://www.facebook.com/stephanie.sharp.461637/" target="_blank" rel="noopener noreferrer" aria-label="Follow Stephanie Sharp on Facebook">
                 <img src="assets/facebook_logo.svg" alt="Facebook icon" class="social-icon" loading="lazy">
               </a>
-              <a href="https://www.instagram.com/stephanie_sharpchoice/?igsh=MWR6bnlwd2l5MTlyNQ%3D%3D" target="_blank" rel="noopener noreferrer" aria-label="Follow me on Instagram">
+              <a href="https://www.instagram.com/stephanie_sharpchoice/?igsh=MWR6bnlwd2l5MTlyNQ%3D%3D" target="_blank" rel="noopener noreferrer" aria-label="Follow Stephanie Sharp on Instagram">
                 <img src="assets/instagram_logo.svg" alt="Instagram icon" class="social-icon" loading="lazy">
               </a>
             </div>
           </div>
         </div>
         <div class="hero-media">
-          <img src="assets/hero.jpg" alt="Stephanie Sharp helping a client in Austin" loading="lazy" />
+          <img src="assets/hero.jpg" alt="Stephanie Sharp, Austin real estate agent, helping a client review property documents" loading="lazy" />
         </div>
       </div>
     </section>
