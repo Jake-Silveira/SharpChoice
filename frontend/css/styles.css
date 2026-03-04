@@ -224,17 +224,34 @@ header, section {
 }
 
 
-/* HERO SECTION */
+/* HERO SECTION - High-End with Background Image */
 .hero {
   width: 100%;
-  background: linear-gradient(135deg, var(--color-dark) 0%, #2a2a2a 100%);
+  position: relative;
+  background: linear-gradient(135deg, rgba(28, 28, 28, 0.85) 0%, rgba(42, 42, 42, 0.75) 100%),
+              url('../assets/justin-wallace-cB_LQ6NGkq4-unsplash.jpg') center/cover no-repeat fixed;
   color: #fff;
-  padding: 4rem 1rem;
+  padding: 5rem 1rem;
   box-sizing: border-box;
+  overflow: hidden;
 }
 
+/* Subtle overlay for better text contrast */
+.hero::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(ellipse at center, transparent 0%, rgba(0, 0, 0, 0.2) 100%);
+  pointer-events: none;
+  z-index: 0;
+}
 
 .hero-inner {
+  position: relative;
+  z-index: 1;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -253,13 +270,26 @@ header, section {
   margin-bottom: 1rem;
   line-height: 1.2;
   text-align: center;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  font-family: var(--font-heading);
+  font-weight: 700;
+  letter-spacing: 0.02em;
 }
 
 .hero-text p {
-  font-size: 1.1rem;
+  font-size: 1.15rem;
   margin-bottom: 2rem;
-  color: #ddd;
+  color: #f0f0f0;
   text-align: center;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+  font-weight: 300;
+}
+
+.hero-sub {
+  font-size: 1.25rem;
+  color: var(--color-primary);
+  font-weight: 400;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 .hero-buttons {
@@ -277,12 +307,19 @@ header, section {
   width: 100%;
   max-width: 500px;
   border-radius: 8px;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
-  object-fit: cover; /* Maintains aspect ratio while covering the container */
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+  object-fit: cover;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 /* RESPONSIVE DESIGN */
 @media (max-width: 768px) {
+  .hero {
+    padding: 3rem 1rem;
+    background: linear-gradient(135deg, rgba(28, 28, 28, 0.9) 0%, rgba(42, 42, 42, 0.85) 100%),
+                url('../assets/justin-wallace-cB_LQ6NGkq4-unsplash.jpg') center/cover no-repeat;
+  }
+
   .hero-inner {
     flex-direction: column;
     text-align: center;
@@ -294,6 +331,23 @@ header, section {
 
   .hero-text h2 {
     font-size: 2rem;
+  }
+
+  .hero-text p {
+    font-size: 1rem;
+  }
+
+  .hero-sub {
+    font-size: 1.1rem;
+  }
+
+  .hero-buttons {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .hero-media img {
+    max-width: 100%;
   }
 }
 
