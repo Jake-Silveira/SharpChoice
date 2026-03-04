@@ -25,7 +25,7 @@ app.use(helmet({
     directives: {
       defaultSrc: ["'self'"],
       styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://cdn.jsdelivr.net"],
-      scriptSrc: ["'self'", "https://cdn.jsdelivr.net", "https://www.googletagmanager.com"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net", "https://www.googletagmanager.com", "https://www.google-analytics.com"],
       imgSrc: ["'self'", "data:", "https://*.supabase.co", "https://*.supabase.com", "https://www.google-analytics.com", "https://www.googletagmanager.com", "https://maps.gstatic.com", "https://*.googleapis.com", "https://*.ggpht.com"],
       fontSrc: ["'self'", "https://fonts.gstatic.com"],
       connectSrc: ["'self'", "https://*.supabase.co", "https://*.supabase.com", "https://api.resend.com", "https://cdn.jsdelivr.net", "https://www.google-analytics.com", "https://*.analytics.google.com", "https://www.googletagmanager.com"],
