@@ -25,10 +25,10 @@ app.use(helmet({
     directives: {
       defaultSrc: ["'self'"],
       styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://cdn.jsdelivr.net"],
-      scriptSrc: ["'self'", "https://cdn.jsdelivr.net"],
-      imgSrc: ["'self'", "data:", "https://*.supabase.co", "https://*.supabase.com"],
+      scriptSrc: ["'self'", "https://cdn.jsdelivr.net", "https://www.googletagmanager.com"],
+      imgSrc: ["'self'", "data:", "https://*.supabase.co", "https://*.supabase.com", "https://www.google-analytics.com", "https://www.googletagmanager.com"],
       fontSrc: ["'self'", "https://fonts.gstatic.com"],
-      connectSrc: ["'self'", "https://*.supabase.co", "https://*.supabase.com", "https://api.resend.com", "https://cdn.jsdelivr.net"],
+      connectSrc: ["'self'", "https://*.supabase.co", "https://*.supabase.com", "https://api.resend.com", "https://cdn.jsdelivr.net", "https://www.google-analytics.com", "https://*.analytics.google.com", "https://www.googletagmanager.com"],
       frameSrc: ["'self'"],
       objectSrc: ["'none'"],
       frameAncestors: ["'none'"]
