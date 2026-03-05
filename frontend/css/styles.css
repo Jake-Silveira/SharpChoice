@@ -1493,13 +1493,13 @@ header, section {
   width: 32px;
   height: 32px;
   transition: all 0.3s ease;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+  filter: brightness(0) saturate(100%) invert(61%) sepia(21%) saturate(418%) hue-rotate(331deg) brightness(94%) contrast(91%) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2)); /* --color-accent */
 }
 
 .social-links a:hover .social-icon,
 .social-links a:focus .social-icon {
   transform: scale(1.1) translateY(-2px);
-  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3)) brightness(1.1);
+  filter: brightness(0) saturate(100%) invert(48%) sepia(14%) saturate(671%) hue-rotate(333deg) brightness(92%) contrast(94%) drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3)); /* --color-primary */
 }
 
 /* Responsive: Stack vertically on mobile if needed */
@@ -1555,13 +1555,13 @@ header, section {
   width: 36px;
   height: 36px;
   transition: all 0.3s ease;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+  filter: brightness(0) saturate(100%) invert(61%) sepia(21%) saturate(418%) hue-rotate(331deg) brightness(94%) contrast(91%) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2)); /* --color-accent */
 }
 
 .social-links a:hover .social-icon,
 .social-links a:focus .social-icon {
   transform: scale(1.15) translateY(-2px);
-  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3)) brightness(1.1);
+  filter: brightness(0) saturate(100%) invert(48%) sepia(14%) saturate(671%) hue-rotate(333deg) brightness(92%) contrast(94%) drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3)); /* --color-primary */
 }
 
 /* "OR" version – subtle separator */
