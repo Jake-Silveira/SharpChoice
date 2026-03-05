@@ -248,7 +248,7 @@ header, section {
 .hero {
   width: 100%;
   position: relative;
-  background: linear-gradient(135deg, rgba(28, 28, 28, 0.21) 0%, rgba(42, 42, 42, 0.29) 100%),
+  background: linear-gradient(135deg, rgba(28, 28, 28, 0.1) 0%, rgba(42, 42, 42, 0.1) 100%),
               url('../assets/justin-wallace-cB_LQ6NGkq4-unsplash.jpg') center center/cover no-repeat fixed;
   background-position: center;
   color: #fff;
@@ -337,7 +337,7 @@ header, section {
 @media (max-width: 768px) {
   .hero {
     padding: 3rem 1rem;
-    background: linear-gradient(135deg, rgba(28, 28, 28, 0.21) 0%, rgba(42, 42, 42, 0.29) 100%),
+    background: linear-gradient(135deg, rgba(28, 28, 28, 0.15) 0%, rgba(42, 42, 42, 0.2) 100%),
                 url('../assets/justin-wallace-cB_LQ6NGkq4-unsplash.jpg') center/cover no-repeat;
   }
 
@@ -381,6 +381,7 @@ header, section {
   border: none;
   text-decoration: none;
   transition: background 0.3s ease;
+  font-weight: 600;
 }
 
 .btn-primary:hover {
@@ -394,6 +395,7 @@ header, section {
   color: var(--color-accent);
   text-decoration: none;
   transition: border-color 0.3s ease, color 0.3s ease;
+  font-weight: 600;
 }
 
 .btn-outline:hover {
