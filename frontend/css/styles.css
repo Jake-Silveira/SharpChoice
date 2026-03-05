@@ -291,7 +291,7 @@ header, section {
   margin-bottom: 1rem;
   line-height: 1.2;
   text-align: center;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.7), 0 0 30px rgba(0, 0, 0, 0.5);
   font-family: var(--font-heading);
   font-weight: 700;
   letter-spacing: 0.02em;
@@ -300,17 +300,17 @@ header, section {
 .hero-text p {
   font-size: 1.15rem;
   margin-bottom: 2rem;
-  color: #f0f0f0;
+  color: #ffffff;
   text-align: center;
-  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
-  font-weight: 300;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6), 0 0 20px rgba(0, 0, 0, 0.4);
+  font-weight: 400;
 }
 
 .hero-sub {
   font-size: 1.25rem;
-  color: var(--color-primary);
-  font-weight: 400;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  color: #f5e6e0;
+  font-weight: 500;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7), 0 0 25px rgba(0, 0, 0, 0.5);
 }
 
 .hero-buttons {
@@ -1490,16 +1490,16 @@ header, section {
 }
 
 .social-icon {
-  width: 32px;
-  height: 32px;
+  width: 40px;
+  height: 40px;
   transition: all 0.3s ease;
-  filter: brightness(0) saturate(100%) invert(61%) sepia(21%) saturate(418%) hue-rotate(331deg) brightness(94%) contrast(91%) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2)); /* --color-accent */
+  filter: brightness(0) saturate(100%) invert(61%) sepia(21%) saturate(418%) hue-rotate(331deg) brightness(94%) contrast(91%) drop-shadow(0 3px 6px rgba(0, 0, 0, 0.4)); /* --color-accent */
 }
 
 .social-links a:hover .social-icon,
 .social-links a:focus .social-icon {
-  transform: scale(1.1) translateY(-2px);
-  filter: brightness(0) saturate(100%) invert(48%) sepia(14%) saturate(671%) hue-rotate(333deg) brightness(92%) contrast(94%) drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3)); /* --color-primary */
+  transform: scale(1.2) translateY(-3px);
+  filter: brightness(0) saturate(100%) invert(48%) sepia(14%) saturate(671%) hue-rotate(333deg) brightness(92%) contrast(94%) drop-shadow(0 6px 12px rgba(0, 0, 0, 0.5)); /* --color-primary */
 }
 
 /* Responsive: Stack vertically on mobile if needed */
@@ -1552,16 +1552,16 @@ header, section {
 }
 
 .social-icon {
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
   transition: all 0.3s ease;
-  filter: brightness(0) saturate(100%) invert(61%) sepia(21%) saturate(418%) hue-rotate(331deg) brightness(94%) contrast(91%) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2)); /* --color-accent */
+  filter: brightness(0) saturate(100%) invert(61%) sepia(21%) saturate(418%) hue-rotate(331deg) brightness(94%) contrast(91%) drop-shadow(0 3px 6px rgba(0, 0, 0, 0.4)); /* --color-accent */
 }
 
 .social-links a:hover .social-icon,
 .social-links a:focus .social-icon {
-  transform: scale(1.15) translateY(-2px);
-  filter: brightness(0) saturate(100%) invert(48%) sepia(14%) saturate(671%) hue-rotate(333deg) brightness(92%) contrast(94%) drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3)); /* --color-primary */
+  transform: scale(1.2) translateY(-3px);
+  filter: brightness(0) saturate(100%) invert(48%) sepia(14%) saturate(671%) hue-rotate(333deg) brightness(92%) contrast(94%) drop-shadow(0 6px 12px rgba(0, 0, 0, 0.5)); /* --color-primary */
 }
 
 /* "OR" version – subtle separator */
