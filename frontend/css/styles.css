@@ -120,7 +120,7 @@ header, section {
   overflow-x: hidden;
   border: 4px solid #fff;
   border-radius: 8px;
-  box-shadow: inset 0 0 0 4px var(--color-dark), inset 0 0 0 8px var(--color-accent);
+  box-shadow: inset 0 0 0 8px var(--color-dark);
 }
 
 .header-inner {
@@ -137,17 +137,18 @@ header, section {
 
 .brand {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  flex-wrap: nowrap; /* Disable wrapping on desktop */
+  flex-wrap: nowrap;
   gap: 1rem;
-  min-width: 0; /* allows flex child text to shrink instead of overflow */
+  min-width: 0;
 }
 
 .brand-logo {
-  height: 140px; /* increased size */
+  height: 140px;
   width: auto;
   display: block;
-  flex-shrink: 0; /* prevents logo from squishing */
+  flex-shrink: 0;
 }
 
 .brand-text {
@@ -157,11 +158,12 @@ header, section {
   flex: 1;
   min-width: 150px;
   overflow-wrap: break-word;
+  text-align: center;
 }
 
 .brand-name {
   margin: 0;
-  font-size: 2rem;
+  font-size: 1rem;
   line-height: 1.2;
   word-break: break-word;
   font-family: var(--font-heading);
@@ -490,7 +492,7 @@ header, section {
   }
   
   .brand-name {
-    font-size: 1.7rem; /* Reduced to proportionally match the logo */
+    font-size: 1rem; /* Reduced to proportionally match the logo */
   }
 
   .site-nav ul {
@@ -580,7 +582,7 @@ header, section {
 
 .about-hero-image {
   width: 100%;
-  max-width: 340px;
+  max-width: 280px;
   height: auto;
   aspect-ratio: 3 / 4;
   border-radius: 12px;
@@ -594,7 +596,7 @@ header, section {
 
 .about-profile-image {
   width: 100%;
-  max-width: 340px;
+  max-width: 280px;
   height: auto;
   aspect-ratio: 3 / 4;
   border-radius: 12px;
