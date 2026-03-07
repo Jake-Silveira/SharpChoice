@@ -118,18 +118,9 @@ header, section {
   width: 100%;
   box-sizing: border-box;
   overflow-x: hidden;
-  border-bottom: 1px solid var(--color-dark);
-}
-
-.site-header::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: var(--color-accent);
-  pointer-events: none;
+  border: 4px solid #fff;
+  border-radius: 8px;
+  box-shadow: inset 0 0 0 4px var(--color-dark), inset 0 0 0 8px var(--color-accent);
 }
 
 .header-inner {
@@ -262,7 +253,7 @@ header, section {
               url('../assets/justin-wallace-cB_LQ6NGkq4-unsplash.jpg') center center/cover no-repeat fixed;
   background-position: center;
   color: #fff;
-  padding: 6rem 1rem;
+  padding: 1rem 1rem;
   box-sizing: border-box;
   overflow: hidden;
   min-height: 600px;
@@ -289,8 +280,6 @@ header, section {
   align-items: flex-start;
   justify-content: flex-end;
   gap: 2rem;
-  max-width: var(--max-width);
-  margin: 0 auto;
 }
 
 .hero-text {
@@ -317,7 +306,7 @@ header, section {
   margin-bottom: 0;
   color: #ffffff;
   text-align: center;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6), 0 0 20px rgba(0, 0, 0, 0.4);
+  text-shadow: 0 4px 14px rgba(0, 0, 0, 0.8), 0 0 25px rgba(0, 0, 0, 0.6);
   font-weight: 400;
 }
 
@@ -325,7 +314,7 @@ header, section {
   font-size: 1.25rem;
   color: #f5e6e0;
   font-weight: 500;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7), 0 0 25px rgba(0, 0, 0, 0.5);
+  text-shadow: 0 4px 14px rgba(0, 0, 0, 0.7), 0 0 25px rgba(0, 0, 0, 0.5);
   margin-top: 0.5rem;
   display: flex;
   flex-direction: column;
@@ -538,133 +527,143 @@ header, section {
 }
 
 /* About Section */
+/* About Section - Professional Redesign */
 .about {
-  display: flex;
-  flex-direction: column;
-  gap: 2.5rem;
-  align-items: center;
-  padding: 2rem 1rem;
+  padding: 4rem 0;
   width: 100%;
-  max-width: 1200px;
+  max-width: 1500px;
   margin: 0 auto;
   box-sizing: border-box;
 }
 
-/* Top container: photo + text */
+/* Top container: photo + text side-by-side */
 .aboutContainerTop {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 2rem;
+  display: grid;
+  grid-template-columns: 340px 1fr 340px;
+  gap: 3.5rem;
+  align-items: start;
   width: 100%;
   box-sizing: border-box;
-}
-
-/* About Section - 3 column layout: image | text | image */
-.about {
-  display: flex;
-  flex-direction: column;
-  gap: 2.5rem;
-  align-items: center;
-  padding: 2rem 0 !important;
-  width: 100%;
-  max-width: 100%;
-  margin: 0 auto;
-  box-sizing: border-box;
-}
-
-/* Top container: photo + text */
-.aboutContainerTop {
-  display: flex;
-  flex-wrap: nowrap;
-  align-items: flex-start;
-  justify-content: flex-start;
-  gap: 2rem;
-  width: 100%;
-  box-sizing: border-box;
-  padding: 0 1rem;
 }
 
 .about-image-left {
   display: flex;
-  justify-content: flex-start;
-  align-items: flex-start;
-  flex: 0 0 auto;
+  justify-content: center;
+  align-items: center;
+}
+
+.about-image-left.sticky {
+  position: sticky;
+  top: 2rem;
+  align-self: start;
+}
+
+.about-image-right {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.about-image-right.sticky {
+  position: sticky;
+  top: 2rem;
+  align-self: start;
+}
+
+/* Disable sticky on mobile */
+@media (max-width: 1100px) {
+  .about-image-left.sticky,
+  .about-image-right.sticky {
+    position: static;
+  }
 }
 
 .about-hero-image {
-  max-width: 380px;
-  width: auto;
+  width: 100%;
+  max-width: 340px;
   height: auto;
-  border-radius: 10px;
+  aspect-ratio: 3 / 4;
+  border-radius: 12px;
   display: block;
-  transition: transform 0.6s ease;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              box-shadow 0.6s ease;
   object-fit: cover;
+  object-position: 70% center;
+}
+
+.about-profile-image {
+  width: 100%;
+  max-width: 340px;
+  height: auto;
+  aspect-ratio: 3 / 4;
+  border-radius: 12px;
+  display: block;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              box-shadow 0.6s ease;
+  object-fit: cover;
+  object-position: center center;
+}
+
+.about-hero-image:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.16);
+}
+
+.about-profile-image:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.16);
 }
 
 .about-text {
-  flex: 1 1 auto;
-  min-width: 200px;
-  overflow-wrap: break-word;
-  word-break: break-word;
-}
-
-/* Scale up image when about section is expanded */
-.aboutContainerTop.expanded .about-hero-image {
-  transform: scale(1.05);
+  padding-top: 0.5rem;
 }
 
 .about-text h2 {
-  margin-bottom: 1rem;
+  font-size: 2.25rem;
+  margin-bottom: 1.5rem;
+  color: var(--color-dark);
+  line-height: 1.3;
+  text-align: center;
 }
 
-/* About Bio - Truncated with Ellipsis and Smooth Expand */
+/* About Bio - Clean typography with smooth expand */
 .about-bio {
+  line-height: 1.8;
+  color: #4a4a4a;
+  font-size: 1.05rem;
   position: relative;
+}
+
+.about-bio .bio-text-wrapper {
   overflow: hidden;
-  max-height: 8.5em;
-  line-height: 1.6;
-  transition: max-height 0.6s ease;
-  overflow-wrap: break-word;
-  word-break: break-word;
-  white-space: normal;
+  transition: max-height 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  max-height: 9em;
+  position: relative;
+  display: inline;
 }
 
-/* Fading overlay for truncated text */
-.about-bio::after {
-  content: "...";
-  position: absolute;
-  background: linear-gradient(to right, rgba(255,255,255,0), white 30%);
-  color: var(--color-gray);
+/* Gradient fade for collapsed state */
+.about-bio .bio-text-wrapper:not(.expanded) {
+  mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
 }
 
-/* Expanded state */
-.about-bio.expanded {
-  max-height: 100em;
-}
-
-.about-bio.expanded::after {
-  content: none;
+.about-bio .bio-text-wrapper.expanded {
+  max-height: none;
+  display: block;
 }
 
 .more-text {
   display: none;
 }
 
-.about-bio.expanded .more-text {
+.bio-text-wrapper.expanded .more-text {
   display: inline;
 }
 
-/* Read More Button */
-.read-more-container {
-  display: flex;
-  justify-content: flex-end;
-  width: 100%;
-  margin-top: 0.5rem;
-  box-sizing: border-box;
-}
-
+/* Read More Button - Inline with text */
 .read-more-btn {
   background: none;
   border: none;
@@ -672,8 +671,9 @@ header, section {
   font-weight: 600;
   cursor: pointer;
   font-size: 1rem;
-  transition: color 0.5s ease;
-  white-space: nowrap;
+  transition: color 0.3s ease;
+  padding: 0 0.25rem;
+  font-family: var(--font-body);
 }
 
 .read-more-btn:hover {
@@ -686,63 +686,91 @@ header, section {
   justify-content: center;
   align-items: center;
   width: 100%;
+  margin-top: 3rem;
 }
 
 .about-video video {
   width: 100%;
   max-width: 1000px;
   height: auto;
-  border-radius: 10px;
-  aspect-ratio: 16 / 9; /* ensures consistent proportions */
+  border-radius: 12px;
+  aspect-ratio: 16 / 9;
   object-fit: cover;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
 }
 
 /* Mobile Responsiveness */
-@media (max-width: 768px) {
-  .about {
-    gap: 1.5rem;
-    padding: 1rem 0.5rem;
+@media (max-width: 1100px) {
+  .aboutContainerTop {
+    grid-template-columns: 1fr 1fr;
+    gap: 2.5rem;
   }
 
-  .aboutContainerTop {
-    flex-wrap: wrap;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    gap: 1.5rem;
-    padding: 0;
+  .about-image-right {
+    grid-column: 1 / -1;
+    order: -1;
   }
 
   .about-image-left {
-    order: -2;
-    flex: 0 0 auto;
-    width: 100%;
-    justify-content: center;
+    order: 0;
   }
 
-  .about-text {
-    order: -1;
-    text-align: left;
-    min-width: 100%;
-  }
-
-  .about-hero-image {
-    max-width: 320px;
-    width: auto;
+  .about-hero-image,
+  .about-profile-image {
+    max-width: 360px;
     height: auto;
     margin: 0 auto;
   }
 
-  .read-more-container {
-    justify-content: center;
+  .about-text h2 {
+    font-size: 1.85rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .aboutContainerTop {
+    grid-template-columns: 1fr;
+    gap: 2rem;
   }
 
-  .about-video video {
+  .about-image-left {
+    order: -1;
+  }
+
+  .about-image-right {
+    order: 1;
+  }
+
+  .about-hero-image,
+  .about-profile-image {
+    max-width: 320px;
+    height: auto;
+  }
+
+  .about-text h2 {
+    font-size: 1.65rem;
+  }
+
+  .about-bio {
+    font-size: 1rem;
+    line-height: 1.7;
+  }
+
+  .read-more-btn {
     width: 100%;
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .about-hero-image,
+  .about-profile-image {
     max-width: 100%;
-    aspect-ratio: 16 / 9;
-    border-radius: 8px;
+    height: auto;
+  }
+
+  .about-text h2 {
+    font-size: 1.5rem;
   }
 }
 

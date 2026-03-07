@@ -129,17 +129,21 @@ document.querySelectorAll('.cta').forEach((btn) => {
 // =============================
 document.addEventListener('DOMContentLoaded', () => {
   const readMoreBtn = $('.read-more-btn');
-  const bio         = $('#about-bio');      // the <p> that truncates
-  const moreText    = $('#about-more');     // hidden extra text
-  const aboutContainerTop = $('.aboutContainerTop');
+  const textWrapper = $('#bio-text-wrapper');  // the wrapper that truncates
+  const moreText    = $('#about-more');        // hidden extra text
+  const imageLeft = $('.about-image-left');
+  const imageRight = $('.about-image-right');
 
-  if (readMoreBtn && bio && moreText) {
+  if (readMoreBtn && textWrapper && moreText) {
     readMoreBtn.addEventListener('click', () => {
-      const isExpanded = bio.classList.toggle('expanded');
-      
-      // Add/remove class to container for image scaling
-      if (aboutContainerTop) {
-        aboutContainerTop.classList.toggle('expanded', isExpanded);
+      const isExpanded = textWrapper.classList.toggle('expanded');
+
+      // Add/remove sticky class to images when expanded
+      if (imageLeft) {
+        imageLeft.classList.toggle('sticky', isExpanded);
+      }
+      if (imageRight) {
+        imageRight.classList.toggle('sticky', isExpanded);
       }
 
       // Update button text & ARIA
