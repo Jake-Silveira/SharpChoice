@@ -629,6 +629,7 @@ header, section {
 .about-text {
   flex: 1 1 auto;
   min-width: 200px;
+  max-width: 500px;
   overflow-wrap: break-word;
   word-break: break-word;
 }
