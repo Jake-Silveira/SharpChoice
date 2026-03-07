@@ -611,7 +611,7 @@ header, section {
 }
 
 .about-profile-image {
-  max-width: 420px;
+  max-width: 480px;
   width: auto;
   height: auto;
   border-radius: 10px;
@@ -760,7 +760,7 @@ header, section {
   }
 
   .about-profile-image {
-    max-width: 360px;
+    max-width: 400px;
     width: auto;
     height: auto;
     margin: 0 auto;
