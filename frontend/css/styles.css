@@ -582,10 +582,8 @@ header, section {
   justify-content: space-between;
   gap: 1.5rem;
   width: 100%;
-  max-width: 1200px;
   box-sizing: border-box;
   padding: 0 0.5rem;
-  margin: 0 auto;
 }
 
 .about-image-left {
