@@ -611,7 +611,7 @@ header, section {
 }
 
 .about-profile-image {
-  max-width: 380px;
+  max-width: 420px;
   width: auto;
   height: auto;
   border-radius: 10px;
@@ -752,9 +752,15 @@ header, section {
     justify-content: center;
   }
 
-  .about-hero-image,
-  .about-profile-image {
+  .about-hero-image {
     max-width: 320px;
+    width: auto;
+    height: auto;
+    margin: 0 auto;
+  }
+
+  .about-profile-image {
+    max-width: 360px;
     width: auto;
     height: auto;
     margin: 0 auto;
