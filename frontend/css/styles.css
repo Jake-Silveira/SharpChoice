@@ -75,7 +75,6 @@ h6 { font-size: 1rem; }
 /* Section headings - Better spacing from previous sections */
 section h2,
 section > h2:first-child,
-.hero-text h2,
 .about-text h2,
 #map-heading,
 #contact-heading,
@@ -303,9 +302,10 @@ header, section {
 
 .hero-text h2 {
   font-size: 2.5rem;
+  margin-top: 0;
   margin-bottom: 1rem;
   line-height: 1.2;
-  text-align: right;
+  text-align: center;
   text-shadow: 0 2px 12px rgba(0, 0, 0, 0.7), 0 0 30px rgba(0, 0, 0, 0.5);
   font-family: var(--font-heading);
   font-weight: 700;
@@ -335,7 +335,7 @@ header, section {
 
 .hero-sub-line {
   display: block;
-  line-height: 1.3;
+  line-height: 2;
 }
 
 .hero-buttons {
@@ -561,11 +561,24 @@ header, section {
   box-sizing: border-box;
 }
 
-/* About Images - Left and Right */
+/* About Section - 3 column layout: image | text | image */
+.about {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+  align-items: center;
+  padding: 2rem 1rem;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+/* Top container: photo + text */
 .aboutContainerTop {
   display: flex;
   flex-wrap: wrap;
-  align-items: stretch;
+  align-items: flex-start;
   justify-content: space-between;
   gap: 2rem;
   width: 100%;
@@ -574,17 +587,16 @@ header, section {
 
 .about-image-left {
   display: flex;
-  justify-content: center;
-  align-items: stretch;
-  min-width: 200px;
+  justify-content: flex-start;
+  align-items: flex-start;
   flex: 0 0 auto;
+  margin-left: 0.5rem;
 }
 
 .about-hero-image {
-  max-width: 100%;
+  max-width: 280px;
   width: 100%;
-  height: 100%;
-  min-height: 400px;
+  height: auto;
   border-radius: 10px;
   display: block;
   transition: transform 0.6s ease;
@@ -593,17 +605,16 @@ header, section {
 
 .about-photo {
   display: flex;
-  justify-content: center;
-  align-items: stretch;
-  min-width: 200px;
+  justify-content: flex-end;
+  align-items: flex-start;
   flex: 0 0 auto;
+  margin-right: 0.5rem;
 }
 
 .about-profile-image {
-  max-width: 100%;
+  max-width: 280px;
   width: 100%;
-  height: 100%;
-  min-height: 400px;
+  height: auto;
   border-radius: 10px;
   display: block;
   transition: transform 0.6s ease;
@@ -618,8 +629,8 @@ header, section {
 
 .about-text {
   flex: 1 1 auto;
-  min-width: 300px;
-  width: 100%;
+  min-width: 280px;
+  max-width: 600px;
   overflow-wrap: break-word;
   word-break: break-word;
 }
@@ -721,26 +732,29 @@ header, section {
     gap: 1.5rem;
   }
 
+  .about-image-left {
+    order: -2; /* Hero image first */
+  }
+
+  .about-text {
+    order: -1; /* Text second */
+    text-align: left;
+  }
+
+  .about-photo {
+    order: 0; /* Profile image last */
+  }
+
   .about-image-left,
   .about-photo {
     max-width: 100%;
-    width: 100%;
-    order: -1;
-  }
-
-  .about-image-left {
-    order: -2; /* Hero image first on mobile */
+    justify-content: center;
   }
 
   .about-hero-image,
   .about-profile-image {
-    max-width: 300px;
-    min-height: 300px;
+    max-width: 280px;
     margin: 0 auto;
-  }
-
-  .about-text {
-    text-align: left;
   }
 
   .read-more-container {
