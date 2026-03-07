@@ -590,14 +590,13 @@ header, section {
   display: flex;
   justify-content: flex-start;
   align-items: flex-start;
-  flex: 0 0 280px;
+  flex: 0 0 auto;
 }
 
 .about-hero-image {
   max-width: 280px;
-  width: 280px;
+  width: auto;
   height: auto;
-  aspect-ratio: 3 / 4;
   border-radius: 10px;
   display: block;
   transition: transform 0.6s ease;
@@ -608,14 +607,13 @@ header, section {
   display: flex;
   justify-content: flex-end;
   align-items: flex-start;
-  flex: 0 0 280px;
+  flex: 0 0 auto;
 }
 
 .about-profile-image {
   max-width: 280px;
-  width: 280px;
+  width: auto;
   height: auto;
-  aspect-ratio: 3 / 4;
   border-radius: 10px;
   display: block;
   transition: transform 0.6s ease;
@@ -757,7 +755,8 @@ header, section {
   .about-hero-image,
   .about-profile-image {
     max-width: 280px;
-    width: 280px;
+    width: auto;
+    height: auto;
     margin: 0 auto;
   }
 
