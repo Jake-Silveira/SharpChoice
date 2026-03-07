@@ -285,18 +285,18 @@ header, section {
 
 .hero-text {
   flex: 1 1 50%;
-  max-width: 600px;
+  max-width: 400px;
   margin-left: auto;
   text-align: right;
 }
 
 .hero-text h2 {
-  font-size: 2.5rem;
+  font-size: 1.75rem;
   margin-top: 0;
   margin-bottom: 1rem;
   line-height: 1.2;
   text-align: center;
-  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.7), 0 0 30px rgba(0, 0, 0, 0.5);
+  text-shadow: 0 4px 12px rgba(0, 0, 0, 0.7), 0 0 30px rgba(0, 0, 0, 0.5);
   font-family: var(--font-heading);
   font-weight: 800;
   letter-spacing: 0.02em;
