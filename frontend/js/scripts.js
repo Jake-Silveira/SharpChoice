@@ -131,10 +131,16 @@ document.addEventListener('DOMContentLoaded', () => {
   const readMoreBtn = $('.read-more-btn');
   const bio         = $('#about-bio');      // the <p> that truncates
   const moreText    = $('#about-more');     // hidden extra text
+  const aboutContainerTop = $('.aboutContainerTop');
 
   if (readMoreBtn && bio && moreText) {
     readMoreBtn.addEventListener('click', () => {
       const isExpanded = bio.classList.toggle('expanded');
+      
+      // Add/remove class to container for image scaling
+      if (aboutContainerTop) {
+        aboutContainerTop.classList.toggle('expanded', isExpanded);
+      }
 
       // Update button text & ARIA
       readMoreBtn.textContent = isExpanded ? 'See Less' : 'See More';
