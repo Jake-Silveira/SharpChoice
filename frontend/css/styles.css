@@ -281,7 +281,7 @@ header, section {
   align-items: flex-start;
   justify-content: flex-end;
   gap: 2rem;
-  transform: translate(-140px, 30px);
+  transform: translate(-100px, 30px);
 }
 
 .hero-text {
