@@ -17,7 +17,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // === Middleware ===
-// Trust proxy for proper rate limiting behind Render's load balancer
+// Trust proxy for proper rate limiting behind the platform's load balancer
 app.set('trust proxy', 1);
 
 app.use(helmet({
